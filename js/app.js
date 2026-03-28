@@ -1012,7 +1012,7 @@ async function generateCharCard() {
   ctx.fillText(S.charName || 'Your Progress', CX, nameY);
   if (S.charTitle) {
     ctx.font = '400 11px Inter, sans-serif'; ctx.fillStyle = gold; ctx.globalAlpha = 0.7;
-    ctx.fillText(S.charTitle, CX, nameY - 14);
+    ctx.fillText(S.charTitle, CX, nameY - 25);
     ctx.globalAlpha = 1;
   }
   const metaParts = [S.charWorld, S.charClass ? S.charClass + (S.charClassLevel ? ' Lv.' + S.charClassLevel : '') : null, S.charFC ? '‹' + S.charFC + '›' : null].filter(Boolean);
