@@ -79,12 +79,20 @@
       <div class="section-title">Your Progress</div>
       <div id="char-display">
         <img id="char-avatar-img" class="char-avatar" src="" alt="" style="display:none;">
-        <span id="char-name-display"></span>
-        <span id="char-world-display"></span>
-        <span id="char-class-display" style="display:none;"></span>
-        <a id="char-lodestone-link" href="#" target="_blank" rel="noopener" style="display:none;">🔗 Lodestone</a>
-        <button id="char-refresh-btn" class="btn-ghost btn" style="padding:1px 6px; font-size:10px; display:none;" title="Re-fetch from Lodestone">↻</button>
-        <button class="btn-ghost btn" style="padding:1px 6px; font-size:10px;" onclick="clearCharacter()">✕</button>
+        <div class="char-info">
+          <div class="char-name-row">
+            <span id="char-name-display"></span>
+            <span id="char-world-display"></span>
+          </div>
+          <div class="char-meta-row">
+            <span id="char-title-display" style="display:none;"></span>
+            <span id="char-class-display" style="display:none;"></span>
+            <span id="char-fc-display" style="display:none;"></span>
+            <a id="char-lodestone-link" href="#" target="_blank" rel="noopener" style="display:none;">🔗 Lodestone</a>
+            <button id="char-refresh-btn" class="btn-ghost btn" style="padding:1px 6px; font-size:10px; display:none;" title="Re-fetch from Lodestone">↻</button>
+            <button class="btn-ghost btn" style="padding:1px 6px; font-size:10px;" onclick="clearCharacter()">✕</button>
+          </div>
+        </div>
       </div>
     </div>
     <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:13px; margin-bottom:16px;">

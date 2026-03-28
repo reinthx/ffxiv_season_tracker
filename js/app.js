@@ -65,7 +65,7 @@ function xpPerLevel(level) { return xpToStartLevel(level + 1) - xpToStartLevel(l
 //  STATE
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-let S = { level:1, xp:0, goal:25, userStart:null, charName:null, charWorld:null, charLodestoneId:null, charAvatar:null, charPortrait:null, charClass:null, charClassLevel:null };
+let S = { level:1, xp:0, goal:25, userStart:null, charName:null, charWorld:null, charLodestoneId:null, charAvatar:null, charPortrait:null, charClass:null, charClassLevel:null, charTitle:null, charFC:null };
 let _viewingShare = false;    // true when displaying someone else's share link
 let _cardBlob = null;         // holds the last generated character card blob
 let _sharedSeriesData = null; // decoded past-series from a share link [{seriesNum,levelReached,msCount}]
@@ -163,6 +163,14 @@ async function fetchPortraitByLodestoneId(lodestoneId) {
       const classDataEl = doc.querySelector('.character__class__data > p:nth-child(1)');
       if (classDataEl) { const lm = classDataEl.textContent.match(/LEVEL\s*(\d+)/i); if (lm) S.charClassLevel = parseInt(lm[1]); }
     }
+    if (!S.charTitle) {
+      const titleEl = doc.querySelector('.frame__chara__title');
+      if (titleEl) S.charTitle = titleEl.textContent.trim() || null;
+    }
+    if (!S.charFC) {
+      const fcEl = doc.querySelector('.character__freecompany__name > h4:nth-child(2) > a:nth-child(1)');
+      if (fcEl) S.charFC = fcEl.textContent.trim() || null;
+    }
   } catch { /* best-effort */ }
 
   // Avatar (face thumbnail) is only reliably available on the search results page — fetch it if still missing
@@ -193,7 +201,7 @@ async function fetchPortraitByLodestoneId(lodestoneId) {
 
 // Extended char data (portrait/class — not in URL, stored separately)
 function saveCharExt() {
-  try { localStorage.setItem('ffxiv-char-ext', JSON.stringify({ lodestoneId: S.charLodestoneId, portrait: S.charPortrait, avatar: S.charAvatar, cls: S.charClass, clsLv: S.charClassLevel })); } catch {}
+  try { localStorage.setItem('ffxiv-char-ext', JSON.stringify({ lodestoneId: S.charLodestoneId, portrait: S.charPortrait, avatar: S.charAvatar, cls: S.charClass, clsLv: S.charClassLevel, title: S.charTitle, fc: S.charFC })); } catch {}
 }
 function loadCharExt() {
   try { return JSON.parse(localStorage.getItem('ffxiv-char-ext') || 'null'); } catch { return null; }
@@ -807,6 +815,7 @@ function applyProgress() {
     charName: cn, charWorld: cw,
     charLodestoneId: S.charLodestoneId, charAvatar: S.charAvatar,
     charPortrait: S.charPortrait, charClass: S.charClass, charClassLevel: S.charClassLevel,
+    charTitle: S.charTitle, charFC: S.charFC,
   };
   recordXPHist();
   _viewingShare = false;
@@ -997,12 +1006,19 @@ async function generateCharCard() {
 
   // ── Character name + meta ────────────────────────────────
   ctx.textAlign = 'left';
+  let nameY = 68;
+  if (S.charTitle) { nameY = 74; }
   ctx.font = '700 28px Cinzel, serif'; ctx.fillStyle = gold;
-  ctx.fillText(S.charName || 'Your Progress', CX, 68);
-  const metaParts = [S.charWorld, S.charClass ? S.charClass + (S.charClassLevel ? ' Lv.' + S.charClassLevel : '') : null].filter(Boolean);
+  ctx.fillText(S.charName || 'Your Progress', CX, nameY);
+  if (S.charTitle) {
+    ctx.font = '400 11px Inter, sans-serif'; ctx.fillStyle = gold; ctx.globalAlpha = 0.7;
+    ctx.fillText(S.charTitle, CX, nameY - 14);
+    ctx.globalAlpha = 1;
+  }
+  const metaParts = [S.charWorld, S.charClass ? S.charClass + (S.charClassLevel ? ' Lv.' + S.charClassLevel : '') : null, S.charFC ? '‹' + S.charFC + '›' : null].filter(Boolean);
   if (metaParts.length) {
     ctx.font = '400 13px Inter, sans-serif'; ctx.fillStyle = muted;
-    ctx.fillText(metaParts.join('  ·  '), CX, 86);
+    ctx.fillText(metaParts.join('  ·  '), CX, nameY + 18);
   }
 
   hLine(100);
@@ -1202,7 +1218,7 @@ async function copyCardImage() {
 
 function resetAll() {
   if (!confirm('Reset all progress? Character info will also be cleared.')) return;
-  S = { level:1, xp:0, goal:25, userStart:null, charName:null, charWorld:null, charLodestoneId:null, charAvatar:null, charPortrait:null, charClass:null, charClassLevel:null };
+  S = { level:1, xp:0, goal:25, userStart:null, charName:null, charWorld:null, charLodestoneId:null, charAvatar:null, charPortrait:null, charClass:null, charClassLevel:null, charTitle:null, charFC:null };
   clearCharExt();
   document.getElementById('inp-level').value      = '1';
   document.getElementById('inp-xp').value         = '0';
@@ -1221,7 +1237,7 @@ function resetAll() {
 
 function clearCharacter() {
   S.charName = null; S.charWorld = null; S.charLodestoneId = null; S.charAvatar = null;
-  S.charPortrait = null; S.charClass = null; S.charClassLevel = null;
+  S.charPortrait = null; S.charClass = null; S.charClassLevel = null; S.charTitle = null; S.charFC = null;
   clearCharExt();
   document.getElementById('inp-char-name').value = '';
   const wSel = document.getElementById('inp-char-world');
@@ -1251,6 +1267,10 @@ function renderCharDisplay() {
         classEl.style.display = 'inline';
       } else { classEl.style.display = 'none'; }
     }
+    const titleEl2 = document.getElementById('char-title-display');
+    if (titleEl2) { titleEl2.textContent = S.charTitle || ''; titleEl2.style.display = S.charTitle ? 'inline' : 'none'; }
+    const fcEl2 = document.getElementById('char-fc-display');
+    if (fcEl2) { fcEl2.textContent = S.charFC ? '‹' + S.charFC + '›' : ''; fcEl2.style.display = S.charFC ? 'inline' : 'none'; }
     // Lodestone link — always show if ID known, else show search link
     const lodestoneEl = document.getElementById('char-lodestone-link');
     if (lodestoneEl) {
@@ -1454,6 +1474,10 @@ async function lookupCharacter(forceRefresh = false) {
         if (soulMatch) entry.activeClass = soulMatch[1].trim();
         const classDataEl = charDoc.querySelector('.character__class__data > p:nth-child(1)');
         if (classDataEl) { const lm = classDataEl.textContent.match(/LEVEL\s*(\d+)/i); if (lm) entry.activeClassLevel = parseInt(lm[1]); }
+        const titleEl = charDoc.querySelector('.frame__chara__title');
+        if (titleEl) entry.charTitle = titleEl.textContent.trim() || null;
+        const fcEl = charDoc.querySelector('.character__freecompany__name > h4:nth-child(2) > a:nth-child(1)');
+        if (fcEl) entry.freeCompany = fcEl.textContent.trim() || null;
       }
     } catch { /* portrait is best-effort */ }
 
@@ -1498,6 +1522,10 @@ async function applyLodestoneUrl() {
     if (soulMatch) entry.activeClass = soulMatch[1].trim();
     const classDataEl = charDoc.querySelector('.character__class__data > p:nth-child(1)');
     if (classDataEl) { const lm = classDataEl.textContent.match(/LEVEL\s*(\d+)/i); if (lm) entry.activeClassLevel = parseInt(lm[1]); }
+    const titleEl = charDoc.querySelector('.frame__chara__title');
+    if (titleEl) entry.charTitle = titleEl.textContent.trim() || null;
+    const fcEl = charDoc.querySelector('.character__freecompany__name > h4:nth-child(2) > a:nth-child(1)');
+    if (fcEl) entry.freeCompany = fcEl.textContent.trim() || null;
     const cacheKey = `${(nameVal || charName).toLowerCase()}|${(worldVal || charWorld).toLowerCase()}`;
     const cache = loadCharCache();
     cache[cacheKey] = entry;
@@ -1569,6 +1597,8 @@ function applyLookupResult(name, server, lodestoneId, avatarUrl) {
     S.charPortrait    = cached.portrait || null;
     S.charClass       = cached.activeClass || null;
     S.charClassLevel  = cached.activeClassLevel || null;
+    S.charTitle       = cached.charTitle || null;
+    S.charFC          = cached.freeCompany || null;
   }
   saveCharExt();
   persist();
@@ -1959,6 +1989,8 @@ window.addEventListener('load', async () => {
       S.charAvatar      = ext.avatar   || S.charAvatar || null;
       S.charClass       = ext.cls      || null;
       S.charClassLevel  = ext.clsLv    || null;
+      S.charTitle       = ext.title    || null;
+      S.charFC          = ext.fc       || null;
     }
     // If portrait or avatar are missing (e.g. share link on a new device), fetch them silently
     if (S.charLodestoneId && (!S.charPortrait || !S.charAvatar)) {
