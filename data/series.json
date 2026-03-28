@@ -1,0 +1,2625 @@
+{
+  "_howToUpdate": "To add a new series: (1) Set the old 'current:true' entry to false. (2) Add a new object at the TOP of 'series' with 'current:true' and all 25 rewards. All series use the same schema. Set 'milestone:true' on the 5 key rewards (lv 5/10/15/20/25). Fields: imgUrl = consolegameswiki image URL or null; demoUrl = YouTube URL or null.",
+  "levelThresholds": [
+    0,
+    2000,
+    4000,
+    6000,
+    8000,
+    11000,
+    14000,
+    17000,
+    20000,
+    23000,
+    27000,
+    31000,
+    35000,
+    39000,
+    43000,
+    48500,
+    54000,
+    59500,
+    65000,
+    70500,
+    78000,
+    85500,
+    93000,
+    100500,
+    108000
+  ],
+  "extraLevelCost": 20000,
+  "currentSeries": 10,
+  "series": [
+    {
+      "num": 10,
+      "current": true,
+      "name": "Series 10",
+      "patch": "7.4",
+      "patchStart": "2025-12-16",
+      "patchEnd": "2026-04-28",
+      "rewards": [
+        {
+          "level": 1,
+          "type": "start",
+          "icon": "⚔️",
+          "name": "Journey Begins",
+          "imgUrl": null,
+          "demoUrl": null,
+          "desc": "Your PvP Series adventure starts here! Earn Series XP by playing Crystalline Conflict, Frontline, and Rival Wings.",
+          "milestone": false
+        },
+        {
+          "level": 2,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 3,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 4,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 5,
+          "type": "emote",
+          "icon": "💃",
+          "name": "Ballroom Etiquette – Erudite Idleness",
+          "imgUrl": "data/common/ballroom_etiquette.png",
+          "demoUrl": "https://www.youtube.com/watch?v=GY9Y8z7FQ2s",
+          "desc": "A manual teaching the intricate gestures of erudite idleness as practiced by the discerning upper class of Ul'dah. Use to learn the emote.",
+          "milestone": true
+        },
+        {
+          "level": 6,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 7,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 8,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 9,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 10,
+          "type": "framer",
+          "icon": "🖼️",
+          "name": "Bayside Battleground Framer's Kit",
+          "imgUrl": "data/common/framers_kit.png",
+          "demoUrl": null,
+          "desc": "Materials for crafting a Bayside Battleground-themed portrait frame for your Adventurer Plate.",
+          "milestone": true
+        },
+        {
+          "level": 11,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 12,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 13,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 14,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 15,
+          "type": "minion",
+          "icon": "🐾",
+          "name": "G-Warrior MGSD",
+          "imgUrl": "data/series/10/g-warrior_mgsd.png",
+          "demoUrl": "https://www.youtube.com/watch?v=1pftIqGA7_c",
+          "desc": "A miniature magitek infantry unit modeled after the formidable G-Warrior, always ready to stand at your side.",
+          "milestone": true
+        },
+        {
+          "level": 16,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 17,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 18,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 19,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 20,
+          "type": "framer",
+          "icon": "🖼️",
+          "name": "Worqor Chirteh Framer's Kit",
+          "imgUrl": "data/common/framers_kit.png",
+          "demoUrl": null,
+          "desc": "Materials for crafting a Worqor Chirteh-themed portrait frame for your Adventurer Plate.",
+          "milestone": true
+        },
+        {
+          "level": 21,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 22,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 23,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 24,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 25,
+          "type": "mount",
+          "icon": "🐎",
+          "name": "Wanyudo Horn",
+          "imgUrl": "data/series/10/wanyudo_horn.png",
+          "demoUrl": "https://www.youtube.com/watch?v=8MHlXDDLF94",
+          "desc": "A horn used to summon the Wanyudo — a spectral ox-cart wheel wreathed in undying flame, born from the tormented souls of those who defied their masters in life.",
+          "milestone": true
+        }
+      ]
+    },
+    {
+      "num": 9,
+      "name": "Series 9",
+      "patch": "7.3",
+      "patchStart": "2025-07-08",
+      "patchEnd": "2025-12-16",
+      "rewards": [
+        {
+          "level": 1,
+          "type": "start",
+          "icon": "⚔️",
+          "name": "Journey Begins",
+          "imgUrl": null,
+          "demoUrl": null,
+          "desc": "Your PvP Series adventure starts here! Earn Series XP by playing Crystalline Conflict, Frontline, and Rival Wings.",
+          "milestone": false
+        },
+        {
+          "level": 2,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 3,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 4,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 5,
+          "type": "emote",
+          "icon": "💃",
+          "name": "Ballroom Etiquette – Penning for Posterity",
+          "imgUrl": "data/common/ballroom_etiquette.png",
+          "demoUrl": "https://www.youtube.com/watch?v=WEQ8xSoZwL4",
+          "desc": "A manual of refined etiquette covering the art of penning correspondence for posterity. Use to learn the emote.",
+          "milestone": true
+        },
+        {
+          "level": 6,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 7,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 8,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 9,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 10,
+          "type": "framer",
+          "icon": "🖼️",
+          "name": "Hidden Gorge Framer's Kit",
+          "imgUrl": "data/common/framers_kit.png",
+          "demoUrl": null,
+          "desc": "Materials for crafting a Hidden Gorge-themed portrait frame for your Adventurer Plate.",
+          "milestone": true
+        },
+        {
+          "level": 11,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 12,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 13,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 14,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 15,
+          "type": "minion",
+          "icon": "🐾",
+          "name": "Falcon-blue",
+          "imgUrl": "data/series/9/falcon-blue_gobtank.png",
+          "demoUrl": "https://www.youtube.com/watch?v=77dbyFTQOtA",
+          "desc": "A pair of goblin-engineered magitek tanks in falcon-blue and raven-red livery, ready to patrol at your heels.",
+          "milestone": true
+        },
+        {
+          "level": 16,
+          "type": "minion",
+          "icon": "🐾",
+          "name": "Raven-red Gobtank",
+          "imgUrl": "data/icons/Trophy_Crystal.png",
+          "demoUrl": "https://www.youtube.com/watch?v=5gTm8diqBeA",
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": true
+        },
+        {
+          "level": 17,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 18,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 19,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 20,
+          "type": "framer",
+          "icon": "🖼️",
+          "name": "Borderland Ruins (Secure) Framer's Kit",
+          "imgUrl": "data/common/framers_kit.png",
+          "demoUrl": null,
+          "desc": "Materials for crafting a Borderland Ruins (Secure)-themed portrait frame for your Adventurer Plate.",
+          "milestone": true
+        },
+        {
+          "level": 21,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 22,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 23,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 24,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 25,
+          "type": "attire",
+          "icon": "👗",
+          "name": "Air Cell Attire Coffer",
+          "imgUrl": "data/common/attire_coffer.png",
+          "demoUrl": "https://www.youtube.com/watch?v=BlVhyEEfOUA",
+          "desc": "A coffer containing the complete Air Cell Attire set — the grand prize of Series 9.",
+          "milestone": true
+        }
+      ]
+    },
+    {
+      "num": 8,
+      "name": "Series 8",
+      "patch": "7.2",
+      "patchStart": "2025-03-25",
+      "patchEnd": "2025-07-08",
+      "rewards": [
+        {
+          "level": 1,
+          "type": "start",
+          "icon": "⚔️",
+          "name": "Journey Begins",
+          "imgUrl": null,
+          "demoUrl": null,
+          "desc": "Your PvP Series adventure starts here! Earn Series XP by playing Crystalline Conflict, Frontline, and Rival Wings.",
+          "milestone": false
+        },
+        {
+          "level": 2,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 3,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 4,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 5,
+          "type": "emote",
+          "icon": "💃",
+          "name": "Ballroom Etiquette – Feigning Fainting",
+          "imgUrl": "data/common/ballroom_etiquette.png",
+          "demoUrl": "https://www.youtube.com/watch?v=ew--PuffXzA",
+          "desc": "A manual of refined etiquette covering the dramatic art of a well-timed theatrical swoon. Use to learn the emote.",
+          "milestone": true
+        },
+        {
+          "level": 6,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 7,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 8,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 9,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 10,
+          "type": "framer",
+          "icon": "🖼️",
+          "name": "Fields of Glory Framer's Kit",
+          "imgUrl": "data/common/framers_kit.png",
+          "demoUrl": null,
+          "desc": "Materials for crafting a Fields of Glory-themed portrait frame for your Adventurer Plate.",
+          "milestone": true
+        },
+        {
+          "level": 11,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 12,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 13,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 14,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 15,
+          "type": "minion",
+          "icon": "🐾",
+          "name": "Clockwork Oppressor",
+          "imgUrl": "data/series/8/clockwork_oppressor.png",
+          "demoUrl": "https://www.youtube.com/watch?v=o1Vz8ZZu2VA",
+          "desc": "A miniature clockwork replica of the fearsome Oppressor magitek weapon. Winds itself up with mechanical precision.",
+          "milestone": true
+        },
+        {
+          "level": 16,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 17,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 18,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 19,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 20,
+          "type": "framer",
+          "icon": "🖼️",
+          "name": "Onsal Hakair Framer's Kit",
+          "imgUrl": "data/common/framers_kit.png",
+          "demoUrl": null,
+          "desc": "Materials for crafting an Onsal Hakair-themed portrait frame for your Adventurer Plate.",
+          "milestone": true
+        },
+        {
+          "level": 21,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 22,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 23,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 24,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 25,
+          "type": "mount",
+          "icon": "🐎",
+          "name": "Magitek Slasher",
+          "imgUrl": "data/series/8/magitek_slasher.png",
+          "demoUrl": "https://www.youtube.com/watch?v=AtJ1G0s1MhU",
+          "desc": "A state-of-the-art magitek assault vehicle, repurposed as a personal mount. The ultimate prize of Series 8.",
+          "milestone": true
+        }
+      ]
+    },
+    {
+      "num": 7,
+      "name": "Series 7",
+      "patch": "7.1",
+      "patchStart": "2024-12-19",
+      "patchEnd": "2025-03-25",
+      "rewards": [
+        {
+          "level": 1,
+          "type": "start",
+          "icon": "⚔️",
+          "name": "Journey Begins",
+          "imgUrl": null,
+          "demoUrl": null,
+          "desc": "Your PvP Series adventure starts here! Earn Series XP by playing Crystalline Conflict, Frontline, and Rival Wings.",
+          "milestone": false
+        },
+        {
+          "level": 2,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 3,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 4,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 5,
+          "type": "emote",
+          "icon": "💃",
+          "name": "Ballroom Etiquette – Awaiting Orders",
+          "imgUrl": "data/common/ballroom_etiquette.png",
+          "demoUrl": "https://www.youtube.com/watch?v=AvPf7zDf6rw",
+          "desc": "A manual detailing the proper posture and bearing while awaiting orders from one's superiors. Use to learn the emote.",
+          "milestone": true
+        },
+        {
+          "level": 6,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 7,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 8,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 9,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 10,
+          "type": "framer",
+          "icon": "🖼️",
+          "name": "Seal Rock Framer's Kit",
+          "imgUrl": "data/common/framers_kit.png",
+          "demoUrl": null,
+          "desc": "Materials for crafting a Seal Rock-themed portrait frame for your Adventurer Plate.",
+          "milestone": true
+        },
+        {
+          "level": 11,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 12,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 13,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 14,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 15,
+          "type": "minion",
+          "icon": "🐾",
+          "name": "Adamant Weapon",
+          "imgUrl": "data/series/7/adamant_weapon.png",
+          "demoUrl": "https://www.youtube.com/watch?v=KSAzeaNnbgo",
+          "desc": "A pocket-sized version of the magitek adamant weapon, faithfully reproduced down to its last bolt and barrel.",
+          "milestone": true
+        },
+        {
+          "level": 16,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 17,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 18,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 19,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 20,
+          "type": "framer",
+          "icon": "🖼️",
+          "name": "Red Sands Framer's Kit",
+          "imgUrl": "data/common/framers_kit.png",
+          "demoUrl": null,
+          "desc": "Materials for crafting a Red Sands-themed portrait frame for your Adventurer Plate.",
+          "milestone": true
+        },
+        {
+          "level": 21,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 22,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 23,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 24,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 25,
+          "type": "attire",
+          "icon": "👗",
+          "name": "Loose Fit Attire Coffer",
+          "imgUrl": "data/common/attire_coffer.png",
+          "demoUrl": "https://www.youtube.com/watch?v=70oLP5w3gLE",
+          "desc": "A coffer containing the complete Loose Fit Attire set — the grand prize of Series 7.",
+          "milestone": true
+        }
+      ]
+    },
+    {
+      "num": 6,
+      "name": "Series 6",
+      "patch": "7.0",
+      "patchStart": "2024-06-21",
+      "patchEnd": "2024-12-19",
+      "rewards": [
+        {
+          "level": 1,
+          "type": "start",
+          "icon": "⚔️",
+          "name": "Journey Begins",
+          "imgUrl": null,
+          "demoUrl": null,
+          "desc": "Your PvP Series adventure starts here! Earn Series XP by playing Crystalline Conflict, Frontline, and Rival Wings.",
+          "milestone": false
+        },
+        {
+          "level": 2,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 3,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 4,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 5,
+          "type": "fashion",
+          "icon": "☂️",
+          "name": "Bomb Parasol (Fashion Accessory)",
+          "imgUrl": "data/series/6/bomb_parasol.png",
+          "demoUrl": "https://www.youtube.com/watch?v=AE-cTonLAT0",
+          "desc": "A parasol fashioned in the likeness of a bomb — a whimsical fashion accessory with a fuse that never quite burns out.",
+          "milestone": true
+        },
+        {
+          "level": 6,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 7,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 8,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 9,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 10,
+          "type": "framer",
+          "icon": "🖼️",
+          "name": "Volcanic Heart Framer's Kit",
+          "imgUrl": "data/common/framers_kit.png",
+          "demoUrl": null,
+          "desc": "Materials for crafting a Volcanic Heart-themed portrait frame for your Adventurer Plate.",
+          "milestone": true
+        },
+        {
+          "level": 11,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 12,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 13,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 14,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 15,
+          "type": "minion",
+          "icon": "🐾",
+          "name": "Squeak the Coyote",
+          "imgUrl": "data/series/6/squeak_the_coyote.png",
+          "demoUrl": "https://www.youtube.com/watch?v=gyfW0fcqR8Y",
+          "desc": "A tiny coyote pup who answers only to the name Squeak. Loyal and scruffy in equal measure.",
+          "milestone": true
+        },
+        {
+          "level": 16,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 17,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 18,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 19,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 20,
+          "type": "framer",
+          "icon": "🖼️",
+          "name": "Clockwork Castletown Framer's Kit",
+          "imgUrl": "data/common/framers_kit.png",
+          "demoUrl": null,
+          "desc": "Materials for crafting a Clockwork Castletown-themed portrait frame for your Adventurer Plate.",
+          "milestone": true
+        },
+        {
+          "level": 21,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 22,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 23,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 24,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 25,
+          "type": "mount",
+          "icon": "🐎",
+          "name": "Oppressor",
+          "imgUrl": "data/series/6/oppressor.png",
+          "demoUrl": "https://www.youtube.com/watch?v=-RQbENmfioI",
+          "desc": "A full-sized magitek oppressor vehicle, commandeered from the empire and repurposed for personal transport. The ultimate prize of Series 6.",
+          "milestone": true
+        }
+      ]
+    },
+    {
+      "num": 5,
+      "name": "Series 5",
+      "patch": "6.5",
+      "patchStart": "2023-10-03",
+      "patchEnd": "2024-06-21",
+      "rewards": [
+        {
+          "level": 1,
+          "type": "start",
+          "icon": "⚔️",
+          "name": "Journey Begins",
+          "imgUrl": null,
+          "demoUrl": null,
+          "desc": "Your PvP Series adventure starts here! Earn Series XP by playing Crystalline Conflict, Frontline, and Rival Wings.",
+          "milestone": false
+        },
+        {
+          "level": 2,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 3,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 4,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 5,
+          "type": "emote",
+          "icon": "💃",
+          "name": "Ballroom Etiquette – Defeatist Attitude",
+          "imgUrl": "data/common/ballroom_etiquette.png",
+          "demoUrl": "https://www.youtube.com/watch?v=pJWdlJUXgfk",
+          "desc": "A manual teaching the subtleties of projecting a studied air of defeatism. Use to learn the emote.",
+          "milestone": true
+        },
+        {
+          "level": 6,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 7,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 8,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 9,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 10,
+          "type": "framer",
+          "icon": "🖼️",
+          "name": "Palaistra Framer's Kit",
+          "imgUrl": "data/common/framers_kit.png",
+          "demoUrl": null,
+          "desc": "Materials for crafting a Palaistra-themed portrait frame for your Adventurer Plate.",
+          "milestone": true
+        },
+        {
+          "level": 11,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 12,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 13,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 14,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 15,
+          "type": "minion",
+          "icon": "🐾",
+          "name": "Tourmaline Weapon",
+          "imgUrl": "data/series/5/tourmaline_weapon.png",
+          "demoUrl": "https://www.youtube.com/watch?v=iFTlwHE_jMo",
+          "desc": "A miniaturized magitek weapon set in shimmering tourmaline, a gem-studded replica of its full-sized counterpart.",
+          "milestone": true
+        },
+        {
+          "level": 16,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 17,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 18,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 19,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 20,
+          "type": "framer",
+          "icon": "🖼️",
+          "name": "Cloud Nine Framer's Kit",
+          "imgUrl": "data/common/framers_kit.png",
+          "demoUrl": null,
+          "desc": "Materials for crafting a Cloud Nine-themed portrait frame for your Adventurer Plate.",
+          "milestone": true
+        },
+        {
+          "level": 21,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 22,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 23,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 24,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 25,
+          "type": "attire",
+          "icon": "👗",
+          "name": "Fierce Tyrant's Attire Coffer",
+          "imgUrl": "data/common/attire_coffer.png",
+          "demoUrl": "https://www.youtube.com/watch?v=f4pzKtd8-Bw",
+          "desc": "A coffer containing the complete Fierce Tyrant's Attire set — the grand prize of Series 5.",
+          "milestone": true
+        }
+      ]
+    },
+    {
+      "num": 4,
+      "name": "Series 4",
+      "patch": "6.4",
+      "patchStart": "2023-05-23",
+      "patchEnd": "2023-10-03",
+      "rewards": [
+        {
+          "level": 1,
+          "type": "start",
+          "icon": "⚔️",
+          "name": "Journey Begins",
+          "imgUrl": null,
+          "demoUrl": null,
+          "desc": "Your PvP Series adventure starts here! Earn Series XP by playing Crystalline Conflict, Frontline, and Rival Wings.",
+          "milestone": false
+        },
+        {
+          "level": 2,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 3,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 4,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 5,
+          "type": "emote",
+          "icon": "💃",
+          "name": "Ballroom Etiquette – Heartfelt Sincerity",
+          "imgUrl": "data/common/ballroom_etiquette.png",
+          "demoUrl": "https://www.youtube.com/watch?v=7mJAEepEUpI",
+          "desc": "A manual teaching the art of expressing heartfelt sincerity — warmth so genuine it disarms even the most suspicious of adversaries. Use to learn the emote.",
+          "milestone": true
+        },
+        {
+          "level": 6,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 7,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 8,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 9,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 10,
+          "type": "framer",
+          "icon": "🖼️",
+          "name": "Aramitama Framer's Kit",
+          "imgUrl": "data/common/framers_kit.png",
+          "demoUrl": null,
+          "desc": "Materials for crafting an Aramitama-themed portrait frame for your Adventurer Plate.",
+          "milestone": true
+        },
+        {
+          "level": 11,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 12,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 13,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 14,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 15,
+          "type": "minion",
+          "icon": "🐾",
+          "name": "Rubellite Weapon",
+          "imgUrl": "data/series/4/rubellite_weapon.png",
+          "demoUrl": "https://www.youtube.com/watch?v=pCoP_VqpeWw",
+          "desc": "A miniaturized magitek weapon adorned with deep red rubellite — a gem-studded replica of its full-sized counterpart.",
+          "milestone": true
+        },
+        {
+          "level": 16,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 17,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 18,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 19,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 20,
+          "type": "framer",
+          "icon": "🖼️",
+          "name": "Nigimitama Framer's Kit",
+          "imgUrl": "data/common/framers_kit.png",
+          "demoUrl": null,
+          "desc": "Materials for crafting a Nigimitama-themed portrait frame for your Adventurer Plate.",
+          "milestone": true
+        },
+        {
+          "level": 21,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 22,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 23,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 24,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 25,
+          "type": "mount",
+          "icon": "🐎",
+          "name": "Traveling Supporter",
+          "imgUrl": "data/series/4/traveling_supporter.png",
+          "demoUrl": "https://www.youtube.com/watch?v=Iq1mX4fGh4I",
+          "desc": "A dedicated magitek support vehicle, stripped of its weaponry and converted into a surprisingly comfortable personal mount. The ultimate prize of Series 4.",
+          "milestone": true
+        }
+      ]
+    },
+    {
+      "num": 3,
+      "name": "Series 3",
+      "patch": "6.3",
+      "patchStart": "2023-01-10",
+      "patchEnd": "2023-05-23",
+      "rewards": [
+        {
+          "level": 1,
+          "type": "start",
+          "icon": "⚔️",
+          "name": "Journey Begins",
+          "imgUrl": null,
+          "demoUrl": null,
+          "desc": "Your PvP Series adventure starts here! Earn Series XP by playing Crystalline Conflict, Frontline, and Rival Wings.",
+          "milestone": false
+        },
+        {
+          "level": 2,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 3,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 4,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 5,
+          "type": "emote",
+          "icon": "💃",
+          "name": "Ballroom Etiquette – Discreet Discussion",
+          "imgUrl": "data/common/ballroom_etiquette.png",
+          "demoUrl": null,
+          "desc": "A manual teaching the practiced art of exchanging confidential information with absolute discretion. Use to learn the emote.",
+          "milestone": true
+        },
+        {
+          "level": 6,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 7,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 8,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 9,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 10,
+          "type": "framer",
+          "icon": "🖼️",
+          "name": "Falcon Framer's Kit",
+          "imgUrl": "data/common/framers_kit.png",
+          "demoUrl": null,
+          "desc": "Materials for crafting a Falcon-themed portrait frame for your Adventurer Plate.",
+          "milestone": true
+        },
+        {
+          "level": 11,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 12,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 13,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 14,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 15,
+          "type": "mount",
+          "icon": "🐎",
+          "name": "Logistics Node",
+          "imgUrl": "data/series/3/logistics_node.png",
+          "demoUrl": "https://www.youtube.com/watch?v=FQnyCxCILGE",
+          "desc": "A compact logistics node reprogrammed to carry passengers. Hovers with uncanny silence and eerie efficiency.",
+          "milestone": true
+        },
+        {
+          "level": 16,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 17,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 18,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 19,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 20,
+          "type": "framer",
+          "icon": "🖼️",
+          "name": "Raven Framer's Kit",
+          "imgUrl": "data/common/framers_kit.png",
+          "demoUrl": null,
+          "desc": "Materials for crafting a Raven-themed portrait frame for your Adventurer Plate.",
+          "milestone": true
+        },
+        {
+          "level": 21,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 22,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 23,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 24,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 25,
+          "type": "attire",
+          "icon": "👗",
+          "name": "False Monarchy Attire Coffer",
+          "imgUrl": "data/common/attire_coffer.png",
+          "demoUrl": "https://www.youtube.com/watch?v=MsIXkuVZsx0",
+          "desc": "A coffer containing the complete False Monarchy Attire set — the grand prize of Series 3.",
+          "milestone": true
+        }
+      ]
+    },
+    {
+      "num": 2,
+      "name": "Series 2",
+      "patch": "6.2",
+      "patchStart": "2022-08-23",
+      "patchEnd": "2023-01-10",
+      "rewards": [
+        {
+          "level": 1,
+          "type": "start",
+          "icon": "⚔️",
+          "name": "Journey Begins",
+          "imgUrl": null,
+          "demoUrl": null,
+          "desc": "Your PvP Series adventure starts here! Earn Series XP by playing Crystalline Conflict, Frontline, and Rival Wings.",
+          "milestone": false
+        },
+        {
+          "level": 2,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 3,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 4,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 5,
+          "type": "emote",
+          "icon": "💃",
+          "name": "Ballroom Etiquette – Taking Sides",
+          "imgUrl": "data/common/ballroom_etiquette.png",
+          "demoUrl": "https://www.youtube.com/watch?v=ZvukTS5j5PI",
+          "desc": "A manual teaching the delicate art of picking sides in a dispute with conviction, yet without alienating either party. Use to learn the emote.",
+          "milestone": true
+        },
+        {
+          "level": 6,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 7,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 8,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 9,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 10,
+          "type": "framer",
+          "icon": "🖼️",
+          "name": "Azure Framer's Kit",
+          "imgUrl": "data/common/framers_kit.png",
+          "demoUrl": null,
+          "desc": "Materials for crafting an Azure-themed portrait frame for your Adventurer Plate.",
+          "milestone": true
+        },
+        {
+          "level": 11,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 12,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 13,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 14,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 15,
+          "type": "minion",
+          "icon": "🐾",
+          "name": "Clockwork Cerulean & Crimson Chaser",
+          "imgUrl": "data/series/2/clockwork_cerulean_chaser.png",
+          "demoUrl": "https://www.youtube.com/watch?v=oPGBmJqbFlc",
+          "desc": "A pair of clockwork chasers in cerulean and crimson, perpetually circling one another in a mechanical dance.",
+          "milestone": true
+        },
+        {
+          "level": 16,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 17,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 18,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 19,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 20,
+          "type": "framer",
+          "icon": "🖼️",
+          "name": "Crimson Framer's Kit",
+          "imgUrl": "data/common/framers_kit.png",
+          "demoUrl": null,
+          "desc": "Materials for crafting a Crimson-themed portrait frame for your Adventurer Plate.",
+          "milestone": true
+        },
+        {
+          "level": 21,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 22,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 23,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 24,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 25,
+          "type": "mount",
+          "icon": "🐎",
+          "name": "Fylgja Horn",
+          "imgUrl": "data/series/2/fylgja_horn.png",
+          "demoUrl": "https://www.youtube.com/watch?v=AsL55ClDyrc",
+          "desc": "A horn used to summon the Fylgja, a spectral wolf-like guardian said to accompany worthy souls. The ultimate prize of Series 2.",
+          "milestone": true
+        }
+      ]
+    },
+    {
+      "num": 1,
+      "name": "Series 1",
+      "patch": "6.1",
+      "patchStart": "2022-04-12",
+      "patchEnd": "2022-08-23",
+      "rewards": [
+        {
+          "level": 1,
+          "type": "start",
+          "icon": "⚔️",
+          "name": "Journey Begins",
+          "imgUrl": null,
+          "demoUrl": null,
+          "desc": "Your PvP Series adventure starts here — where it all began. Earn Series XP by playing Crystalline Conflict, Frontline, and Rival Wings.",
+          "milestone": false
+        },
+        {
+          "level": 2,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 3,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 4,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 5,
+          "type": "emote",
+          "icon": "💃",
+          "name": "Ballroom Etiquette – Persuasive Perseverance",
+          "imgUrl": "data/common/ballroom_etiquette.png",
+          "demoUrl": null,
+          "desc": "A manual teaching the art of relentless, charming persistence — the foundation of all successful social endeavors. Use to learn the emote.",
+          "milestone": true
+        },
+        {
+          "level": 6,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 7,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 8,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 9,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 10,
+          "type": "framer",
+          "icon": "🖼️",
+          "name": "Astra Framer's Kit",
+          "imgUrl": "data/common/framers_kit.png",
+          "demoUrl": null,
+          "desc": "Materials for crafting an Astra-themed portrait frame for your Adventurer Plate.",
+          "milestone": true
+        },
+        {
+          "level": 11,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 12,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 13,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 14,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 15,
+          "type": "attire",
+          "icon": "👓",
+          "name": "False Shaded Spectacles",
+          "imgUrl": "data/series/1/false_shaded_spectacles.png",
+          "demoUrl": "https://www.youtube.com/watch?v=cSZ7AqfIDH4",
+          "desc": "A pair of fashionable spectacles with subtly darkened lenses, lending their wearer an air of mysterious sophistication.",
+          "milestone": true
+        },
+        {
+          "level": 16,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 17,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 18,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 19,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 20,
+          "type": "framer",
+          "icon": "🖼️",
+          "name": "Umbra Framer's Kit",
+          "imgUrl": "data/common/framers_kit.png",
+          "demoUrl": null,
+          "desc": "Materials for crafting an Umbra-themed portrait frame for your Adventurer Plate.",
+          "milestone": true
+        },
+        {
+          "level": 21,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 22,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 23,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 24,
+          "type": "crystals",
+          "icon": "💠",
+          "name": "1,000 Trophy Crystals",
+          "imgUrl": "data/common/trophy_crystal.png",
+          "demoUrl": null,
+          "desc": "Currency used to purchase PvP gear and cosmetics from the Crystal Trophy Exchange at the Wolves' Den Pier.",
+          "milestone": false
+        },
+        {
+          "level": 25,
+          "type": "attire",
+          "icon": "👗",
+          "name": "Archfiend Attire Coffer",
+          "imgUrl": "data/common/attire_coffer.png",
+          "demoUrl": "https://www.youtube.com/watch?v=EXfNVChoXPQ",
+          "desc": "A coffer containing the complete Archfiend Attire set — the grand prize of Series 1, where it all began.",
+          "milestone": true
+        }
+      ]
+    }
+  ]
+}
