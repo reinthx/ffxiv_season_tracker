@@ -1132,6 +1132,8 @@ function applyLookupResult(name, server, lodestoneId, avatarUrl) {
   renderCharDisplay();
   renderPortraitBg();
   showToast(`Character set: ${name}`);
+  // If portrait or avatar are still missing, fetch them now (char page fetch may have failed during lookup)
+  if (!S.charPortrait || !S.charAvatar) fetchPortraitByLodestoneId(lodestoneId);
   // Collapse the lookup section after successful use
   const charSection = document.querySelector('.char-card-section');
   if (charSection) charSection.classList.remove('open');
