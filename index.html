@@ -7,7 +7,6 @@
   <meta name="description" content="Track your FFXIV PvP Series progress — XP per day, upcoming rewards, and estimated completion.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -127,9 +126,12 @@
             </div>
           </div>
         </div>
-        <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px; flex-wrap:wrap;">
           <button id="btn-char-lookup" class="btn btn-gold" style="padding:8px 16px; font-size:13px; white-space:nowrap;" onclick="lookupCharacter(false)" title="Look up on Lodestone" disabled>🔍 Look up on Lodestone</button>
           <span id="char-lookup-hint" style="font-size:11px; color:var(--text-muted);">Select a Home World above to enable lookup</span>
+          <span style="font-size:11px; color:var(--text-muted);">or</span>
+          <input type="text" id="inp-lodestone-url" placeholder="Paste character url here" style="flex:1; min-width:180px; padding:6px 8px; font-size:12px;">
+          <button class="btn btn-outline" style="padding:6px 12px; font-size:12px; white-space:nowrap;" onclick="applyLodestoneUrl()">Load</button>
         </div>
         <div id="char-lookup-result"></div>
       </div>

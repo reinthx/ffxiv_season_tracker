@@ -21,20 +21,32 @@ const TYPE_META = {
 
 const ACT_AVG = { cc:800, fl:1250, rw:1000, dailyBonus:1250 };
 
-// CORS proxy fallback list — tried in order until one succeeds
+// CORS proxy pool — tried in parallel, fastest working one wins
 const CORS_PROXIES = [
   url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-  url => `https://thingproxy.freeboard.io/fetch/${url}`,
+  url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
 ];
+const PROXY_TIMEOUT_MS = 8000;
+
 async function fetchViaProxy(url) {
-  let lastErr;
-  for (const makeProxy of CORS_PROXIES) {
-    try {
-      const resp = await fetch(makeProxy(url));
-      if (resp.ok) return resp;
-    } catch (e) { lastErr = e; }
+  const controllers = CORS_PROXIES.map(() => new AbortController());
+  const timer = setTimeout(() => controllers.forEach(c => c.abort()), PROXY_TIMEOUT_MS);
+
+  try {
+    return await Promise.any(
+      CORS_PROXIES.map(async (makeProxy, i) => {
+        const resp = await fetch(makeProxy(url), { signal: controllers[i].signal });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        // Cancel remaining in-flight requests
+        controllers.forEach((c, j) => { if (j !== i) c.abort(); });
+        return resp;
+      })
+    );
+  } catch {
+    throw new Error('All proxies failed or timed out');
+  } finally {
+    clearTimeout(timer);
   }
-  throw lastErr || new Error('All proxies failed');
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -965,11 +977,9 @@ async function lookupCharacter(forceRefresh = false) {
     const resp = await fetchViaProxy(searchUrl);
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const html = await resp.text();
-
     const parser = new DOMParser();
     const doc    = parser.parseFromString(html, 'text/html');
 
-    // Find first character entry link with a numeric ID (skip nav/breadcrumb links like /lodestone/character/ with no ID)
     let linkEl = null, lodestoneId = null;
     for (const a of doc.querySelectorAll('a[href*="/lodestone/character/"]')) {
       const m = a.getAttribute('href').match(/\/character\/(\d+)\//);
@@ -983,67 +993,84 @@ async function lookupCharacter(forceRefresh = false) {
 
     const avatarEl  = linkEl.querySelector('img') || doc.querySelector('.entry__chara__face img');
     const avatarUrl = avatarEl ? (avatarEl.getAttribute('src') || '') : '';
-
-    const nameEl   = doc.querySelector('.entry__chara__name') || doc.querySelector('.entry__name');
-    const charName = nameEl ? nameEl.textContent.trim() : nameVal;
-
+    const nameEl    = doc.querySelector('.entry__chara__name') || doc.querySelector('.entry__name');
+    const charName  = nameEl ? nameEl.textContent.trim() : nameVal;
     const worldEl   = doc.querySelector('.entry__world') || doc.querySelector('.entry__world-dcgroup--world');
     const charWorld = worldEl ? worldEl.textContent.trim().split(/\s*[\n[]/)[0].trim() : worldVal;
 
-    // Try to extract active class/job from the search result entry itself (more reliable than char page)
-    let srActiveClass = null, srActiveClassLevel = null;
-    const entryEl = linkEl.closest('li') || linkEl.closest('[class*="entry"]') || linkEl.parentElement;
-    if (entryEl) {
-      const jobImg = entryEl.querySelector('.entry__chara__job img, img[src*="classjob"], img[class*="job"]');
-      if (jobImg) {
-        const alt = (jobImg.getAttribute('alt') || '').trim();
-        if (alt && !/^\d+$/.test(alt)) srActiveClass = alt;
-      }
-      const lvEl = entryEl.querySelector('.entry__chara__level, [class*="chara__level"], [class*="classlv"]');
-      if (lvEl) { const m = lvEl.textContent.match(/(\d+)/); if (m) srActiveClassLevel = parseInt(m[1]); }
-    }
-
     const entry = { name: charName, world: charWorld, lodestoneId, avatarUrl, cachedAt: Date.now() };
 
-    // Pre-populate class from search results (may get overridden by char page)
-    if (srActiveClass)      entry.activeClass      = srActiveClass;
-    if (srActiveClassLevel) entry.activeClassLevel = srActiveClassLevel;
-
-    // Fetch character page for full-body portrait + active class/level (best-effort)
     try {
       const charResp = await fetchViaProxy('https://na.finalfantasyxiv.com/lodestone/character/' + lodestoneId + '/');
       if (charResp.ok) {
         const charHtml = await charResp.text();
         const charDoc  = parser.parseFromString(charHtml, 'text/html');
-        // Full-body portrait — try multiple selectors
         const portraitEl = charDoc.querySelector('.character__detail__image img')
           || charDoc.querySelector('img[src*="img2.finalfantasyxiv.com"][src*="_gc"]')
           || charDoc.querySelector('.character-block__portrait img')
           || charDoc.querySelector('img[src*="/character/"]');
         if (portraitEl) entry.portrait = portraitEl.getAttribute('src') || null;
-        // Active class — search for equipped soul crystal ("Soul of the X")
-        // This is the most reliable method: every advanced job equips a uniquely-named soul crystal
         const soulMatch = charHtml.match(/Soul of the ([A-Z][A-Za-z ]{2,28}?)(?=["<&\n])/);
-        if (soulMatch) {
-          entry.activeClass = soulMatch[1].trim();
-        }
-        // Level from class data section (already populated from search results, refine if possible)
+        if (soulMatch) entry.activeClass = soulMatch[1].trim();
         const classData = charDoc.querySelector('.character__class__data, .character__level__main');
-        if (classData) {
-          const lvMatch = classData.textContent.match(/(\d+)/);
-          if (lvMatch) entry.activeClassLevel = parseInt(lvMatch[1]);
-        }
+        if (classData) { const lm = classData.textContent.match(/(\d+)/); if (lm) entry.activeClassLevel = parseInt(lm[1]); }
       }
-    } catch { /* portrait fetch is best-effort — don't fail the lookup */ }
+    } catch { /* portrait is best-effort */ }
 
-    const cache  = loadCharCache();
+    const cache = loadCharCache();
     cache[cacheKey] = entry;
     saveCharCache(cache);
-
     showCharResult(resultEl, entry);
   } catch (e) {
-    const lodestoneSearchUrl = `https://na.finalfantasyxiv.com/lodestone/character/?q=${encodeURIComponent(nameVal)}&worldname=${encodeURIComponent(worldVal)}`;
-    resultEl.innerHTML = `<span style="color:var(--red);">⚠ Lookup failed: ${e.message}. <a href="${lodestoneSearchUrl}" target="_blank" rel="noopener" style="color:var(--blue);">Try on Lodestone directly</a>.</span>`;
+    resultEl.innerHTML = `<span style="color:var(--red);font-size:12px;">⚠ Lookup failed: ${e.message} — try pasting your character URL in the field above.</span>`;
+  }
+}
+
+async function applyLodestoneUrl() {
+  const input    = document.getElementById('inp-lodestone-url');
+  const resultEl = document.getElementById('char-lookup-result');
+  if (!input) return;
+  const val     = input.value.trim();
+  const idMatch = val.match(/\/character\/(\d+)/) || (val.match(/^\d+$/) ? [null, val] : null);
+  if (!idMatch) { showToast('Paste your full Lodestone character URL'); return; }
+  const lodestoneId = idMatch[1];
+  const nameVal     = document.getElementById('inp-char-name').value.trim();
+  const worldVal    = getWorldVal();
+  resultEl.innerHTML = `<span class="lookup-spinner"></span><span style="color:var(--text-muted);">Loading character…</span>`;
+  try {
+    const charResp = await fetchViaProxy('https://na.finalfantasyxiv.com/lodestone/character/' + lodestoneId + '/');
+    if (!charResp.ok) throw new Error('HTTP ' + charResp.status);
+    const charHtml = await charResp.text();
+    const charDoc  = new DOMParser().parseFromString(charHtml, 'text/html');
+    const nameEl   = charDoc.querySelector('.frame__chara__name') || charDoc.querySelector('.character__name');
+    const worldEl  = charDoc.querySelector('.frame__chara__world') || charDoc.querySelector('.character__world');
+    const charName  = (nameEl && nameEl.textContent.trim()) || nameVal || '(Unknown)';
+    const charWorld = (worldEl && worldEl.textContent.trim().split(/\s*[\n[]/)[0].trim()) || worldVal || '';
+    const entry = { name: charName, world: charWorld, lodestoneId, avatarUrl: '', cachedAt: Date.now() };
+    const portraitEl = charDoc.querySelector('.character__detail__image img')
+      || charDoc.querySelector('img[src*="img2.finalfantasyxiv.com"][src*="_gc"]')
+      || charDoc.querySelector('.character-block__portrait img');
+    if (portraitEl) entry.portrait = portraitEl.getAttribute('src') || null;
+    const avatarEl = charDoc.querySelector('.character__detail__face img') || charDoc.querySelector('.js__c_face img');
+    if (avatarEl) entry.avatarUrl = avatarEl.getAttribute('src') || '';
+    const soulMatch = charHtml.match(/Soul of the ([A-Z][A-Za-z ]{2,28}?)(?=["<&\n])/);
+    if (soulMatch) entry.activeClass = soulMatch[1].trim();
+    const cacheKey = `${(nameVal || charName).toLowerCase()}|${(worldVal || charWorld).toLowerCase()}`;
+    const cache = loadCharCache();
+    cache[cacheKey] = entry;
+    saveCharCache(cache);
+    showCharResult(resultEl, entry);
+  } catch (e) {
+    // Proxies failed — create a minimal entry from just the ID and whatever the user typed
+    const charName  = nameVal || '(Unknown)';
+    const charWorld = worldVal || '';
+    const entry = { name: charName, world: charWorld, lodestoneId, avatarUrl: '', cachedAt: Date.now() };
+    const cacheKey = `${charName.toLowerCase()}|${charWorld.toLowerCase()}`;
+    const cache = loadCharCache();
+    cache[cacheKey] = entry;
+    saveCharCache(cache);
+    showCharResult(resultEl, entry);
+    showToast('Portrait unavailable — character linked by ID only.');
   }
 }
 
@@ -1110,48 +1137,6 @@ function applyLookupResult(name, server, lodestoneId, avatarUrl) {
   if (charSection) charSection.classList.remove('open');
 }
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-//  XIVAPI ICON RESOLVER
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-const ICON_CACHE_KEY = 'ffxiv-icon-cache';
-
-function loadIconCache() {
-  try { return JSON.parse(localStorage.getItem(ICON_CACHE_KEY) || '{}'); } catch { return {}; }
-}
-function saveIconCache(cache) {
-  try { localStorage.setItem(ICON_CACHE_KEY, JSON.stringify(cache)); } catch {}
-}
-
-async function resolveIcons(rewards) {
-  const cache  = loadIconCache();
-  const missing = rewards.filter(r => !r.imgUrl && r.name);
-
-  for (const r of missing) {
-    // Check cache first
-    if (cache[r.name]) {
-      r.imgUrl = 'https://xivapi.com' + cache[r.name];
-      continue;
-    }
-    // Fire-and-forget per item — no await on the outer loop, but we await inside
-    try {
-      const url  = `https://xivapi.com/search?string=${encodeURIComponent(r.name)}&indexes=Item&columns=Name,Icon`;
-      const resp = await fetch(url);
-      if (!resp.ok) continue;
-      const data = await resp.json();
-      const result = (data.Results || [])[0];
-      if (result && result.Icon) {
-        cache[r.name] = result.Icon;
-        r.imgUrl = 'https://xivapi.com' + result.Icon;
-        saveIconCache(cache);
-        // Re-render to show the newly loaded icon
-        render();
-      }
-    } catch {
-      // Best-effort, ignore errors
-    }
-  }
-}
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 //  THEME
@@ -1476,6 +1461,7 @@ function showToast(msg) { const e = document.getElementById('toast'); e.textCont
 
 window.addEventListener('load', async () => {
   loadTheme();
+  try { localStorage.removeItem('ffxiv-icon-cache'); } catch {}
   buildWorldSelect();
 
   const saved = loadPersisted();
@@ -1502,9 +1488,6 @@ window.addEventListener('load', async () => {
   }
 
   await loadData();
-  // Fire-and-forget icon resolution after data loads
-  if (REWARDS.length) resolveIcons(REWARDS);
-
   checkSeriesTransition();
   checkPatchEndExpiry();
   render();
@@ -1516,6 +1499,9 @@ window.addEventListener('load', async () => {
   const wCustom = document.getElementById('inp-char-world-custom');
   if (wCustom) wCustom.addEventListener('keydown', e => { if (e.key === 'Enter') applyProgress(); });
   document.querySelectorAll('#c-cc,#c-fl,#c-rw').forEach(el => el.addEventListener('input', calcActivities));
+
+  const lodestoneUrlInput = document.getElementById('inp-lodestone-url');
+  if (lodestoneUrlInput) lodestoneUrlInput.addEventListener('keydown', e => { if (e.key === 'Enter') applyLodestoneUrl(); });
 
   // Character section collapse/expand toggle
   const charHeader = document.querySelector('.char-card-section .char-card-header');
