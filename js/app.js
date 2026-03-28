@@ -151,13 +151,18 @@ async function fetchPortraitByLodestoneId(lodestoneId) {
     if (!resp.ok) return;
     const html = await resp.text();
     const doc  = new DOMParser().parseFromString(html, 'text/html');
-    const portraitEl = doc.querySelector('.character__detail__image img')
+    const portraitEl = doc.querySelector('.js__image_popup > img')
+      || doc.querySelector('.character__detail__image img')
       || doc.querySelector('img[src*="img2.finalfantasyxiv.com"][src*="_gc"]')
       || doc.querySelector('.character-block__portrait img')
       || doc.querySelector('img[src*="/character/"]');
     if (portraitEl) S.charPortrait = portraitEl.getAttribute('src') || null;
     const soulMatch = html.match(/Soul of the ([A-Z][A-Za-z ]{2,28}?)(?=["<&\n])/);
     if (soulMatch && !S.charClass) S.charClass = soulMatch[1].trim();
+    if (!S.charClassLevel) {
+      const classDataEl = doc.querySelector('.character__class__data > p:nth-child(1)');
+      if (classDataEl) { const lm = classDataEl.textContent.match(/LEVEL\s*(\d+)/i); if (lm) S.charClassLevel = parseInt(lm[1]); }
+    }
   } catch { /* best-effort */ }
 
   // Avatar (face thumbnail) is only reliably available on the search results page — fetch it if still missing
@@ -180,7 +185,7 @@ async function fetchPortraitByLodestoneId(lodestoneId) {
   }
 
   if (S.charPortrait || S.charAvatar || S.charClass) {
-    saveCharExt();
+    if (!_viewingShare) saveCharExt();
     renderPortraitBg();
     renderCharDisplay();
   }
@@ -1439,15 +1444,16 @@ async function lookupCharacter(forceRefresh = false) {
       if (charResp.ok) {
         const charHtml = await charResp.text();
         const charDoc  = parser.parseFromString(charHtml, 'text/html');
-        const portraitEl = charDoc.querySelector('.character__detail__image img')
+        const portraitEl = charDoc.querySelector('.js__image_popup > img')
+          || charDoc.querySelector('.character__detail__image img')
           || charDoc.querySelector('img[src*="img2.finalfantasyxiv.com"][src*="_gc"]')
           || charDoc.querySelector('.character-block__portrait img')
           || charDoc.querySelector('img[src*="/character/"]');
         if (portraitEl) entry.portrait = portraitEl.getAttribute('src') || null;
         const soulMatch = charHtml.match(/Soul of the ([A-Z][A-Za-z ]{2,28}?)(?=["<&\n])/);
         if (soulMatch) entry.activeClass = soulMatch[1].trim();
-        const classData = charDoc.querySelector('.character__class__data, .character__level__main');
-        if (classData) { const lm = classData.textContent.match(/(\d+)/); if (lm) entry.activeClassLevel = parseInt(lm[1]); }
+        const classDataEl = charDoc.querySelector('.character__class__data > p:nth-child(1)');
+        if (classDataEl) { const lm = classDataEl.textContent.match(/LEVEL\s*(\d+)/i); if (lm) entry.activeClassLevel = parseInt(lm[1]); }
       }
     } catch { /* portrait is best-effort */ }
 
@@ -1481,7 +1487,8 @@ async function applyLodestoneUrl() {
     const charName  = (nameEl && nameEl.textContent.trim()) || nameVal || '(Unknown)';
     const charWorld = (worldEl && worldEl.textContent.trim().split(/\s*[\n[]/)[0].trim()) || worldVal || '';
     const entry = { name: charName, world: charWorld, lodestoneId, avatarUrl: '', cachedAt: Date.now() };
-    const portraitEl = charDoc.querySelector('.character__detail__image img')
+    const portraitEl = charDoc.querySelector('.js__image_popup > img')
+      || charDoc.querySelector('.character__detail__image img')
       || charDoc.querySelector('img[src*="img2.finalfantasyxiv.com"][src*="_gc"]')
       || charDoc.querySelector('.character-block__portrait img');
     if (portraitEl) entry.portrait = portraitEl.getAttribute('src') || null;
@@ -1489,6 +1496,8 @@ async function applyLodestoneUrl() {
     if (avatarEl) entry.avatarUrl = avatarEl.getAttribute('src') || '';
     const soulMatch = charHtml.match(/Soul of the ([A-Z][A-Za-z ]{2,28}?)(?=["<&\n])/);
     if (soulMatch) entry.activeClass = soulMatch[1].trim();
+    const classDataEl = charDoc.querySelector('.character__class__data > p:nth-child(1)');
+    if (classDataEl) { const lm = classDataEl.textContent.match(/LEVEL\s*(\d+)/i); if (lm) entry.activeClassLevel = parseInt(lm[1]); }
     const cacheKey = `${(nameVal || charName).toLowerCase()}|${(worldVal || charWorld).toLowerCase()}`;
     const cache = loadCharCache();
     cache[cacheKey] = entry;
