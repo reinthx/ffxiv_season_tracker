@@ -4,7 +4,7 @@
 
 let LEVEL_THRESHOLDS = [0,2000,4000,6000,8000,11000,14000,17000,20000,23000,27000,31000,35000,39000,43000,48500,54000,59500,65000,70500,78000,85500,93000,100500,108000];
 let EXTRA_LEVEL_COST = 20000;
-let CURRENT_SERIES   = { num:0, name:'Loading…', patch:'', patchStart:'', patchEnd:'' };
+let CURRENT_SERIES   = { num:0, name:'Loading…', patch:'', patchStart:'', patchEnd:'', patchEndEstimated:false };
 let REWARDS          = [];
 let OLD_SERIES       = [];
 
@@ -151,26 +151,12 @@ async function fetchPortraitByLodestoneId(lodestoneId) {
     if (!resp.ok) return;
     const html = await resp.text();
     const doc  = new DOMParser().parseFromString(html, 'text/html');
-    const portraitEl = doc.querySelector('.js__image_popup > img')
-      || doc.querySelector('.character__detail__image img')
-      || doc.querySelector('img[src*="img2.finalfantasyxiv.com"][src*="_gc"]')
-      || doc.querySelector('.character-block__portrait img')
-      || doc.querySelector('img[src*="/character/"]');
-    if (portraitEl) S.charPortrait = portraitEl.getAttribute('src') || null;
-    const soulMatch = html.match(/Soul of the ([A-Z][A-Za-z ]{2,28}?)(?=["<&\n])/);
-    if (soulMatch && !S.charClass) S.charClass = soulMatch[1].trim();
-    if (!S.charClassLevel) {
-      const classDataEl = doc.querySelector('.character__class__data > p:nth-child(1)');
-      if (classDataEl) { const lm = classDataEl.textContent.match(/LEVEL\s*(\d+)/i); if (lm) S.charClassLevel = parseInt(lm[1]); }
-    }
-    if (!S.charTitle) {
-      const titleEl = doc.querySelector('.frame__chara__title');
-      if (titleEl) S.charTitle = titleEl.textContent.trim() || null;
-    }
-    if (!S.charFC) {
-      const fcEl = doc.querySelector('.character__freecompany__name > h4:nth-child(2) > a:nth-child(1)');
-      if (fcEl) S.charFC = fcEl.textContent.trim() || null;
-    }
+    const parsed = parseCharFromDoc(html, doc);
+    if (parsed.portrait)          S.charPortrait   = parsed.portrait;
+    if (parsed.activeClass && !S.charClass)      S.charClass      = parsed.activeClass;
+    if (parsed.activeClassLevel && !S.charClassLevel) S.charClassLevel = parsed.activeClassLevel;
+    if (parsed.charTitle && !S.charTitle)        S.charTitle      = parsed.charTitle;
+    if (parsed.freeCompany && !S.charFC)         S.charFC         = parsed.freeCompany;
   } catch { /* best-effort */ }
 
   // Avatar (face thumbnail) is only reliably available on the search results page — fetch it if still missing
@@ -279,13 +265,47 @@ function computeStats() {
 const fmt  = n => Number(n).toLocaleString();
 const fmtD = d => d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
 const fmtDS= s => new Date(s+'T12:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+function estimatePatchEnd(patchStart) {
+  const MS_DAY = 86_400_000;
+  const targetMs = new Date(patchStart + 'T12:00:00').getTime() + 133 * MS_DAY;
+  const dow = new Date(targetMs).getDay();
+  const fwd = (2 - dow + 7) % 7;
+  const bck = dow === 2 ? 0 : 7 - fwd;
+  return new Date(targetMs + (fwd <= bck ? fwd : -bck) * MS_DAY).toISOString().split('T')[0];
+}
 function badgeHTML(type) { const m = TYPE_META[type] || TYPE_META.start; return `<span class="badge ${m.badgeClass}">${m.label}</span>`; }
+function extractMilestones(rewards) {
+  return (rewards || []).filter(r => r.milestone).map(r => ({ lv:r.level, type:r.type, icon:r.icon, name:r.name, imgUrl:r.imgUrl||null, demoUrl:r.demoUrl||null, desc:r.desc||'' }));
+}
+function parseCharFromDoc(html, doc) {
+  const portraitEl = doc.querySelector('.js__image_popup > img')
+    || doc.querySelector('.character__detail__image img')
+    || doc.querySelector('img[src*="img2.finalfantasyxiv.com"][src*="_gc"]')
+    || doc.querySelector('.character-block__portrait img');
+  const portrait = portraitEl ? (portraitEl.getAttribute('src') || null) : null;
+  const soulMatch = html.match(/Soul of the ([A-Z][A-Za-z ]{2,28}?)(?=["<&\n])/);
+  const activeClass = soulMatch ? soulMatch[1].trim() : null;
+  const classDataEl = doc.querySelector('.character__class__data > p:nth-child(1)');
+  const lvMatch = classDataEl ? classDataEl.textContent.match(/LEVEL\s*(\d+)/i) : null;
+  const activeClassLevel = lvMatch ? parseInt(lvMatch[1]) : null;
+  const titleEl = doc.querySelector('.frame__chara__title');
+  const charTitle = titleEl ? (titleEl.textContent.trim() || null) : null;
+  const fcEl = doc.querySelector('.character__freecompany__name > h4:nth-child(2) > a:nth-child(1)');
+  const freeCompany = fcEl ? (fcEl.textContent.trim() || null) : null;
+  return { portrait, activeClass, activeClassLevel, charTitle, freeCompany };
+}
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 //  RENDER
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+let _renderTimer = null;
 function render() {
+  if (_renderTimer) { clearTimeout(_renderTimer); _renderTimer = null; }
+  _renderTimer = setTimeout(_renderImmediate, 80);
+}
+function _renderImmediate() {
+  _renderTimer = null;
   const st = computeStats();
 
   // Series banner
@@ -293,8 +313,9 @@ function render() {
   setText('banner-remain',  st.daysLeft);
   setW('series-timeline-bar', st.seriesPct);
   setText('banner-start-label', fmtDS(CURRENT_SERIES.patchStart));
-  setText('banner-end-label',   fmtDS(CURRENT_SERIES.patchEnd));
-  setText('banner-dates', `${fmtDS(CURRENT_SERIES.patchStart)} → ${fmtDS(CURRENT_SERIES.patchEnd)}`);
+  const endLabel = (CURRENT_SERIES.patchEndEstimated ? '~' : '') + fmtDS(CURRENT_SERIES.patchEnd);
+  setText('banner-end-label',   endLabel);
+  setText('banner-dates', `${fmtDS(CURRENT_SERIES.patchStart)} → ${endLabel}`);
   setText('banner-pct-label', st.seriesPct.toFixed(1) + '% of series elapsed');
 
   // Progress bars
@@ -332,7 +353,7 @@ function render() {
   renderUpcoming(st);
   renderRewards(st);
   renderCatchup(st);
-  calcActivities();
+  calcActivities(st);
   renderCharDisplay();
   renderPortraitBg();
   renderSparkline();
@@ -463,11 +484,15 @@ function renderMilestoneCounter() {
     </div>`;
 }
 
+let _sparklineLastKey = null;
 function renderSparkline() {
   const wrap = document.getElementById('xp-sparkline-section');
   if (!wrap) return;
   const hist = loadXPHist();
   if (hist.length < 2) { wrap.style.display = 'none'; return; }
+  const sparkKey = hist.length + '|' + hist[hist.length-1].date + '|' + hist[hist.length-1].totalXP + '|' + S.goal;
+  if (sparkKey === _sparklineLastKey) return;
+  _sparklineLastKey = sparkKey;
   wrap.style.display = 'block';
 
   const W = 400, H = 80, PAD = 8;
@@ -547,14 +572,14 @@ function fireConfetti() {
 //  ACTIVITY CALCULATOR
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-function calcActivities() {
+function calcActivities(st) {
   const cc  = Math.max(0, parseInt(document.getElementById('c-cc').value) || 0);
   const fl  = Math.max(0, parseInt(document.getElementById('c-fl').value) || 0);
   const rw  = Math.max(0, parseInt(document.getElementById('c-rw').value) || 0);
   const bonus   = fl > 0 ? ACT_AVG.dailyBonus : 0;
   const dailyXP = cc*ACT_AVG.cc + fl*ACT_AVG.fl + rw*ACT_AVG.rw + bonus;
 
-  const st  = computeStats();
+  if (!st) st = computeStats();
   const out = document.getElementById('calc-output');
 
   if (dailyXP === 0) { out.innerHTML = `<p style="font-size:12px;color:var(--text-muted);">Enter match counts above.</p>`; return; }
@@ -675,7 +700,7 @@ function recordPastSeason(num) {
   const lv = Math.max(1, parseInt(lvInput?.value) || 0);
   if (!lv) { lvInput?.focus(); return; }
   const old = OLD_SERIES.find(s => s.num === num);
-  const ms  = old?.milestones || (old?.rewards||[]).filter(r => r.milestone).map(r => ({lv:r.level,type:r.type,icon:r.icon,name:r.name,imgUrl:r.imgUrl||null,demoUrl:r.demoUrl||null,desc:r.desc||''}));
+  const ms  = old?.milestones || extractMilestones(old?.rewards);
   const obtained = ms.filter(m => {
     const cb = document.getElementById(`rec-ms-${num}-${m.lv}`);
     return cb?.checked;
@@ -1097,7 +1122,7 @@ async function generateCharCard() {
   ctx.fillStyle = purple; ctx.textAlign = 'center';
   ctx.fillText(`${st.seriesPct.toFixed(1)}% of series elapsed`, CX + PBW / 2, 348);
   ctx.fillStyle = muted; ctx.textAlign = 'right';
-  ctx.fillText(fmtDS(CURRENT_SERIES.patchEnd), CRX, 348);
+  ctx.fillText((CURRENT_SERIES.patchEndEstimated ? '~' : '') + fmtDS(CURRENT_SERIES.patchEnd), CRX, 348);
 
   hLine(362);
 
@@ -1386,6 +1411,11 @@ function loadCharCache() {
   try { return JSON.parse(localStorage.getItem(CHAR_CACHE_KEY) || '{}'); } catch { return {}; }
 }
 function saveCharCache(cache) {
+  // Prune entries older than TTL before saving
+  const cutoff = Date.now() - CHAR_CACHE_TTL;
+  for (const key of Object.keys(cache)) {
+    if ((cache[key].cachedAt || 0) < cutoff) delete cache[key];
+  }
   try { localStorage.setItem(CHAR_CACHE_KEY, JSON.stringify(cache)); } catch {}
 }
 
@@ -1445,8 +1475,7 @@ async function lookupCharacter(forceRefresh = false) {
       if (m) { linkEl = a; lodestoneId = m[1]; break; }
     }
     if (!linkEl) {
-      const lodestoneSearchUrl = `https://na.finalfantasyxiv.com/lodestone/character/?q=${encodeURIComponent(nameVal)}&worldname=${encodeURIComponent(worldVal)}`;
-      resultEl.innerHTML = `<span style="color:var(--text-muted);">No characters found for "${nameVal}" on ${worldVal}. <a href="${lodestoneSearchUrl}" target="_blank" rel="noopener" style="color:var(--blue);">Search on Lodestone</a></span>`;
+      resultEl.innerHTML = `<span style="color:var(--text-muted);">No characters found for "${nameVal}" on ${worldVal}. <a href="${searchUrl}" target="_blank" rel="noopener" style="color:var(--blue);">Search on Lodestone</a></span>`;
       return;
     }
 
@@ -1464,20 +1493,12 @@ async function lookupCharacter(forceRefresh = false) {
       if (charResp.ok) {
         const charHtml = await charResp.text();
         const charDoc  = parser.parseFromString(charHtml, 'text/html');
-        const portraitEl = charDoc.querySelector('.js__image_popup > img')
-          || charDoc.querySelector('.character__detail__image img')
-          || charDoc.querySelector('img[src*="img2.finalfantasyxiv.com"][src*="_gc"]')
-          || charDoc.querySelector('.character-block__portrait img')
-          || charDoc.querySelector('img[src*="/character/"]');
-        if (portraitEl) entry.portrait = portraitEl.getAttribute('src') || null;
-        const soulMatch = charHtml.match(/Soul of the ([A-Z][A-Za-z ]{2,28}?)(?=["<&\n])/);
-        if (soulMatch) entry.activeClass = soulMatch[1].trim();
-        const classDataEl = charDoc.querySelector('.character__class__data > p:nth-child(1)');
-        if (classDataEl) { const lm = classDataEl.textContent.match(/LEVEL\s*(\d+)/i); if (lm) entry.activeClassLevel = parseInt(lm[1]); }
-        const titleEl = charDoc.querySelector('.frame__chara__title');
-        if (titleEl) entry.charTitle = titleEl.textContent.trim() || null;
-        const fcEl = charDoc.querySelector('.character__freecompany__name > h4:nth-child(2) > a:nth-child(1)');
-        if (fcEl) entry.freeCompany = fcEl.textContent.trim() || null;
+        const parsed = parseCharFromDoc(charHtml, charDoc);
+        if (parsed.portrait)        entry.portrait        = parsed.portrait;
+        if (parsed.activeClass)     entry.activeClass     = parsed.activeClass;
+        if (parsed.activeClassLevel)entry.activeClassLevel= parsed.activeClassLevel;
+        if (parsed.charTitle)       entry.charTitle       = parsed.charTitle;
+        if (parsed.freeCompany)     entry.freeCompany     = parsed.freeCompany;
       }
     } catch { /* portrait is best-effort */ }
 
@@ -1511,21 +1532,14 @@ async function applyLodestoneUrl() {
     const charName  = (nameEl && nameEl.textContent.trim()) || nameVal || '(Unknown)';
     const charWorld = (worldEl && worldEl.textContent.trim().split(/\s*[\n[]/)[0].trim()) || worldVal || '';
     const entry = { name: charName, world: charWorld, lodestoneId, avatarUrl: '', cachedAt: Date.now() };
-    const portraitEl = charDoc.querySelector('.js__image_popup > img')
-      || charDoc.querySelector('.character__detail__image img')
-      || charDoc.querySelector('img[src*="img2.finalfantasyxiv.com"][src*="_gc"]')
-      || charDoc.querySelector('.character-block__portrait img');
-    if (portraitEl) entry.portrait = portraitEl.getAttribute('src') || null;
+    const parsed = parseCharFromDoc(charHtml, charDoc);
+    if (parsed.portrait)        entry.portrait        = parsed.portrait;
+    if (parsed.activeClass)     entry.activeClass     = parsed.activeClass;
+    if (parsed.activeClassLevel)entry.activeClassLevel= parsed.activeClassLevel;
+    if (parsed.charTitle)       entry.charTitle       = parsed.charTitle;
+    if (parsed.freeCompany)     entry.freeCompany     = parsed.freeCompany;
     const avatarEl = charDoc.querySelector('.character__detail__face img') || charDoc.querySelector('.js__c_face img');
     if (avatarEl) entry.avatarUrl = avatarEl.getAttribute('src') || '';
-    const soulMatch = charHtml.match(/Soul of the ([A-Z][A-Za-z ]{2,28}?)(?=["<&\n])/);
-    if (soulMatch) entry.activeClass = soulMatch[1].trim();
-    const classDataEl = charDoc.querySelector('.character__class__data > p:nth-child(1)');
-    if (classDataEl) { const lm = classDataEl.textContent.match(/LEVEL\s*(\d+)/i); if (lm) entry.activeClassLevel = parseInt(lm[1]); }
-    const titleEl = charDoc.querySelector('.frame__chara__title');
-    if (titleEl) entry.charTitle = titleEl.textContent.trim() || null;
-    const fcEl = charDoc.querySelector('.character__freecompany__name > h4:nth-child(2) > a:nth-child(1)');
-    if (fcEl) entry.freeCompany = fcEl.textContent.trim() || null;
     const cacheKey = `${(nameVal || charName).toLowerCase()}|${(worldVal || charWorld).toLowerCase()}`;
     const cache = loadCharCache();
     cache[cacheKey] = entry;
@@ -1647,7 +1661,8 @@ async function loadData() {
     const cur = data.series?.find(s => s.current);
     if (cur) {
       if (cur.rewards) REWARDS = cur.rewards;
-      CURRENT_SERIES = { num:cur.num, name:cur.name||'Series '+cur.num, patch:cur.patch||'', patchStart:cur.patchStart, patchEnd:cur.patchEnd };
+      const patchEndEstimated = !cur.patchEnd && !!cur.patchStart;
+      CURRENT_SERIES = { num:cur.num, name:cur.name||'Series '+cur.num, patch:cur.patch||'', patchStart:cur.patchStart, patchEnd:cur.patchEnd || (patchEndEstimated ? estimatePatchEnd(cur.patchStart) : ''), patchEndEstimated };
       setText('banner-series-name', CURRENT_SERIES.name);
       setText('banner-patch', 'Patch ' + CURRENT_SERIES.patch);
       const rt = document.getElementById('rewards-title');
@@ -1655,8 +1670,7 @@ async function loadData() {
     }
     const old = data.series?.filter(s => !s.current) || [];
     if (old.length) OLD_SERIES = old.map(s => {
-      const ms = (s.rewards||[]).filter(r => r.milestone).map(r => ({lv:r.level,type:r.type,icon:r.icon,name:r.name,imgUrl:r.imgUrl||null,demoUrl:r.demoUrl||null,desc:r.desc||''}));
-      return { num:s.num, name:s.name||'Series '+s.num, patch:s.patch, start:s.patchStart, end:s.patchEnd, rewards:s.rewards||null, milestones:ms };
+      return { num:s.num, name:s.name||'Series '+s.num, patch:s.patch, start:s.patchStart, end:s.patchEnd, rewards:s.rewards||null, milestones:extractMilestones(s.rewards) };
     });
     if (errEl) errEl.style.display = 'none';
   } catch (e) {
@@ -1710,8 +1724,7 @@ function checkPatchEndExpiry() {
   const arr = loadPS();
   if (arr.find(p => p.seriesNum === CURRENT_SERIES.num)) return;
   if (S.level <= 1 && S.xp === 0) return;
-  const ms = REWARDS.filter(r => r.milestone).map(r => ({lv:r.level,type:r.type,icon:r.icon,name:r.name,imgUrl:r.imgUrl||null,demoUrl:r.demoUrl||null,desc:r.desc||''}));
-  arr.push({ seriesNum:CURRENT_SERIES.num, name:CURRENT_SERIES.name, patch:CURRENT_SERIES.patch, patchStart:CURRENT_SERIES.patchStart, patchEnd:CURRENT_SERIES.patchEnd, levelReached:S.level, xpInLevel:S.xp, goalLevel:S.goal, savedAt:new Date().toISOString().split('T')[0], auto:true, rewards:REWARDS, milestones:ms, itemsObtained:[] });
+  arr.push({ seriesNum:CURRENT_SERIES.num, name:CURRENT_SERIES.name, patch:CURRENT_SERIES.patch, patchStart:CURRENT_SERIES.patchStart, patchEnd:CURRENT_SERIES.patchEnd, levelReached:S.level, xpInLevel:S.xp, goalLevel:S.goal, savedAt:new Date().toISOString().split('T')[0], auto:true, rewards:REWARDS, milestones:extractMilestones(REWARDS), itemsObtained:[] });
   savePS(arr);
   showToast(`${CURRENT_SERIES.name} has ended — progress auto-archived.`);
 }
@@ -1735,7 +1748,7 @@ function renderDataTab() {
   if (!el) return;
   DATA_MODAL_CACHE = [];
   const now = Date.now();
-  const curMilestones = REWARDS.filter(r => r.milestone).map(r => ({lv:r.level,type:r.type,icon:r.icon,name:r.name,imgUrl:r.imgUrl||null,demoUrl:r.demoUrl||null,desc:r.desc||''}));
+  const curMilestones = extractMilestones(REWARDS);
   const curEntry = { num:CURRENT_SERIES.num, name:CURRENT_SERIES.name, patch:CURRENT_SERIES.patch, start:CURRENT_SERIES.patchStart, end:CURRENT_SERIES.patchEnd, rewards:null, milestones:curMilestones };
   // Build a psOverrideMap from shared series data so the data tab reflects the shared user's history
   let psOverrideMap = null;
@@ -1801,9 +1814,7 @@ function renderDataCard(s, isCurrent, now, psOverrideMap) {
     : `<span style="background:rgba(107,122,150,0.1);color:var(--text-muted);border-radius:4px;padding:2px 8px;font-size:10px;letter-spacing:0.05em;">ENDED</span>`;
 
   const seriesLabel = (s.name || 'Series ' + s.num);
-  const milestones = s.rewards
-    ? s.rewards.filter(r => r.milestone).map(r => ({lv:r.level,type:r.type,icon:r.icon,name:r.name,imgUrl:r.imgUrl||null,demoUrl:r.demoUrl||null,desc:r.desc||''}))
-    : (s.milestones || []);
+  const milestones = s.rewards ? extractMilestones(s.rewards) : (s.milestones || []);
 
   // For past series, get obtained state upfront so cards can show collected overlay
   let psEntry = null, obtained = [];
