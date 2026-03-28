@@ -129,7 +129,6 @@ body {
 }
 .pf-blue   { background: linear-gradient(90deg, #4a7ecf, var(--blue)); }
 .pf-purple { background: linear-gradient(90deg, #7c3aed, var(--purple)); }
-.pf-red    { background: linear-gradient(90deg, #a02020, var(--red)); }
 
 /* ── Stat Cards ─────────────────────── */
 .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 13px 10px; text-align: center; }

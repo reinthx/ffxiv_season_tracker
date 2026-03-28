@@ -119,20 +119,34 @@ async function fetchPortraitByLodestoneId(lodestoneId) {
       || doc.querySelector('.character-block__portrait img')
       || doc.querySelector('img[src*="/character/"]');
     if (portraitEl) S.charPortrait = portraitEl.getAttribute('src') || null;
-    if (!S.charAvatar) {
-      const avatarEl = doc.querySelector('.character__detail__face img')
-        || doc.querySelector('.js__c_face img')
-        || doc.querySelector('img[src*="img2.finalfantasyxiv.com"][src*="c_"][src*="_gc"]');
-      if (avatarEl) S.charAvatar = avatarEl.getAttribute('src') || null;
-    }
     const soulMatch = html.match(/Soul of the ([A-Z][A-Za-z ]{2,28}?)(?=["<&\n])/);
     if (soulMatch && !S.charClass) S.charClass = soulMatch[1].trim();
-    if (S.charPortrait || S.charAvatar || S.charClass) {
-      saveCharExt();
-      renderPortraitBg();
-      renderCharDisplay();
-    }
   } catch { /* best-effort */ }
+
+  // Avatar (face thumbnail) is only reliably available on the search results page — fetch it if still missing
+  if (!S.charAvatar && S.charName && S.charWorld) {
+    try {
+      const searchUrl = `https://na.finalfantasyxiv.com/lodestone/character/?q=${encodeURIComponent(S.charName)}&worldname=${encodeURIComponent(S.charWorld)}`;
+      const searchResp = await fetchViaProxy(searchUrl);
+      if (searchResp.ok) {
+        const searchHtml = await searchResp.text();
+        const searchDoc  = new DOMParser().parseFromString(searchHtml, 'text/html');
+        for (const a of searchDoc.querySelectorAll('a[href*="/lodestone/character/"]')) {
+          const m = a.getAttribute('href').match(/\/character\/(\d+)\//);
+          if (m && m[1] === String(lodestoneId)) {
+            const avatarEl = a.querySelector('img') || a.closest('li')?.querySelector('img');
+            if (avatarEl) { S.charAvatar = avatarEl.getAttribute('src') || null; break; }
+          }
+        }
+      }
+    } catch { /* best-effort */ }
+  }
+
+  if (S.charPortrait || S.charAvatar || S.charClass) {
+    saveCharExt();
+    renderPortraitBg();
+    renderCharDisplay();
+  }
 }
 
 // Extended char data (portrait/class — not in URL, stored separately)
@@ -1483,8 +1497,8 @@ window.addEventListener('load', async () => {
       S.charClass       = ext.cls      || null;
       S.charClassLevel  = ext.clsLv    || null;
     }
-    // If we have a lodestone ID but no portrait (e.g. opened a share link on a new device), fetch it silently
-    if (S.charLodestoneId && !S.charPortrait) {
+    // If portrait or avatar are missing (e.g. share link on a new device), fetch them silently
+    if (S.charLodestoneId && (!S.charPortrait || !S.charAvatar)) {
       fetchPortraitByLodestoneId(S.charLodestoneId);
     }
   }
