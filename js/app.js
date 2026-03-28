@@ -66,6 +66,8 @@ function xpPerLevel(level) { return xpToStartLevel(level + 1) - xpToStartLevel(l
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 let S = { level:1, xp:0, goal:25, userStart:null, charName:null, charWorld:null, charLodestoneId:null, charAvatar:null, charPortrait:null, charClass:null, charClassLevel:null };
+let _viewingShare = false; // true when displaying someone else's share link
+let _cardBlob = null;     // holds the last generated character card blob
 
 function encodeS(s) {
   const p = new URLSearchParams();
@@ -95,7 +97,9 @@ function decodeS(raw) {
 }
 function persist() {
   history.replaceState(null, '', '#' + encodeS(S));
-  try { localStorage.setItem('ffxiv-tracker', encodeS(S)); } catch {}
+  if (!_viewingShare) {
+    try { localStorage.setItem('ffxiv-tracker', encodeS(S)); } catch {}
+  }
 }
 function loadPersisted() {
   const hash = location.hash.slice(1);
@@ -767,6 +771,7 @@ function applyProgress() {
     charPortrait: S.charPortrait, charClass: S.charClass, charClassLevel: S.charClassLevel,
   };
   recordXPHist();
+  _viewingShare = false;
   persist(); render(); showToast('Progress updated!');
   if (level >= goal && prevLevel < goal) fireConfetti();
 }
@@ -774,6 +779,386 @@ function applyProgress() {
 function shareURL() {
   const url = location.origin + location.pathname + '#' + encodeS(S);
   navigator.clipboard.writeText(url).then(() => showToast('Share link copied! 📋')).catch(() => prompt('Copy this link:', url));
+}
+
+function loadOwnProgress() {
+  let ownRaw = null;
+  try { ownRaw = localStorage.getItem('ffxiv-tracker'); } catch {}
+  const ownState = ownRaw ? decodeS(ownRaw) : null;
+  if (!ownState) { showToast('No saved progress found.'); return; }
+  _viewingShare = false;
+  S = ownState;
+  document.getElementById('inp-level').value     = S.level;
+  document.getElementById('inp-xp').value        = S.xp;
+  document.getElementById('inp-goal').value       = S.goal;
+  document.getElementById('inp-user-start').value = S.userStart || '';
+  document.getElementById('inp-char-name').value  = S.charName || '';
+  syncWorldSelectFromState();
+  const ext = loadCharExt();
+  if (ext && ext.lodestoneId && ext.lodestoneId === S.charLodestoneId) {
+    S.charPortrait    = ext.portrait || null;
+    S.charAvatar      = ext.avatar   || S.charAvatar || null;
+    S.charClass       = ext.cls      || null;
+    S.charClassLevel  = ext.clsLv    || null;
+  }
+  history.replaceState(null, '', '#' + encodeS(S));
+  const banner = document.getElementById('share-view-banner');
+  if (banner) banner.style.display = 'none';
+  render();
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  CHARACTER CARD GENERATOR
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+function ctxRoundRect(ctx, x, y, w, h, r) {
+  if (typeof ctx.roundRect === 'function') { ctx.roundRect(x, y, w, h, r); return; }
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y);
+}
+
+function hexToRgbArr(hex) {
+  hex = hex.trim().replace(/^#/, '');
+  if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+  const n = parseInt(hex, 16);
+  if (isNaN(n)) return null;
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
+async function generateCharCard() {
+  const btn = document.getElementById('btn-char-card');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Generating…'; }
+
+  const st = computeStats();
+
+  // — theme colours —
+  const cs = getComputedStyle(document.documentElement);
+  const cv = k => cs.getPropertyValue(k).trim();
+  const gold   = cv('--gold')       || '#c8a96e';
+  const bg     = cv('--bg')         || '#080b10';
+  const card   = cv('--card')       || '#10141c';
+  const text   = cv('--text')       || '#e2e8f0';
+  const muted  = cv('--text-muted') || '#6b7a96';
+  const grn    = cv('--green')      || '#4ade80';
+  const red    = cv('--red')        || '#f87171';
+  const purple = cv('--purple')     || '#a78bfa';
+  const bgRgb   = hexToRgbArr(bg)   || [8, 11, 16];
+  const goldRgb = hexToRgbArr(gold) || [200, 169, 110];
+
+  // — images via proxy (avoid CORS canvas taint) —
+  async function fetchImgBlob(url) {
+    const resp = await fetchViaProxy(url);
+    if (!resp.ok) throw new Error('bad status');
+    const blob = await resp.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    return new Promise(res => {
+      const img = new Image();
+      img.onload = () => { URL.revokeObjectURL(blobUrl); res(img); };
+      img.onerror = () => { URL.revokeObjectURL(blobUrl); res(null); };
+      img.src = blobUrl;
+    });
+  }
+
+  let portraitImg = null, avatarImg = null;
+  const imgLoads = [];
+  if (S.charPortrait) imgLoads.push(fetchImgBlob(S.charPortrait).then(i => { portraitImg = i; }).catch(() => {}));
+  if (S.charAvatar)   imgLoads.push(fetchImgBlob(S.charAvatar).then(i => { avatarImg = i; }).catch(() => {}));
+  await Promise.allSettled(imgLoads);
+
+  // Preload milestone icons — local files, same origin, no proxy needed
+  const milestones = REWARDS.filter(r => r.milestone);
+  const msImgs = await Promise.all(milestones.map(r => {
+    if (!r.imgUrl) return Promise.resolve(null);
+    return new Promise(res => {
+      const img = new Image();
+      img.onload = () => res(img);
+      img.onerror = () => res(null);
+      img.src = new URL(r.imgUrl, location.href).href;
+    });
+  }));
+
+  try { await Promise.all(['700 28px Cinzel', '400 13px Inter', '600 15px Inter'].map(f => document.fonts.load(f))); } catch {}
+
+  // — canvas —
+  const W = 900, H = 490;
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  const PORTRAIT_W = 260;
+  const CX  = 284;       // content left
+  const CRX = W - 24;    // content right
+  const PBW = CRX - CX;  // content width (also progress bar width)
+
+  // ── Helpers ─────────────────────────────────────────────
+  function hLine(y) {
+    ctx.strokeStyle = `rgba(${goldRgb},0.18)`;
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(CX, y); ctx.lineTo(CRX, y); ctx.stroke();
+  }
+  function drawStatCols(cols, lblY, valY) {
+    const cw = PBW / cols.length;
+    cols.forEach((c, i) => {
+      const x = CX + i * cw;
+      ctx.font = '400 10px Inter, sans-serif'; ctx.fillStyle = muted; ctx.textAlign = 'left';
+      ctx.fillText(c.lbl.toUpperCase(), x, lblY);
+      ctx.font = '700 15px Inter, sans-serif'; ctx.fillStyle = c.color || text;
+      ctx.fillText(c.val, x, valY);
+    });
+  }
+
+  // ── Background ──────────────────────────────────────────
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // ── Portrait panel ──────────────────────────────────────
+  if (portraitImg) {
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, 0, PORTRAIT_W + 30, H); ctx.clip();
+    const scale = H / portraitImg.naturalHeight;
+    const pw = portraitImg.naturalWidth * scale;
+    ctx.drawImage(portraitImg, (PORTRAIT_W - pw) / 2, 0, pw, H);
+    ctx.restore();
+    const fade = ctx.createLinearGradient(PORTRAIT_W - 90, 0, PORTRAIT_W + 30, 0);
+    fade.addColorStop(0, `rgba(${bgRgb},0)`);
+    fade.addColorStop(1, bg);
+    ctx.fillStyle = fade;
+    ctx.fillRect(0, 0, PORTRAIT_W + 30, H);
+  } else {
+    ctx.fillStyle = card;
+    ctx.fillRect(0, 0, PORTRAIT_W, H);
+    ctx.fillStyle = `rgba(${goldRgb},0.2)`;
+    ctx.fillRect(PORTRAIT_W - 1, 0, 1, H);
+    if (avatarImg) {
+      const SZ = 96, ax = (PORTRAIT_W - SZ) / 2, ay = (H - SZ) / 2;
+      ctx.save();
+      ctx.beginPath(); ctxRoundRect(ctx, ax, ay, SZ, SZ, SZ / 2); ctx.clip();
+      ctx.drawImage(avatarImg, ax, ay, SZ, SZ);
+      ctx.restore();
+      ctx.strokeStyle = gold; ctx.lineWidth = 2;
+      ctx.beginPath(); ctxRoundRect(ctx, ax, ay, SZ, SZ, SZ / 2); ctx.stroke();
+    } else {
+      ctx.font = '56px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = `rgba(${goldRgb},0.2)`;
+      ctx.fillText('⚔', PORTRAIT_W / 2, H / 2);
+    }
+  }
+
+  ctx.textBaseline = 'alphabetic';
+
+  // ── Series header ────────────────────────────────────────
+  ctx.textAlign = 'right';
+  ctx.font = '400 10px Inter, sans-serif'; ctx.fillStyle = muted;
+  ctx.fillText('FINAL FANTASY XIV', CRX, 28);
+  ctx.font = '600 13px Cinzel, serif'; ctx.fillStyle = gold;
+  ctx.fillText(CURRENT_SERIES.name || `Series ${CURRENT_SERIES.num}`, CRX, 44);
+
+  // ── Character name + meta ────────────────────────────────
+  ctx.textAlign = 'left';
+  ctx.font = '700 28px Cinzel, serif'; ctx.fillStyle = gold;
+  ctx.fillText(S.charName || 'Your Progress', CX, 68);
+  const metaParts = [S.charWorld, S.charClass ? S.charClass + (S.charClassLevel ? ' Lv.' + S.charClassLevel : '') : null].filter(Boolean);
+  if (metaParts.length) {
+    ctx.font = '400 13px Inter, sans-serif'; ctx.fillStyle = muted;
+    ctx.fillText(metaParts.join('  ·  '), CX, 86);
+  }
+
+  hLine(100);
+
+  // ── Season progress bar ──────────────────────────────────
+  const pct = Math.min(1, st.seasonPct / 100);
+  ctx.font = '600 14px Inter, sans-serif'; ctx.fillStyle = text; ctx.textAlign = 'left';
+  ctx.fillText(`Level ${S.level}`, CX, 120);
+  ctx.font = '400 12px Inter, sans-serif'; ctx.fillStyle = muted;
+  ctx.fillText(`  →  Goal: Lv. ${S.goal}`, CX + 58, 120);
+  ctx.font = '700 13px Inter, sans-serif'; ctx.fillStyle = pct >= 1 ? grn : gold;
+  ctx.textAlign = 'right';
+  ctx.fillText(`${st.seasonPct.toFixed(1)}%`, CRX, 120);
+  ctx.textAlign = 'left';
+  const PBY = 130, PBH = 12;
+  ctx.beginPath(); ctxRoundRect(ctx, CX, PBY, PBW, PBH, 6);
+  ctx.fillStyle = 'rgba(255,255,255,0.08)'; ctx.fill();
+  if (pct > 0) {
+    ctx.beginPath(); ctxRoundRect(ctx, CX, PBY, Math.max(PBH, PBW * pct), PBH, 6);
+    ctx.fillStyle = pct >= 1 ? grn : gold; ctx.fill();
+  }
+
+  hLine(156);
+
+  // ── Stats row 1: pace & progress ────────────────────────
+  drawStatCols([
+    { lbl: 'Total XP',    val: fmt(st.totalXP) },
+    { lbl: 'XP to Goal',  val: st.xpRemain > 0 ? fmt(st.xpRemain) : '✓ Done!' },
+    { lbl: 'XP / Day',    val: st.xpPerDay ? fmt(st.xpPerDay) : '—' },
+    { lbl: 'Est. Finish', val: st.finishDate ? fmtD(st.finishDate) : (st.xpRemain === 0 ? '✓ Done!' : '—') },
+  ], 174, 193);
+
+  hLine(208);
+
+  // ── Status + pace summary ────────────────────────────────
+  if (st.makeIt) {
+    const statusMap = { done: ['🎉 Goal reached!', grn], yes: ['✓ On track!', grn], no: ['⚠ Behind pace', red] };
+    const [statusText, statusColor] = statusMap[st.makeIt] || ['—', muted];
+    ctx.font = '600 14px Inter, sans-serif'; ctx.fillStyle = statusColor; ctx.textAlign = 'left';
+    ctx.fillText(statusText, CX, 228);
+  }
+  if (st.xpPerDay && st.daysLeft > 0) {
+    ctx.font = '400 12px Inter, sans-serif'; ctx.fillStyle = muted; ctx.textAlign = 'right';
+    ctx.fillText(`${fmt(st.xpPerDay)} XP/day  ·  ${st.daysLeft} days left in series`, CRX, 228);
+  }
+
+  hLine(244);
+
+  // ── Stats row 2: requirements & timeline ─────────────────
+  drawStatCols([
+    { lbl: 'Min XP/Day Needed',   val: st.minXpPerDay ? fmt(st.minXpPerDay) : (st.xpRemain === 0 ? '✓ Done' : '—') },
+    { lbl: 'Days to Goal',        val: st.daysToGoal !== null ? st.daysToGoal + (st.daysToGoal === 1 ? ' day' : ' days') : (st.xpRemain === 0 ? '✓' : '—') },
+    { lbl: 'Days Elapsed',        val: st.elapsed + (st.elapsed === 1 ? ' day' : ' days') },
+    { lbl: 'Days Left in Series', val: st.daysLeft + (st.daysLeft === 1 ? ' day' : ' days') },
+  ], 264, 282);
+
+  hLine(298);
+
+  // ── Series timeline bar ──────────────────────────────────
+  ctx.font = '400 10px Inter, sans-serif'; ctx.fillStyle = muted; ctx.textAlign = 'left';
+  ctx.fillText('SERIES TIMELINE', CX, 316);
+  if (CURRENT_SERIES.patch) {
+    ctx.textAlign = 'right';
+    ctx.fillText(CURRENT_SERIES.patch, CRX, 316);
+  }
+  const TBY = 324, TBH = 10, seriesPct = Math.min(1, st.seriesPct / 100);
+  ctx.beginPath(); ctxRoundRect(ctx, CX, TBY, PBW, TBH, 5);
+  ctx.fillStyle = 'rgba(255,255,255,0.08)'; ctx.fill();
+  if (seriesPct > 0) {
+    ctx.beginPath(); ctxRoundRect(ctx, CX, TBY, Math.max(TBH, PBW * seriesPct), TBH, 5);
+    ctx.fillStyle = purple; ctx.fill();
+  }
+  ctx.font = '400 10px Inter, sans-serif';
+  ctx.fillStyle = muted; ctx.textAlign = 'left';
+  ctx.fillText(fmtDS(CURRENT_SERIES.patchStart), CX, 348);
+  ctx.fillStyle = purple; ctx.textAlign = 'center';
+  ctx.fillText(`${st.seriesPct.toFixed(1)}% of series elapsed`, CX + PBW / 2, 348);
+  ctx.fillStyle = muted; ctx.textAlign = 'right';
+  ctx.fillText(fmtDS(CURRENT_SERIES.patchEnd), CRX, 348);
+
+  hLine(362);
+
+  // ── Milestone rewards strip ──────────────────────────────
+  const msEarned = milestones.filter(r => r.level <= S.level).length;
+
+  ctx.font = '400 10px Inter, sans-serif'; ctx.fillStyle = muted; ctx.textAlign = 'left';
+  ctx.fillText('MILESTONE REWARDS', CX, 378);
+  // earned counter (right-aligned)
+  ctx.textAlign = 'right';
+  ctx.fillStyle = msEarned === milestones.length ? grn : gold;
+  ctx.fillText(`${msEarned} / ${milestones.length} earned`, CRX, 378);
+
+  if (milestones.length === 0) {
+    ctx.font = '600 13px Inter, sans-serif'; ctx.fillStyle = muted; ctx.textAlign = 'left';
+    ctx.fillText('No milestone data', CX, 428);
+  } else {
+    const slotW = PBW / milestones.length;
+    milestones.forEach((r, i) => {
+      const earned = r.level <= S.level;
+      const rx = CX + i * slotW + slotW / 2;
+
+      ctx.globalAlpha = earned ? 1 : 0.35;
+
+      // Level pill
+      ctx.font = '700 11px Inter, sans-serif';
+      const lvTxt = `Lv.${r.level}`;
+      const lvW = ctx.measureText(lvTxt).width + 14;
+      ctx.fillStyle = earned ? `rgba(${goldRgb},0.25)` : `rgba(${goldRgb},0.1)`;
+      ctx.beginPath(); ctxRoundRect(ctx, rx - lvW / 2, 384, lvW, 17, 4); ctx.fill();
+      ctx.strokeStyle = earned ? `rgba(${goldRgb},0.6)` : `rgba(${goldRgb},0.25)`; ctx.lineWidth = 1;
+      ctx.beginPath(); ctxRoundRect(ctx, rx - lvW / 2, 384, lvW, 17, 4); ctx.stroke();
+      ctx.fillStyle = earned ? gold : muted; ctx.textAlign = 'center';
+      ctx.fillText(lvTxt, rx, 397);
+
+      // Icon image (or emoji fallback)
+      const ISZ = 30;
+      if (msImgs[i]) {
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(msImgs[i], rx - ISZ / 2, 406, ISZ, ISZ);
+        ctx.imageSmoothingEnabled = true;
+      } else {
+        ctx.font = '22px sans-serif';
+        ctx.fillText(r.icon, rx, 427);
+      }
+
+      ctx.globalAlpha = 1;
+
+      // Checkmark badge for earned
+      if (earned) {
+        const bR = 9;
+        ctx.fillStyle = grn;
+        ctx.beginPath(); ctx.arc(rx + 14, 408, bR, 0, Math.PI * 2); ctx.fill();
+        ctx.font = '700 11px Inter, sans-serif'; ctx.fillStyle = bg; ctx.textAlign = 'center';
+        ctx.fillText('✓', rx + 14, 412);
+      }
+
+      // Reward name
+      const shortName = r.name.length > 16 ? r.name.slice(0, 14) + '…' : r.name;
+      ctx.globalAlpha = earned ? 0.85 : 0.3;
+      ctx.font = '400 9.5px Inter, sans-serif'; ctx.fillStyle = earned ? text : muted;
+      ctx.textAlign = 'center';
+      ctx.fillText(shortName, rx, 446);
+      ctx.globalAlpha = 1;
+    });
+  }
+
+  // ── Branding bar ─────────────────────────────────────────
+  ctx.fillStyle = `rgba(${goldRgb},0.6)`;
+  ctx.fillRect(0, H - 3, W, 3);
+  ctx.globalAlpha = 0.6;
+  ctx.font = '400 10px Inter, sans-serif'; ctx.fillStyle = muted; ctx.textAlign = 'right';
+  ctx.fillText(location.hostname || 'ffxiv-series-tracker', CRX, H - 10);
+  ctx.globalAlpha = 1;
+
+  // ── Show preview modal ───────────────────────────────────
+  canvas.toBlob(blob => {
+    _cardBlob = blob;
+    const previewUrl = URL.createObjectURL(blob);
+    const img = document.getElementById('card-preview-img');
+    // Revoke previous blob URL if any
+    if (img.src.startsWith('blob:')) URL.revokeObjectURL(img.src);
+    img.src = previewUrl;
+    document.getElementById('card-preview-overlay').style.display = 'flex';
+    if (btn) { btn.disabled = false; btn.textContent = '🎴 Create Character Card'; }
+  }, 'image/png');
+}
+
+function closeCardPreview(e) {
+  if (e && e.target.id !== 'card-preview-overlay') return;
+  const overlay = document.getElementById('card-preview-overlay');
+  const img = document.getElementById('card-preview-img');
+  if (img && img.src.startsWith('blob:')) URL.revokeObjectURL(img.src);
+  if (img) img.src = '';
+  overlay.style.display = 'none';
+  _cardBlob = null;
+}
+
+function downloadCardImage() {
+  if (!_cardBlob) return;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(_cardBlob);
+  const safeName = (S.charName || 'progress').replace(/\s+/g, '-').replace(/[^a-zA-Z0-9\-]/g, '');
+  a.download = `ffxiv-series-${safeName}.png`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+
+async function copyCardImage() {
+  if (!_cardBlob) return;
+  try {
+    await navigator.clipboard.write([new ClipboardItem({ 'image/png': _cardBlob })]);
+    showToast('Card image copied to clipboard! 📋');
+  } catch {
+    showToast('Clipboard copy not supported here — use Download or right-click → Save.');
+  }
 }
 
 function resetAll() {
@@ -791,6 +1176,7 @@ function resetAll() {
   if (wCustom) wCustom.value = '';
   const lookupResult = document.getElementById('char-lookup-result');
   if (lookupResult) lookupResult.innerHTML = '';
+  _viewingShare = false;
   persist(); render(); showToast('Progress reset.');
 }
 
@@ -1480,7 +1866,15 @@ window.addEventListener('load', async () => {
   try { localStorage.removeItem('ffxiv-icon-cache'); } catch {}
   buildWorldSelect();
 
-  const saved = loadPersisted();
+  // Detect whether we're opening a share link while local data already exists
+  const _initHash = location.hash.slice(1);
+  const _hashState = _initHash ? decodeS(_initHash) : null;
+  let _localRaw = null;
+  try { _localRaw = localStorage.getItem('ffxiv-tracker'); } catch {}
+  const _localState = _localRaw ? decodeS(_localRaw) : null;
+  _viewingShare = !!(_hashState && _localState);
+  const saved = _hashState || _localState;
+
   if (saved) {
     S = saved;
     document.getElementById('inp-level').value     = S.level;
@@ -1500,6 +1894,15 @@ window.addEventListener('load', async () => {
     // If portrait or avatar are missing (e.g. share link on a new device), fetch them silently
     if (S.charLodestoneId && (!S.charPortrait || !S.charAvatar)) {
       fetchPortraitByLodestoneId(S.charLodestoneId);
+    }
+    // Show banner when viewing someone else's share link
+    if (_viewingShare) {
+      const banner = document.getElementById('share-view-banner');
+      if (banner) {
+        const nameEl = document.getElementById('share-view-charname');
+        if (nameEl) nameEl.textContent = S.charName ? ` — ${S.charName}'s progress` : '';
+        banner.style.display = 'flex';
+      }
     }
   }
 
@@ -1526,4 +1929,11 @@ window.addEventListener('load', async () => {
       charHeader.closest('.char-card-section').classList.toggle('open');
     });
   }
+
+  // Escape closes card preview
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && document.getElementById('card-preview-overlay')?.style.display !== 'none') {
+      closeCardPreview();
+    }
+  });
 });

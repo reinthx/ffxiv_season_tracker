@@ -38,6 +38,16 @@
   <!-- ══ TRACKER TAB ═════════════════════════════════════════ -->
   <div id="tab-tracker-content">
 
+  <!-- ══ SHARE VIEW BANNER ═══════════════════════════════ -->
+  <div id="share-view-banner" style="display:none; background:rgba(167,139,250,0.1); border:1px solid rgba(167,139,250,0.35); border-radius:8px; padding:10px 16px; font-size:13px; color:var(--text); margin-bottom:14px; align-items:center; gap:12px; flex-wrap:wrap;">
+    <span style="font-size:15px;">👁</span>
+    <div style="flex:1; min-width:0;">
+      <strong>Viewing shared progress</strong><span id="share-view-charname" style="color:var(--text-muted);"></span>
+      <span style="color:var(--text-muted); font-size:12px;"> — your own data is still saved.</span>
+    </div>
+    <button class="btn btn-outline" style="font-size:12px; padding:5px 12px; border-color:rgba(167,139,250,0.5); white-space:nowrap;" onclick="loadOwnProgress()">← Back to your progress</button>
+  </div>
+
   <!-- ══ SERIES TIMELINE BANNER ══════════════════════════ -->
   <div class="series-banner">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
@@ -144,6 +154,7 @@
       <span style="font-size:11px; color:var(--text-muted); margin-left:2px;">
         Press <kbd style="background:var(--input-bg); border:1px solid var(--border); border-radius:3px; padding:1px 5px; font-size:10px; color:var(--text);">Enter</kbd> in any field to update
       </span>
+      <button id="btn-char-card" class="btn btn-outline" style="margin-left:auto; font-size:12px; padding:6px 14px; white-space:nowrap;" onclick="generateCharCard()">🎴 Create Character Card</button>
     </div>
     </div><!-- /z-index wrapper -->
   </div>
@@ -298,6 +309,21 @@
 
 <div id="toast"></div>
 <canvas id="confetti-canvas"></canvas>
+
+<!-- ══ CHARACTER CARD PREVIEW ══════════════════════════ -->
+<div id="card-preview-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:2000; align-items:center; justify-content:center; padding:20px;" onclick="closeCardPreview(event)">
+  <div style="background:var(--card); border:1px solid var(--border-gold); border-radius:12px; padding:20px; max-width:960px; width:100%; box-shadow:0 24px 64px rgba(0,0,0,0.6);">
+    <div style="overflow-x:auto; margin-bottom:14px; border-radius:6px; line-height:0;">
+      <img id="card-preview-img" src="" alt="Character card" style="width:100%; max-width:900px; border-radius:6px; display:block;">
+    </div>
+    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+      <span style="font-size:11px; color:var(--text-muted); flex:1;">Right-click the image to save, or use the buttons →</span>
+      <button class="btn btn-outline" style="font-size:12px; padding:6px 14px;" onclick="closeCardPreview()">✕ Close</button>
+      <button id="card-copy-btn" class="btn btn-outline" style="font-size:12px; padding:6px 14px;" onclick="copyCardImage()">📋 Copy Image</button>
+      <button id="card-download-btn" class="btn btn-gold" style="font-size:12px; padding:6px 14px;" onclick="downloadCardImage()">⬇ Download PNG</button>
+    </div>
+  </div>
+</div>
 
 <script src="js/app.js" defer></script>
 </body>
