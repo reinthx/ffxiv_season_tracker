@@ -384,12 +384,35 @@ select option, select optgroup { background: var(--input-bg); color: var(--input
 .grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .grid-4-col { display: grid; grid-template-columns: repeat(4,1fr); gap: 11px; }
 
+/* ── Milestone grid (data tab) ───────────────── */
+.ms-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+
 @media (max-width: 600px) {
   .grid-2-col { grid-template-columns: 1fr !important; gap: 10px !important; }
   .grid-4-col { grid-template-columns: repeat(2,1fr) !important; }
   .catchup-option { flex-wrap: wrap; gap: 4px; }
   .catchup-xp { margin-left: 0 !important; }
   .act-label { width: auto !important; flex: 1 !important; min-width: 0 !important; }
+
+  /* Series data tab mobile */
+  .data-series-card { padding: 12px; }
+  .ms-grid { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(74px, 1fr)); gap: 6px; }
+  .data-milestone { min-width: unset !important; max-width: unset !important; flex: unset !important; }
+  .data-ps-row { flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
+  .data-card-dates { display: block; margin-top: 4px; }
+
+  /* Header: push content below absolutely-positioned theme swatches */
+  header { padding-top: 44px; }
+
+  /* Card preview modal: buttons in a row, mobile hint text */
+  .card-hint-text { display: none; }
+  .card-preview-actions::after {
+    content: "Tap and hold to save or use the buttons \2191";
+    font-size: 11px;
+    color: var(--text-muted);
+    width: 100%;
+    order: 10;
+  }
 }
 
 /* ── Progress card portrait background ──────────────────── */

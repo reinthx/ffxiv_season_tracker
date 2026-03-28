@@ -33,11 +33,6 @@
     <button class="tab-btn" id="tab-btn-data" onclick="switchTab('data')">📜 Series Data</button>
   </nav>
 
-  <div id="data-load-error" style="display:none; background:rgba(248,113,113,0.12); border:1px solid rgba(248,113,113,0.4); border-radius:8px; padding:12px 16px; font-size:13px; color:var(--red); margin-bottom:18px;"></div>
-
-  <!-- ══ TRACKER TAB ═════════════════════════════════════════ -->
-  <div id="tab-tracker-content">
-
   <!-- ══ SHARE VIEW BANNER ═══════════════════════════════ -->
   <div id="share-view-banner" style="display:none; background:rgba(167,139,250,0.1); border:1px solid rgba(167,139,250,0.35); border-radius:8px; padding:10px 16px; font-size:13px; color:var(--text); margin-bottom:14px; align-items:center; gap:12px; flex-wrap:wrap;">
     <span style="font-size:15px;">👁</span>
@@ -47,6 +42,11 @@
     </div>
     <button class="btn btn-outline" style="font-size:12px; padding:5px 12px; border-color:rgba(167,139,250,0.5); white-space:nowrap;" onclick="loadOwnProgress()">← Back to your progress</button>
   </div>
+
+  <div id="data-load-error" style="display:none; background:rgba(248,113,113,0.12); border:1px solid rgba(248,113,113,0.4); border-radius:8px; padding:12px 16px; font-size:13px; color:var(--red); margin-bottom:18px;"></div>
+
+  <!-- ══ TRACKER TAB ═════════════════════════════════════════ -->
+  <div id="tab-tracker-content">
 
   <!-- ══ SERIES TIMELINE BANNER ══════════════════════════ -->
   <div class="series-banner">
@@ -316,8 +316,8 @@
     <div style="overflow-x:auto; margin-bottom:14px; border-radius:6px; line-height:0;">
       <img id="card-preview-img" src="" alt="Character card" style="width:100%; max-width:900px; border-radius:6px; display:block;">
     </div>
-    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-      <span style="font-size:11px; color:var(--text-muted); flex:1;">Right-click the image to save, or use the buttons →</span>
+    <div class="card-preview-actions" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+      <span class="card-hint-text" style="font-size:11px; color:var(--text-muted); flex:1;">Right-click the image to save, or use the buttons →</span>
       <button class="btn btn-outline" style="font-size:12px; padding:6px 14px;" onclick="closeCardPreview()">✕ Close</button>
       <button id="card-copy-btn" class="btn btn-outline" style="font-size:12px; padding:6px 14px;" onclick="copyCardImage()">📋 Copy Image</button>
       <button id="card-download-btn" class="btn btn-gold" style="font-size:12px; padding:6px 14px;" onclick="downloadCardImage()">⬇ Download PNG</button>

@@ -66,16 +66,18 @@ function xpPerLevel(level) { return xpToStartLevel(level + 1) - xpToStartLevel(l
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 let S = { level:1, xp:0, goal:25, userStart:null, charName:null, charWorld:null, charLodestoneId:null, charAvatar:null, charPortrait:null, charClass:null, charClassLevel:null };
-let _viewingShare = false; // true when displaying someone else's share link
-let _cardBlob = null;     // holds the last generated character card blob
+let _viewingShare = false;    // true when displaying someone else's share link
+let _cardBlob = null;         // holds the last generated character card blob
+let _sharedSeriesData = null; // decoded past-series from a share link [{seriesNum,levelReached,msCount}]
 
-function encodeS(s) {
+function encodeS(s, includeSd = false) {
   const p = new URLSearchParams();
   p.set('l', s.level); p.set('x', s.xp); p.set('g', s.goal);
   if (s.userStart)       p.set('us', s.userStart);
   if (s.charName)        p.set('cn', s.charName);
   if (s.charWorld)       p.set('cw', s.charWorld);
   if (s.charLodestoneId) p.set('cl', s.charLodestoneId);
+  if (includeSd) { const sd = buildSeriesDataString(); if (sd) p.set('sd', sd); }
   return p.toString();
 }
 function decodeS(raw) {
@@ -95,6 +97,37 @@ function decodeS(raw) {
     };
   } catch { return null; }
 }
+// Compact series-history encoder: positional, 2 base-36 chars per series.
+// Each 2-char chunk = (levelReached-1)*10 + msCount + 1 (0="00"=not played).
+// Series position implied (chunk 0 = Series 1, chunk 1 = Series 2, …).
+// 20 series = max 40 chars; gaps use "00".
+function buildSeriesDataString() {
+  const ps = loadPS();
+  if (!ps.length) return '';
+  const maxNum = Math.max(...ps.map(e => e.seriesNum));
+  const chunks = [];
+  for (let n = 1; n <= maxNum; n++) {
+    const e = ps.find(p => p.seriesNum === n);
+    if (!e || e.levelReached <= 0) { chunks.push('00'); continue; }
+    const code = (Math.min(50, e.levelReached) - 1) * 10 + Math.min(9, (e.itemsObtained || []).length) + 1;
+    chunks.push(code.toString(36).padStart(2, '0'));
+  }
+  // strip trailing "not played" chunks
+  while (chunks.length && chunks[chunks.length - 1] === '00') chunks.pop();
+  return chunks.join('');
+}
+function decodeSeriesData(sd) {
+  if (!sd || sd.length % 2 !== 0) return [];
+  const result = [];
+  for (let i = 0; i < sd.length; i += 2) {
+    const code = parseInt(sd.slice(i, i + 2), 36);
+    if (!code) continue; // 0 = not played
+    const val = code - 1;
+    result.push({ seriesNum: i / 2 + 1, levelReached: Math.floor(val / 10) + 1, msCount: val % 10 });
+  }
+  return result;
+}
+
 function persist() {
   history.replaceState(null, '', '#' + encodeS(S));
   if (!_viewingShare) {
@@ -777,7 +810,7 @@ function applyProgress() {
 }
 
 function shareURL() {
-  const url = location.origin + location.pathname + '#' + encodeS(S);
+  const url = location.origin + location.pathname + '#' + encodeS(S, true) + '&sh=1';
   navigator.clipboard.writeText(url).then(() => showToast('Share link copied! 📋')).catch(() => prompt('Copy this link:', url));
 }
 
@@ -787,6 +820,7 @@ function loadOwnProgress() {
   const ownState = ownRaw ? decodeS(ownRaw) : null;
   if (!ownState) { showToast('No saved progress found.'); return; }
   _viewingShare = false;
+  _sharedSeriesData = null;
   S = ownState;
   document.getElementById('inp-level').value     = S.level;
   document.getElementById('inp-xp').value        = S.xp;
@@ -1664,7 +1698,20 @@ function renderDataTab() {
   const now = Date.now();
   const curMilestones = REWARDS.filter(r => r.milestone).map(r => ({lv:r.level,type:r.type,icon:r.icon,name:r.name,imgUrl:r.imgUrl||null,demoUrl:r.demoUrl||null,desc:r.desc||''}));
   const curEntry = { num:CURRENT_SERIES.num, name:CURRENT_SERIES.name, patch:CURRENT_SERIES.patch, start:CURRENT_SERIES.patchStart, end:CURRENT_SERIES.patchEnd, rewards:null, milestones:curMilestones };
-  el.innerHTML = [renderDataCard(curEntry, true, now), ...OLD_SERIES.map(s => renderDataCard(s, false, now))].join('');
+  // Build a psOverrideMap from shared series data so the data tab reflects the shared user's history
+  let psOverrideMap = null;
+  if (_viewingShare && _sharedSeriesData && _sharedSeriesData.length) {
+    psOverrideMap = {};
+    _sharedSeriesData.forEach(entry => {
+      const old = OLD_SERIES.find(s => s.num === entry.seriesNum);
+      const msList = old?.milestones || (old?.rewards || []).filter(r => r.milestone).map(r => ({ lv: r.level }));
+      // Assume lowest msCount milestones were collected (best approximation from compact format)
+      const itemsObtained = msList.slice(0, entry.msCount).map(m => m.lv);
+      psOverrideMap[entry.seriesNum] = { seriesNum: entry.seriesNum, levelReached: entry.levelReached, goalLevel: 25, itemsObtained, _isShared: true };
+    });
+  }
+
+  el.innerHTML = [renderDataCard(curEntry, true, now, psOverrideMap), ...OLD_SERIES.map(s => renderDataCard(s, false, now, psOverrideMap))].join('');
 
   // Completion stats + streak
   const ps = loadPS();
@@ -1700,7 +1747,7 @@ function openDataModal(cacheIdx) {
   openItemModal({ name:m.name, type:m.type, icon:m.icon, imgUrl:m.imgUrl, demoUrl:m.demoUrl, desc:m.desc||'', titleText:m._seriesLabel, xpHtml:null });
 }
 
-function renderDataCard(s, isCurrent, now) {
+function renderDataCard(s, isCurrent, now, psOverrideMap) {
   const start    = s.start || s.patchStart;
   const end      = s.end   || s.patchEnd;
   const startMs  = new Date(start + 'T12:00:00').getTime();
@@ -1722,7 +1769,7 @@ function renderDataCard(s, isCurrent, now) {
   // For past series, get obtained state upfront so cards can show collected overlay
   let psEntry = null, obtained = [];
   if (!isCurrent) {
-    psEntry = loadPS().find(p => p.seriesNum === s.num);
+    psEntry = psOverrideMap ? (psOverrideMap[s.num] || null) : loadPS().find(p => p.seriesNum === s.num);
     obtained = psEntry ? (psEntry.itemsObtained || []) : [];
   }
 
@@ -1744,12 +1791,17 @@ function renderDataCard(s, isCurrent, now) {
         ? `onclick="openDataModal(${idx})" style="cursor:pointer;" title="${safeName}"`
         : '';
     } else if (psEntry) {
-      // Recorded past season: click toggles collected
+      // Recorded past season: show collected state; only allow toggling if not a shared read-only entry
       const isCollected = obtained.includes(m.lv);
       collectedBadge = isCollected ? `<div class="ms-collected-badge">✓</div>` : '';
-      const titleText = isCollected ? `${safeName} — click to mark uncollected` : `${safeName} — click to mark collected`;
-      cardAttrs = `id="ms-card-${s.num}-${m.lv}" data-name="${safeName}" onclick="toggleItemObtained(${s.num},${m.lv})" style="cursor:pointer;" title="${titleText}"`;
-      if (isCollected) cardAttrs += ` class="data-milestone is-milestone is-collected"`;
+      if (psEntry._isShared) {
+        cardAttrs = `id="ms-card-${s.num}-${m.lv}" data-name="${safeName}" title="${safeName}"`;
+        if (isCollected) cardAttrs += ` class="data-milestone is-milestone is-collected"`;
+      } else {
+        const titleText = isCollected ? `${safeName} — click to mark uncollected` : `${safeName} — click to mark collected`;
+        cardAttrs = `id="ms-card-${s.num}-${m.lv}" data-name="${safeName}" onclick="toggleItemObtained(${s.num},${m.lv})" style="cursor:pointer;" title="${titleText}"`;
+        if (isCollected) cardAttrs += ` class="data-milestone is-milestone is-collected"`;
+      }
     } else {
       // Record Your Progress: click pre-selects milestone
       cardAttrs = `id="ms-card-${s.num}-${m.lv}" data-name="${safeName}" onclick="toggleRecMs(${s.num},${m.lv})" style="cursor:pointer;" title="${safeName} — click to mark collected"`;
@@ -1777,7 +1829,7 @@ function renderDataCard(s, isCurrent, now) {
 
   const rewardsHtml = milestones.length
     ? `<div style="font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Milestones</div>
-       <div style="display:flex;gap:8px;flex-wrap:wrap;">${mCardHtml}</div>`
+       <div class="ms-grid">${mCardHtml}</div>`
     : '';
 
   let personalHtml = '';
@@ -1787,23 +1839,25 @@ function renderDataCard(s, isCurrent, now) {
       const total     = milestones.length;
       const cleared   = psEntry.levelReached >= (psEntry.goalLevel || 25);
       const summText  = total ? `${collected}/${total} milestones collected` : 'no milestone data';
+      const editDeleteBtns = psEntry._isShared ? '' : `
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-ghost" onclick="editPastSeason(${s.num})" style="padding:3px 8px;font-size:11px;" title="Edit level reached">✏</button>
+              <button class="btn btn-ghost" onclick="deletePastSeason(${s.num})" style="padding:3px 8px;font-size:11px;" title="Remove entry">✕</button>
+            </div>`;
       personalHtml = `
         <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
-          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+          <div class="data-ps-row" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
             <span style="font-size:12px;">
               Reached <strong style="color:${cleared ? 'var(--green)' : 'var(--text)'};">Level ${psEntry.levelReached}</strong>
               ${cleared ? ' <span style="color:var(--green);font-size:11px;">✓ Cleared!</span>' : ''}
               &nbsp;·&nbsp;
               <span id="ps-summary-${s.num}" style="color:var(--text-muted);font-size:11px;">${summText}</span>
             </span>
-            <div style="display:flex;gap:6px;">
-              <button class="btn btn-ghost" onclick="editPastSeason(${s.num})" style="padding:3px 8px;font-size:11px;" title="Edit level reached">✏</button>
-              <button class="btn btn-ghost" onclick="deletePastSeason(${s.num})" style="padding:3px 8px;font-size:11px;" title="Remove entry">✕</button>
-            </div>
+            ${editDeleteBtns}
           </div>
-          ${milestones.length ? `<div style="font-size:10px;color:var(--text-muted);margin-top:8px;">Click a milestone above to toggle collected.</div>` : ''}
+          ${(!psEntry._isShared && milestones.length) ? `<div style="font-size:10px;color:var(--text-muted);margin-top:8px;">Click a milestone above to toggle collected.</div>` : ''}
         </div>`;
-    } else {
+    } else if (!psOverrideMap) {
       // Hidden checkboxes feed recordPastSeason(); cards are the visible toggle UI
       const hiddenCbs = milestones.map(m =>
         `<input type="checkbox" id="rec-ms-${s.num}-${m.lv}" style="display:none;">`
@@ -1833,7 +1887,7 @@ function renderDataCard(s, isCurrent, now) {
         <span style="color:var(--text-muted);font-size:0.78rem;">Patch ${s.patch||''}</span>
         ${statusBadge}
       </div>
-      <div style="font-size:0.78rem;color:var(--text-muted);">
+      <div class="data-card-dates" style="font-size:0.78rem;color:var(--text-muted);">
         ${fmtDS(start)} → ${fmtDS(end)}
         <span style="margin-left:8px;opacity:0.65;">${totalDays} days</span>
       </div>
@@ -1872,7 +1926,13 @@ window.addEventListener('load', async () => {
   let _localRaw = null;
   try { _localRaw = localStorage.getItem('ffxiv-tracker'); } catch {}
   const _localState = _localRaw ? decodeS(_localRaw) : null;
-  _viewingShare = !!(_hashState && _localState);
+  _viewingShare = !!(_hashState && _localState && new URLSearchParams(_initHash).has('sh'));
+  if (_viewingShare) {
+    try {
+      const sdParam = new URLSearchParams(_initHash).get('sd');
+      if (sdParam) _sharedSeriesData = decodeSeriesData(sdParam);
+    } catch {}
+  }
   const saved = _hashState || _localState;
 
   if (saved) {
