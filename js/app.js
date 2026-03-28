@@ -21,6 +21,23 @@ const TYPE_META = {
 
 const ACT_AVG = { cc:800, fl:1250, rw:1000, dailyBonus:1250 };
 
+// CORS proxy fallback list — tried in order until one succeeds
+const CORS_PROXIES = [
+  url => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+  url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+  url => `https://thingproxy.freeboard.io/fetch/${url}`,
+];
+async function fetchViaProxy(url) {
+  let lastErr;
+  for (const makeProxy of CORS_PROXIES) {
+    try {
+      const resp = await fetch(makeProxy(url));
+      if (resp.ok) return resp;
+    } catch (e) { lastErr = e; }
+  }
+  throw lastErr || new Error('All proxies failed');
+}
+
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 //  LEVEL MATH
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -78,6 +95,28 @@ function loadPersisted() {
     if (st) { const s = decodeS(st); if (s) return s; }
   } catch {}
   return null;
+}
+
+// Fetch portrait (and class) from Lodestone for a given ID, silently — used when loading a share link on a new device
+async function fetchPortraitByLodestoneId(lodestoneId) {
+  try {
+    const resp = await fetchViaProxy('https://na.finalfantasyxiv.com/lodestone/character/' + lodestoneId + '/');
+    if (!resp.ok) return;
+    const html = await resp.text();
+    const doc  = new DOMParser().parseFromString(html, 'text/html');
+    const portraitEl = doc.querySelector('.character__detail__image img')
+      || doc.querySelector('img[src*="img2.finalfantasyxiv.com"][src*="_gc"]')
+      || doc.querySelector('.character-block__portrait img')
+      || doc.querySelector('img[src*="/character/"]');
+    if (portraitEl) S.charPortrait = portraitEl.getAttribute('src') || null;
+    const soulMatch = html.match(/Soul of the ([A-Z][A-Za-z ]{2,28}?)(?=["<&\n])/);
+    if (soulMatch && !S.charClass) S.charClass = soulMatch[1].trim();
+    if (S.charPortrait || S.charClass) {
+      saveCharExt();
+      renderPortraitBg();
+      renderCharDisplay();
+    }
+  } catch { /* best-effort */ }
 }
 
 // Extended char data (portrait/class — not in URL, stored separately)
@@ -283,7 +322,7 @@ function renderRewards(st) {
 
 function renderCatchup(st) {
   const sec = document.getElementById('catchup-section');
-  if (st.makeIt !== 'no' || !st.minXpPerDay) { sec.style.display = 'none'; return; }
+  if (st.makeIt !== 'no' || !st.minXpPerDay || st.totalXP === 0) { sec.style.display = 'none'; return; }
   sec.style.display = 'block';
 
   const deficit = st.minXpPerDay - (st.xpPerDay || 0);
@@ -919,8 +958,7 @@ async function lookupCharacter(forceRefresh = false) {
 
   try {
     const searchUrl = `https://na.finalfantasyxiv.com/lodestone/character/?q=${encodeURIComponent(nameVal)}&worldname=${encodeURIComponent(worldVal)}`;
-    const proxyUrl  = `https://corsproxy.io/?url=${encodeURIComponent(searchUrl)}`;
-    const resp = await fetch(proxyUrl);
+    const resp = await fetchViaProxy(searchUrl);
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const html = await resp.text();
 
@@ -969,8 +1007,7 @@ async function lookupCharacter(forceRefresh = false) {
 
     // Fetch character page for full-body portrait + active class/level (best-effort)
     try {
-      const charProxy = `https://corsproxy.io/?url=${encodeURIComponent('https://na.finalfantasyxiv.com/lodestone/character/' + lodestoneId + '/')}`;
-      const charResp  = await fetch(charProxy);
+      const charResp = await fetchViaProxy('https://na.finalfantasyxiv.com/lodestone/character/' + lodestoneId + '/');
       if (charResp.ok) {
         const charHtml = await charResp.text();
         const charDoc  = parser.parseFromString(charHtml, 'text/html');
@@ -1064,6 +1101,9 @@ function applyLookupResult(name, server, lodestoneId, avatarUrl) {
   renderCharDisplay();
   renderPortraitBg();
   showToast(`Character set: ${name}`);
+  // Collapse the lookup section after successful use
+  const charSection = document.querySelector('.char-card-section');
+  if (charSection) charSection.classList.remove('open');
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1449,6 +1489,10 @@ window.addEventListener('load', async () => {
       S.charPortrait    = ext.portrait || null;
       S.charClass       = ext.cls || null;
       S.charClassLevel  = ext.clsLv || null;
+    }
+    // If we have a lodestone ID but no portrait (e.g. opened a share link on a new device), fetch it silently
+    if (S.charLodestoneId && !S.charPortrait) {
+      fetchPortraitByLodestoneId(S.charLodestoneId);
     }
   }
 
