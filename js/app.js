@@ -23,7 +23,6 @@ const ACT_AVG = { cc:800, fl:1250, rw:1000, dailyBonus:1250 };
 
 // CORS proxy fallback list — tried in order until one succeeds
 const CORS_PROXIES = [
-  url => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
   url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
   url => `https://thingproxy.freeboard.io/fetch/${url}`,
 ];
@@ -63,7 +62,6 @@ function encodeS(s) {
   if (s.charName)        p.set('cn', s.charName);
   if (s.charWorld)       p.set('cw', s.charWorld);
   if (s.charLodestoneId) p.set('cl', s.charLodestoneId);
-  if (s.charAvatar)      p.set('ca', s.charAvatar);
   return p.toString();
 }
 function decodeS(raw) {
@@ -109,9 +107,15 @@ async function fetchPortraitByLodestoneId(lodestoneId) {
       || doc.querySelector('.character-block__portrait img')
       || doc.querySelector('img[src*="/character/"]');
     if (portraitEl) S.charPortrait = portraitEl.getAttribute('src') || null;
+    if (!S.charAvatar) {
+      const avatarEl = doc.querySelector('.character__detail__face img')
+        || doc.querySelector('.js__c_face img')
+        || doc.querySelector('img[src*="img2.finalfantasyxiv.com"][src*="c_"][src*="_gc"]');
+      if (avatarEl) S.charAvatar = avatarEl.getAttribute('src') || null;
+    }
     const soulMatch = html.match(/Soul of the ([A-Z][A-Za-z ]{2,28}?)(?=["<&\n])/);
     if (soulMatch && !S.charClass) S.charClass = soulMatch[1].trim();
-    if (S.charPortrait || S.charClass) {
+    if (S.charPortrait || S.charAvatar || S.charClass) {
       saveCharExt();
       renderPortraitBg();
       renderCharDisplay();
@@ -121,7 +125,7 @@ async function fetchPortraitByLodestoneId(lodestoneId) {
 
 // Extended char data (portrait/class — not in URL, stored separately)
 function saveCharExt() {
-  try { localStorage.setItem('ffxiv-char-ext', JSON.stringify({ lodestoneId: S.charLodestoneId, portrait: S.charPortrait, cls: S.charClass, clsLv: S.charClassLevel })); } catch {}
+  try { localStorage.setItem('ffxiv-char-ext', JSON.stringify({ lodestoneId: S.charLodestoneId, portrait: S.charPortrait, avatar: S.charAvatar, cls: S.charClass, clsLv: S.charClassLevel })); } catch {}
 }
 function loadCharExt() {
   try { return JSON.parse(localStorage.getItem('ffxiv-char-ext') || 'null'); } catch { return null; }
@@ -1487,8 +1491,9 @@ window.addEventListener('load', async () => {
     const ext = loadCharExt();
     if (ext && ext.lodestoneId && ext.lodestoneId === S.charLodestoneId) {
       S.charPortrait    = ext.portrait || null;
-      S.charClass       = ext.cls || null;
-      S.charClassLevel  = ext.clsLv || null;
+      S.charAvatar      = ext.avatar   || S.charAvatar || null;
+      S.charClass       = ext.cls      || null;
+      S.charClassLevel  = ext.clsLv    || null;
     }
     // If we have a lodestone ID but no portrait (e.g. opened a share link on a new device), fetch it silently
     if (S.charLodestoneId && !S.charPortrait) {
