@@ -15,6 +15,9 @@
 
   <!-- ══ HEADER ══════════════════════════════════════════ -->
   <header style="text-align:center; margin-bottom:20px; position:relative;">
+    <div style="position:absolute; top:0; left:0;">
+      <div id="discord-auth-widget"></div>
+    </div>
     <div style="position:absolute; top:0; right:0; display:flex; align-items:center; gap:8px;">
       <span style="font-size:10px; color:var(--text-muted); letter-spacing:0.05em; text-transform:uppercase;">Theme</span>
       <button class="theme-swatch" data-theme="dusk"     style="background:linear-gradient(135deg,#080b10,#10141c); border-color:#c8a96e;" title="Dusk"         onclick="setTheme('dusk')"></button>
@@ -42,6 +45,10 @@
     </div>
     <button class="btn btn-outline" style="font-size:12px; padding:5px 12px; border-color:rgba(167,139,250,0.5); white-space:nowrap;" onclick="loadOwnProgress()">← Back to your progress</button>
   </div>
+
+  <!-- ══ CLOUD CHARACTER SWITCHER ════════════════════════ -->
+  <!-- Shown only when logged in with at least one cloud save -->
+  <div id="cloud-char-switcher" style="display:none; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:12px 14px; margin-bottom:14px;"></div>
 
   <div id="data-load-error" style="display:none; background:rgba(248,113,113,0.12); border:1px solid rgba(248,113,113,0.4); border-radius:8px; padding:12px 16px; font-size:13px; color:var(--red); margin-bottom:18px;"></div>
 

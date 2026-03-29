@@ -1,0 +1,48 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ffxiv-season-tracker",
+  "compatibility_date": "2025-09-27",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "worker/src/index.ts",
+  "observability": { "enabled": true },
+
+  // Static assets — served for any path not handled by the Worker
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  },
+
+  // D1 SQLite database — user accounts, character saves, moogle wishlists
+  // After creation, paste the database_id returned by: wrangler d1 create ffxiv-tracker-db
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "ffxiv-tracker-db",
+      "database_id": "19f10690-b59c-4580-8fa8-c4008eb95be4"
+    }
+  ],
+
+  // KV namespace — session tokens (auto-expiry via TTL)
+  // After creation, paste IDs returned by:
+  //   wrangler kv namespace create SESSIONS
+  //   wrangler kv namespace create SESSIONS --preview
+  "kv_namespaces": [
+    {
+      "binding": "SESSIONS",
+      "id": "f2134c4632b34154be4c475af89cb023",
+      "preview_id": "412067716881466c97d184fac6df986d"
+    }
+  ],
+
+  // Non-secret vars — safe to commit.
+  // DISCORD_CLIENT_SECRET is a secret: wrangler secret put DISCORD_CLIENT_SECRET
+  "vars": {
+    "DISCORD_CLIENT_ID": "1487655597162631248",
+    "DISCORD_REDIRECT_URI": "https://ffxiv.reinth.win/auth/callback"
+  },
+
+  "dev": {
+    "port": 8787
+  }
+}

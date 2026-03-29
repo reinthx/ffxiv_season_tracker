@@ -70,6 +70,11 @@ let _viewingShare = false;    // true when displaying someone else's share link
 let _cardBlob = null;         // holds the last generated character card blob
 let _sharedSeriesData = null; // decoded past-series from a share link [{seriesNum,levelReached,msCount}]
 
+// ── Cloud sync state (populated only when logged in via Discord) ──────
+let _cloudUser  = null;  // { id, discordId, username, avatar } | null
+let _cloudChars = [];    // array of server-side character saves
+let _activeCloudCharId = null; // lodestoneId of the currently loaded cloud char
+
 function encodeS(s, includeSd = false) {
   const p = new URLSearchParams();
   p.set('l', s.level); p.set('x', s.xp); p.set('g', s.goal);
@@ -846,6 +851,7 @@ function applyProgress() {
   _viewingShare = false;
   persist(); render(); showToast('Progress updated!');
   if (level >= goal && prevLevel < goal) fireConfetti();
+  saveToCloud();
 }
 
 function shareURL() {
@@ -1619,6 +1625,7 @@ function applyLookupResult(name, server, lodestoneId, avatarUrl) {
   renderCharDisplay();
   renderPortraitBg();
   showToast(`Character set: ${name}`);
+  saveToCloud();
   // If portrait or avatar are still missing, fetch them now (char page fetch may have failed during lookup)
   if (!S.charPortrait || !S.charAvatar) fetchPortraitByLodestoneId(lodestoneId);
   // Collapse the lookup section after successful use
@@ -2018,7 +2025,7 @@ window.addEventListener('load', async () => {
     }
   }
 
-  await loadData();
+  await Promise.all([loadData(), initCloudAuth()]);
   checkSeriesTransition();
   checkPatchEndExpiry();
   render();
@@ -2049,3 +2056,190 @@ window.addEventListener('load', async () => {
     }
   });
 });
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  CLOUD SYNC  (Discord login — fully optional)
+//
+//  Login is never required. localStorage always works as-is for guests.
+//  When logged in, saves are mirrored to Cloudflare D1 automatically,
+//  enabling cross-device access and the character switcher for alts.
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+async function initCloudAuth() {
+  // If running on plain GitHub Pages (no Worker), the fetch will either
+  // 404 or fail entirely. Silently skip in both cases.
+  try {
+    const resp = await fetch('/api/me', { credentials: 'same-origin' });
+    if (!resp.ok) { renderAuthUI(null); return; }
+    _cloudUser = await resp.json();
+    renderAuthUI(_cloudUser);
+    await syncCloudCharacters();
+    // If returning from a successful login redirect, clear the query param
+    if (location.search.includes('auth=success')) {
+      history.replaceState(null, '', location.pathname + location.hash);
+    }
+  } catch {
+    renderAuthUI(null); // offline or non-Worker deploy
+  }
+}
+
+async function syncCloudCharacters() {
+  try {
+    const resp = await fetch('/api/characters', { credentials: 'same-origin' });
+    if (!resp.ok) return;
+    _cloudChars = await resp.json();
+    renderCharSwitcher();
+  } catch {}
+}
+
+// Called after applyProgress() and applyLookupResult() — fire-and-forget.
+// localStorage remains the local source of truth; cloud is additive.
+async function saveToCloud() {
+  if (!_cloudUser || !S.charName) return;
+  const lodestoneId = S.charLodestoneId
+    || ('manual:' + (S.charName || '').toLowerCase().trim() + '|' + (S.charWorld || '').toLowerCase().trim());
+  try {
+    await fetch('/api/characters/' + encodeURIComponent(lodestoneId), {
+      method: 'PUT',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        characterName:  S.charName,
+        characterWorld: S.charWorld  || null,
+        portraitUrl:    S.charPortrait || null,
+        avatarUrl:      S.charAvatar   || null,
+        data:           encodeS(S, true),
+      }),
+    });
+    await syncCloudCharacters();
+  } catch {}
+}
+
+// Load a cloud character into the tracker (switches active character).
+async function loadCloudCharacter(lodestoneId) {
+  const char = _cloudChars.find(c => c.lodestoneId === lodestoneId);
+  if (!char) return;
+  const s = decodeS(char.data);
+  if (!s) return;
+  s.charPortrait = char.portraitUrl || null;
+  s.charAvatar   = char.avatarUrl   || null;
+  // Re-attach extended data from local cache if it matches
+  const ext = loadCharExt();
+  if (ext && ext.lodestoneId && ext.lodestoneId === s.charLodestoneId) {
+    s.charClass      = ext.cls    || null;
+    s.charClassLevel = ext.clsLv  || null;
+    s.charTitle      = ext.title  || null;
+    s.charFC         = ext.fc     || null;
+  }
+  S = s;
+  _activeCloudCharId = lodestoneId;
+  _viewingShare = false;
+  document.getElementById('inp-level').value      = S.level;
+  document.getElementById('inp-xp').value         = S.xp;
+  document.getElementById('inp-goal').value        = S.goal;
+  document.getElementById('inp-user-start').value = S.userStart || '';
+  document.getElementById('inp-char-name').value  = S.charName  || '';
+  syncWorldSelectFromState();
+  try { localStorage.setItem('ffxiv-tracker', encodeS(S)); } catch {}
+  saveCharExt();
+  render();
+  renderCharSwitcher();
+  showToast('Loaded: ' + (char.label || char.characterName));
+}
+
+async function deleteCloudCharacter(lodestoneId) {
+  const char  = _cloudChars.find(c => c.lodestoneId === lodestoneId);
+  const label = char ? (char.label || char.characterName) : lodestoneId;
+  if (!confirm(`Remove "${label}" from cloud saves?`)) return;
+  try {
+    await fetch('/api/characters/' + encodeURIComponent(lodestoneId), {
+      method: 'DELETE',
+      credentials: 'same-origin',
+    });
+    await syncCloudCharacters();
+    showToast(`Removed ${label} from cloud.`);
+  } catch {
+    showToast('Could not remove — check your connection.');
+  }
+}
+
+async function renameCloudCharacter(lodestoneId, currentLabel) {
+  const next = prompt('New label for this character:', currentLabel || '');
+  if (!next || !next.trim()) return;
+  try {
+    await fetch('/api/characters/' + encodeURIComponent(lodestoneId), {
+      method: 'PATCH',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ label: next.trim() }),
+    });
+    await syncCloudCharacters();
+  } catch {
+    showToast('Could not rename — check your connection.');
+  }
+}
+
+async function handleLogout() {
+  try { await fetch('/auth/logout', { method: 'POST', credentials: 'same-origin' }); } catch {}
+  _cloudUser         = null;
+  _cloudChars        = [];
+  _activeCloudCharId = null;
+  renderAuthUI(null);
+  renderCharSwitcher();
+  showToast('Logged out.');
+}
+
+function renderAuthUI(user) {
+  const el = document.getElementById('discord-auth-widget');
+  if (!el) return;
+  if (!user) {
+    el.innerHTML = `<a href="/auth/login" class="btn btn-outline" style="font-size:11px;padding:5px 12px;text-decoration:none;">Login with Discord</a>`;
+    return;
+  }
+  const avatarSrc = user.avatar
+    ? `https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.png?size=32`
+    : null;
+  const avatarTag = avatarSrc
+    ? `<img src="${avatarSrc}" style="width:20px;height:20px;border-radius:50%;vertical-align:middle;margin-right:5px;" onerror="this.style.display='none'">`
+    : '';
+  el.innerHTML = `
+    <span style="font-size:11px;color:var(--text-muted);vertical-align:middle;">${avatarTag}${user.username}</span>
+    <button class="btn btn-outline" style="font-size:11px;padding:4px 10px;margin-left:6px;" onclick="handleLogout()">Logout</button>`;
+}
+
+function renderCharSwitcher() {
+  const el = document.getElementById('cloud-char-switcher');
+  if (!el) return;
+  if (!_cloudUser || _cloudChars.length === 0) { el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <div class="section-title" style="font-size:0.72rem;border:none;margin:0;padding:0;">Cloud Characters</div>
+      <span style="font-size:10px;color:var(--text-muted);">Click to switch • saves across all devices</span>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      ${_cloudChars.map(c => {
+        const isActive = c.lodestoneId === _activeCloudCharId;
+        const label    = c.label || c.characterName;
+        const world    = c.characterWorld ? ` @ ${c.characterWorld}` : '';
+        const avatarTag = c.avatarUrl
+          ? `<img src="${c.avatarUrl}" style="width:28px;height:28px;border-radius:4px;flex-shrink:0;object-fit:cover;" onerror="this.style.display='none'">`
+          : `<span style="width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;background:var(--gold-dim);border-radius:4px;font-size:14px;">⚔</span>`;
+        return `<div
+          onclick="loadCloudCharacter('${c.lodestoneId}')"
+          style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;border:1px solid ${isActive ? 'var(--border-gold)' : 'var(--border)'};background:${isActive ? 'var(--gold-dim)' : 'transparent'};cursor:pointer;min-width:0;max-width:220px;">
+          ${avatarTag}
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${label}</div>
+            <div style="font-size:10px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${world}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0;">
+            <button class="btn btn-ghost" style="padding:1px 5px;font-size:10px;line-height:1.4;" title="Rename"
+              onclick="event.stopPropagation();renameCloudCharacter('${c.lodestoneId}','${(c.label||c.characterName).replace(/'/g,"\\'")}')">✎</button>
+            <button class="btn btn-ghost" style="padding:1px 5px;font-size:10px;line-height:1.4;" title="Remove from cloud"
+              onclick="event.stopPropagation();deleteCloudCharacter('${c.lodestoneId}')">✕</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
