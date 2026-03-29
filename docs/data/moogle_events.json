@@ -1,0 +1,148 @@
+{
+  "events": [
+    {
+      "key": "moogle-2026-spring",
+      "name": "Moogle Treasure Trove - The Hunt for Aphorism",
+      "tomeType": "Irregular Tomestone of Mythology",
+      "start": "2026-03-31",
+      "end": "2026-04-28",
+      "patch": "7.45",
+      "active": true,
+
+      "duties": [
+        { "id": "syrcus_tower",         "name": "Syrcus Tower",                    "tomes": 10, "avgMinutes": 20, "category": "alliance",    "casual": false },
+        { "id": "void_ark",             "name": "The Void Ark",                    "tomes": 10, "avgMinutes": 22, "category": "alliance",    "casual": false },
+        { "id": "snowcloak",            "name": "Snowcloak",                       "tomes": 8,  "avgMinutes": 18, "category": "dungeon",     "casual": false },
+        { "id": "lord_of_verminion",    "name": "Lord of Verminion",               "tomes": 8,  "avgMinutes": 15, "category": "gold_saucer", "casual": true  },
+        { "id": "cuff_a_cur",           "name": "Cuff-a-Cur",                      "tomes": 5,  "avgMinutes": 10, "category": "gold_saucer", "casual": true  },
+        { "id": "triple_triad_tourney", "name": "Triple Triad Tournament",         "tomes": 5,  "avgMinutes": 10, "category": "gold_saucer", "casual": true  }
+      ],
+
+      "shop": [
+        { "id": "earring_miner",      "name": "Miner's Earring",                        "cost": 100,   "category": "gear",        "unique": true,  "img": "/data/moogle/202604/earring_miner.png" },
+
+        { "id": "parasol_fatcat",     "name": "Fat Cat Parasol",                        "cost": 50,    "category": "other",       "unique": true,  "img": "/data/moogle/202604/parasol_fatcat.png" },
+        { "id": "mount_emeraldgwiber","name": "Emerald Gwiber Trumpet",                 "cost": 50,    "category": "mount",       "unique": true,  "img": "/data/common/mount_trumpet.png" },
+        { "id": "mount_ixion",        "name": "Ixion Clarion",                          "cost": 50,    "category": "mount",       "unique": true,  "img": "/data/common/mount_trumpet.png" },
+        { "id": "hairstyle_styled4h", "name": "Modern Aesthetics - Styled for Hire",    "cost": 50,    "category": "hairstyle",   "unique": true,  "img": "/data/common/modern_aesthetics.png" },
+        { "id": "emote_fearandloath", "name": "Ballroom Etiquette - Fear and Loathing", "cost": 50,    "category": "emote",       "unique": true,  "img": "/data/common/ballroom_etiquette.png" },
+        { "id": "orchestrion_botw",   "name": "Blood on the Wind Orchestrion Roll",     "cost": 50,    "category": "orchestrion", "unique": true,  "img": "/data/common/orchestrion_roll.png" },
+
+        { "id": "minion_ironfrog",    "name": "Ironfrog Ambler",                        "cost": 30,    "category": "minion",      "unique": true,  "img": "/data/moogle/202604/minion_ironfrog.png" },
+        { "id": "gear_coveralltop",   "name": "Craftsman's Coverall Top",               "cost": 30,    "category": "gear",        "unique": true,  "img": "/data/moogle/202604/gear_coveralltop.png" },
+        { "id": "gear_singlet",       "name": "Craftsman's Singlet",                    "cost": 30,    "category": "gear",        "unique": true,  "img": "/data/moogle/202604/gear_singlet.png" },
+        { "id": "gear_coverallbottom","name": "Craftsman's Coverall Bottoms",           "cost": 30,    "category": "gear",        "unique": true,  "img": "/data/moogle/202604/gear_coverallbottom.png" },
+        { "id": "mgp_platinum",       "name": "MGP Platinum Card",                      "cost": 30,    "category": "other",       "unique": false, "img": "/data/common/mgp_platinum.png" },
+        { "id": "mount_bombpalanquin","name": "Bomb Palanquin Horn",                    "cost": 30,    "category": "mount",       "unique": true,  "img": "/data/common/mount_trumpet.png" },
+        { "id": "mount_direwolf",     "name": "Direwolf Mount",                         "cost": 30,    "category": "mount",       "unique": true,  "img": "/data/common/mount_whistle.png" },
+        { "id": "mount_lunarkamuy",   "name": "Lunar Kamuy Fife",                       "cost": 30,    "category": "mount",       "unique": true,  "img": "/data/common/mount_whistle.png" },
+        { "id": "mount_euphkamuy",    "name": "Euphonious Kamuy Fife",                  "cost": 30,    "category": "mount",       "unique": true,  "img": "/data/common/mount_whistle.png" },
+
+        { "id": "misc_amaurot_spire", "name": "Amaurotine Spire Chandelier",            "cost": 20,    "category": "housing",     "unique": false, "img": "/data/moogle/202604/misc_amaurot_spire.png" },
+        { "id": "misc_crystal_array", "name": "Ornamental Crystal Array",               "cost": 20,    "category": "housing",     "unique": false, "img": "/data/moogle/202604/misc_crystal_array.png" },
+        { "id": "misc_sweet_skewers", "name": "Sweetfish Skewers",                      "cost": 20,    "category": "housing",     "unique": false, "img": "/data/moogle/202604/misc_sweet_skewers.png" },
+        { "id": "misc_rsd_wood_deck", "name": "Raised Wooden Deck",                     "cost": 20,    "category": "housing",     "unique": false, "img": "/data/moogle/202604/misc_rsd_wood_deck.png" },
+        { "id": "misc_mummers_shelf", "name": "Mummer's Shelf",                         "cost": 20,    "category": "housing",     "unique": false, "img": "/data/moogle/202604/misc_mummers_shelf.png" },   
+
+        { "id": "minion_ixal",        "name": "Wind-up Ixal",                           "cost": 15,    "category": "minion",      "unique": true,  "img": "/data/moogle/202604/minion_ixal.png" },
+        { "id": "minion_bucket",      "name": "Magic Bucket",                           "cost": 15,    "category": "minion",      "unique": false, "img": "/data/moogle/202604/minion_bucket.png" },
+        { "id": "gear_hrlmfending",   "name": "Heirloom Jacket of Fending",             "cost": 15,    "category": "gear",        "unique": true,  "img": "/data/moogle/202604/gear_hrlmfending.png" },
+        { "id": "gear_hrlmmaiming",   "name": "Heirloom Jacket of Maiming",             "cost": 15,    "category": "gear",        "unique": true,  "img": "/data/moogle/202604/gear_hrlmmaiming.png" },
+        { "id": "gear_hrlmstriking",  "name": "Heirloom Jacket of Striking",            "cost": 15,    "category": "gear",        "unique": true,  "img": "/data/moogle/202604/gear_hrlmstriking.png" },
+        { "id": "gear_hrlmscouting",  "name": "Heirloom Jacket of Scouting",            "cost": 15,    "category": "gear",        "unique": true,  "img": "/data/moogle/202604/gear_hrlmscouting.png" },
+        { "id": "gear_hrlmaiming",    "name": "Heirloom Jacket of Aiming",              "cost": 15,    "category": "gear",        "unique": true,  "img": "/data/moogle/202604/gear_hrlmaiming.png" },
+        { "id": "gear_hrlmcasting",   "name": "Heirloom Tunic of Casting",              "cost": 15,    "category": "gear",        "unique": true,  "img": "/data/moogle/202604/gear_hrlmcasting.png" },
+        { "id": "gear_hrlmhealing",   "name": "Heirloom Tunic of Healing",              "cost": 15,    "category": "gear",        "unique": true,  "img": "/data/moogle/202604/gear_hrlmhealing.png" },
+        { "id": "gear_pglthfending",  "name": "Paglth'an Jacket of Fending",            "cost": 15,    "category": "gear",        "unique": true,  "img": "/data/moogle/202604/gear_pglthfending.png" },
+        { "id": "gear_pglthmaiming",  "name": "Paglth'an Jacket of Maiming",            "cost": 15,    "category": "gear",        "unique": true,  "img": "/data/moogle/202604/gear_pglthmaiming.png" },
+        { "id": "gear_pglthstriking", "name": "Paglth'an Chestpiece of Striking",       "cost": 15,    "category": "gear",        "unique": true,  "img": "/data/moogle/202604/gear_pglthstriking.png" },
+        { "id": "gear_pglthscouting", "name": "Paglth'an Chestpiece of Scouting",       "cost": 15,    "category": "gear",        "unique": true,  "img": "/data/moogle/202604/gear_pglthscouting.png" },
+        { "id": "gear_pglthaiming",   "name": "Paglth'an Chestpiece of Aiming",         "cost": 15,    "category": "gear",        "unique": true,  "img": "/data/moogle/202604/gear_pglthaiming.png" },
+        { "id": "gear_pglthcasting",  "name": "Paglth'an Chestwrap of Casting",         "cost": 15,    "category": "gear",        "unique": true,  "img": "/data/moogle/202604/gear_pglthcasting.png" },
+        { "id": "gear_hrlmfending",   "name": "Paglth'an Chestwrap of Healing",         "cost": 15,    "category": "gear",        "unique": true,  "img": "/data/moogle/202604/gear_hrlmfending.png" },
+        { "id": "map_seeming",        "name": "Seemingly Special Timeworn Map",         "cost": 15,    "category": "map",         "unique": true,  "img": "/data/common/timeworn_map.png" },
+        { "id": "map_ostensibly",     "name": "Ostensibly Special Timeworn Map",        "cost": 15,    "category": "map",         "unique": true,  "img": "/data/common/timeworn_map.png" },
+        { "id": "map_potentially",    "name": "Potentially Special Timeworn Map",       "cost": 15,    "category": "map",         "unique": true,  "img": "/data/common/timeworn_map.png" },
+        { "id": "map_conceivably",    "name": "Conceivably Special Timeworn Map",       "cost": 15,    "category": "map",         "unique": true,  "img": "/data/common/timeworn_map.png" },
+
+        { "id": "rmap_mlnrmap",       "name": "Middle La Noscea Riding Map",            "cost": 10,    "category": "other",       "unique": true,  "img": "/data/common/scroll.png" },
+        { "id": "rmap_llnrmap",       "name": "Lower La Noscea Riding Map",             "cost": 10,    "category": "other",       "unique": true,  "img": "/data/common/scroll.png" },
+        { "id": "rmap_elnrmap",       "name": "Eastern La Noscea Riding Map",           "cost": 10,    "category": "other",       "unique": true,  "img": "/data/common/scroll.png" },
+        { "id": "rmap_wlnrmap",       "name": "Western La Noscea Riding Map",           "cost": 10,    "category": "other",       "unique": true,  "img": "/data/common/scroll.png" },
+        { "id": "rmap_ulnrmap",       "name": "Upper La Noscea Riding Map",             "cost": 10,    "category": "other",       "unique": true,  "img": "/data/common/scroll.png" },
+        { "id": "rmap_olnrmap",       "name": "Outer La Noscea Riding Map",             "cost": 10,    "category": "other",       "unique": true,  "img": "/data/common/scroll.png" },
+        { "id": "triad_namazu",       "name": "Namazu Card",                            "cost": 10,    "category": "triad",       "unique": true,  "img": "/data/common/tripletriad1.png" },
+        { "id": "triad_kojin",        "name": "Kojin Card",                             "cost": 10,    "category": "triad",       "unique": false, "img": "/data/common/tripletriad2.png" },
+
+        { "id": "triad_mistdragon",   "name": "Mist Dragon Card",                       "cost": 7,     "category": "triad",       "unique": true,   "img": "/data/common/tripletriad3.png" },
+        { "id": "triad_tioman",       "name": "Tioman Card",                            "cost": 7,     "category": "triad",       "unique": true,   "img": "/data/common/tripletriad3.png" },
+        { "id": "triad_diamond",      "name": "Diamond Weapon Card",                    "cost": 7,     "category": "triad",       "unique": true,   "img": "/data/common/tripletriad4.png" },
+        { "id": "minion_succubus",    "name": "Wind-up Succubus",                       "cost": 7,     "category": "minion",      "unique": true,   "img": "/data/moogle/202604/minion_succubus.png" },
+        { "id": "orch_hopldropple",   "name": "Hopl's Dropple Orchestrion Roll",        "cost": 7,     "category": "orchestrion", "unique": false,  "img": "/data/common/orchestrion_roll.png" },
+        { "id": "barding_abigail",    "name": "Abigail Barding",                        "cost": 5,     "category": "other",       "unique": false,  "img": "/data/moogle/202604/barding_abigail.png" },
+        { "id": "misc_jobmastery",    "name": "Magicked Prism (Job Mastery)x 10",       "cost": 1,     "category": "other",       "unique": true,   "img": "/data/common/misc_pouch.png" }
+      ],
+      "challenges": {
+        "weekly": [
+          { "id": "w1", "name": "Complete 3 duties",           "bonus": 10, "requirement": 3  },
+          { "id": "w2", "name": "Complete a Gold Saucer event", "bonus": 5,  "requirement": 1  }
+        ],
+        "standard": [
+          { "id": "s1", "name": "Complete 10 duties",          "bonus": 20, "requirement": 10 },
+          { "id": "s2", "name": "Complete 3 alliance raids",   "bonus": 15, "requirement": 3  }
+        ],
+        "minimog": [
+          { "id": "m1", "name": "Complete 20 duties",          "bonus": 30, "requirement": 20 },
+          { "id": "m2", "name": "Complete every duty type",    "bonus": 25, "requirement": 1  }
+        ],
+        "ultimog": [
+          { "id": "u1", "name": "Complete 50 duties",          "bonus": 50, "requirement": 50 }
+        ]
+      }
+    },
+    {
+      "key": "moogle-2025-spring",
+      "name": "Moogle Treasure Trove",
+      "tomeType": "Irregular Tomestone of Mythology",
+      "start": "2025-03-11",
+      "end": "2025-04-14",
+      "active": false,
+
+      "duties": [
+        { "id": "syrcus_tower",         "name": "Syrcus Tower",                    "tomes": 10, "avgMinutes": 20, "category": "alliance",    "casual": false },
+        { "id": "void_ark",             "name": "The Void Ark",                    "tomes": 10, "avgMinutes": 22, "category": "alliance",    "casual": false },
+        { "id": "snowcloak",            "name": "Snowcloak",                       "tomes": 8,  "avgMinutes": 18, "category": "dungeon",     "casual": false },
+        { "id": "lord_of_verminion",    "name": "Lord of Verminion",               "tomes": 8,  "avgMinutes": 15, "category": "gold_saucer", "casual": true  },
+        { "id": "cuff_a_cur",           "name": "Cuff-a-Cur",                      "tomes": 5,  "avgMinutes": 10, "category": "gold_saucer", "casual": true  },
+        { "id": "triple_triad_tourney", "name": "Triple Triad Tournament",         "tomes": 5,  "avgMinutes": 10, "category": "gold_saucer", "casual": true  }
+      ],
+
+      "shop": [
+        { "id": "mount_ahriman",      "name": "Voidal Resonator",      "cost": 50,  "category": "mount",   "unique": true,  "img": "" },
+        { "id": "minion_estinien",    "name": "Dress-up Estinien",     "cost": 50,  "category": "minion",  "unique": true,  "img": "" },
+        { "id": "emote_sweep",        "name": "Sweep the Leg Emote",   "cost": 30,  "category": "emote",   "unique": true,  "img": "" },
+        { "id": "gear_coffer_top",    "name": "Antiquated Coffer (Top)","cost": 20, "category": "gear",    "unique": false, "img": "" },
+        { "id": "gear_coffer_bottom", "name": "Antiquated Coffer (Btm)","cost": 20, "category": "gear",    "unique": false, "img": "" },
+        { "id": "orchestrion_roll",   "name": "Orchestrion Roll",      "cost": 15,  "category": "other",   "unique": true,  "img": "" }
+      ],
+
+      "challenges": {
+        "weekly": [
+          { "id": "w1", "name": "Complete 3 duties",           "bonus": 10, "requirement": 3  },
+          { "id": "w2", "name": "Complete a Gold Saucer event", "bonus": 5,  "requirement": 1  }
+        ],
+        "standard": [
+          { "id": "s1", "name": "Complete 10 duties",          "bonus": 20, "requirement": 10 },
+          { "id": "s2", "name": "Complete 3 alliance raids",   "bonus": 15, "requirement": 3  }
+        ],
+        "minimog": [
+          { "id": "m1", "name": "Complete 20 duties",          "bonus": 30, "requirement": 20 },
+          { "id": "m2", "name": "Complete every duty type",    "bonus": 25, "requirement": 1  }
+        ],
+        "ultimog": [
+          { "id": "u1", "name": "Complete 50 duties",          "bonus": 50, "requirement": 50 }
+        ]
+      }
+    }
+  ]
+}

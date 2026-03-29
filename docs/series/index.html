@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FFXIV Series Tracker</title>
+  <meta name="description" content="Track your FFXIV PvP Series progress — XP per day, upcoming rewards, and estimated completion.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<div style="max-width:1120px; margin:0 auto; padding:32px 16px 64px;">
+
+  <!-- ══ HEADER ══════════════════════════════════════════ -->
+  <header style="text-align:center; margin-bottom:20px; position:relative;">
+    <div style="position:absolute; top:0; left:0;">
+      <div id="discord-auth-widget"></div>
+    </div>
+    <div style="position:absolute; top:0; right:0; display:flex; align-items:center; gap:8px;">
+      <span style="font-size:10px; color:var(--text-muted); letter-spacing:0.05em; text-transform:uppercase;">Theme</span>
+      <button class="theme-swatch" data-theme="dusk"     style="background:linear-gradient(135deg,#080b10,#10141c); border-color:#c8a96e;" title="Dusk"         onclick="setTheme('dusk')"></button>
+      <button class="theme-swatch" data-theme="midnight" style="background:linear-gradient(135deg,#050505,#0c0c10); border-color:#f0c040;" title="Midnight"     onclick="setTheme('midnight')"></button>
+      <button class="theme-swatch" data-theme="dawn"     style="background:linear-gradient(135deg,#f0ead8,#fffcf4); border-color:#8b6514;" title="Dawn (light)" onclick="setTheme('dawn')"></button>
+      <button class="theme-swatch" data-theme="aether"   style="background:linear-gradient(135deg,#030c18,#071628); border-color:#38cce0;" title="Aether"       onclick="setTheme('aether')"></button>
+    </div>
+    <div style="font-size:0.72rem; letter-spacing:0.15em; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px;">Final Fantasy XIV</div>
+    <h1 class="font-cinzel" style="font-size:clamp(1.8rem,5vw,3rem); font-weight:700; color:var(--gold); margin-bottom:6px; line-height:1.1;">Series Tracker</h1>
+    <p style="color:var(--text-muted); font-size:0.83rem;">PvP Series (Malmstone) progress tracker — rewards, XP rate &amp; series timeline</p>
+  </header>
+
+  <!-- ══ TAB NAV ════════════════════════════════════════════ -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" id="tab-btn-tracker" onclick="switchTab('tracker')">📊 Tracker</button>
+    <button class="tab-btn" id="tab-btn-data" onclick="switchTab('data')">📜 Series Data</button>
+  </nav>
+
+  <!-- ══ SHARE VIEW BANNER ═══════════════════════════════ -->
+  <div id="share-view-banner" style="display:none; background:rgba(167,139,250,0.1); border:1px solid rgba(167,139,250,0.35); border-radius:8px; padding:10px 16px; font-size:13px; color:var(--text); margin-bottom:14px; align-items:center; gap:12px; flex-wrap:wrap;">
+    <span style="font-size:15px;">👁</span>
+    <div style="flex:1; min-width:0;">
+      <strong>Viewing shared progress</strong><span id="share-view-charname" style="color:var(--text-muted);"></span>
+      <span style="color:var(--text-muted); font-size:12px;"> — your own data is still saved.</span>
+    </div>
+    <button class="btn btn-outline" style="font-size:12px; padding:5px 12px; border-color:rgba(167,139,250,0.5); white-space:nowrap;" onclick="loadOwnProgress()">← Back to your progress</button>
+  </div>
+
+<div id="data-load-error" style="display:none; background:rgba(248,113,113,0.12); border:1px solid rgba(248,113,113,0.4); border-radius:8px; padding:12px 16px; font-size:13px; color:var(--red); margin-bottom:18px;"></div>
+
+  <!-- ══ TRACKER TAB ═════════════════════════════════════════ -->
+  <div id="tab-tracker-content">
+
+  <!-- ══ SERIES TIMELINE BANNER ══════════════════════════ -->
+  <div class="series-banner">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+      <div>
+        <span class="font-cinzel" id="banner-series-name" style="color:var(--gold); font-size:0.95rem; font-weight:600;">Series 10</span>
+        <span id="banner-patch" style="color:var(--text-muted); font-size:0.82rem; margin-left:10px;">Patch 7.4</span>
+      </div>
+      <div id="banner-dates" style="font-size:0.8rem; color:var(--text-muted);">Dec 16, 2025 → Apr 28, 2026</div>
+      <div style="display:flex; gap:16px; font-size:0.82rem;">
+        <span><span id="banner-elapsed" style="color:var(--text); font-weight:600;">—</span> <span style="color:var(--text-muted);">days elapsed</span></span>
+        <span><span id="banner-remain" style="color:var(--gold); font-weight:600;">—</span> <span style="color:var(--text-muted);">days left</span></span>
+      </div>
+    </div>
+    <div class="progress-track thin">
+      <div class="progress-fill pf-purple" id="series-timeline-bar" style="width:0%"></div>
+    </div>
+    <div style="display:flex; justify-content:space-between; font-size:10.5px; color:var(--text-muted); margin-top:5px;">
+      <span id="banner-start-label">—</span>
+      <span id="banner-pct-label" style="color:var(--purple);">—% of series elapsed</span>
+      <span id="banner-end-label">—</span>
+    </div>
+  </div>
+
+  <!-- ══ SETUP PANEL ═════════════════════════════════════ -->
+  <div class="card" id="progress-card" style="margin-bottom:18px; position:relative; overflow:hidden;">
+    <div id="progress-portrait-bg"></div>
+    <div style="position:relative; z-index:1;">
+    <div class="card-header-row">
+      <div class="section-title">Your Progress</div>
+      <div id="char-display">
+        <img id="char-avatar-img" class="char-avatar" src="" alt="" style="display:none;">
+        <div class="char-info">
+          <div class="char-name-row">
+            <span id="char-name-display"></span>
+            <span id="char-world-display"></span>
+          </div>
+          <div class="char-meta-row">
+            <span id="char-title-display" style="display:none;"></span>
+            <span id="char-class-display" style="display:none;"></span>
+            <span id="char-fc-display" style="display:none;"></span>
+            <a id="char-lodestone-link" href="#" target="_blank" rel="noopener" style="display:none;">🔗 Lodestone</a>
+            <button id="char-refresh-btn" class="btn-ghost btn" style="padding:1px 6px; font-size:10px; display:none;" title="Re-fetch from Lodestone">↻</button>
+            <button class="btn-ghost btn" style="padding:1px 6px; font-size:10px;" onclick="clearCharacter()">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:13px; margin-bottom:16px;">
+      <div>
+        <label class="field-label">Current Level</label>
+        <input type="number" id="inp-level" min="1" max="50" value="1">
+      </div>
+      <div>
+        <label class="field-label">XP in Level</label>
+        <input type="number" id="inp-xp" min="0" value="0">
+      </div>
+      <div>
+        <label class="field-label">Goal Level</label>
+        <input type="number" id="inp-goal" min="1" max="50" value="25">
+      </div>
+      <div>
+        <label class="field-label">Date Started <span style="opacity:0.6;">(optional)</span></label>
+        <input type="date" id="inp-user-start" placeholder="Default: patch start">
+      </div>
+    </div>
+    <div style="font-size:11px; color:var(--text-muted); margin-bottom:12px;">
+      Leave <em>Tracking Start</em> blank to calculate XP/day from the patch release date.
+      Set it to when <em>you</em> started playing the series for a more accurate rate.
+    </div>
+
+    <!-- Character card section -->
+    <div class="char-card-section" style="margin-bottom:12px;">
+      <div class="char-card-header">
+        <em class="char-toggle-icon">▶</em>
+        <span class="font-cinzel" style="font-size:0.82rem; letter-spacing:0.06em;">⚔ Link Your Character</span>
+        <span style="font-size:10px; color:var(--text-muted); font-weight:400; margin-left:2px;">— Lodestone lookup, portrait &amp; class</span>
+      </div>
+      <div class="char-card-body">
+        <p style="font-size:11px; color:var(--text-muted); margin-bottom:12px; line-height:1.6;">
+          Link your Lodestone character to show your full-body portrait, active job, and a direct profile link in your share URL.
+        </p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+          <div>
+            <label class="field-label">Character Name</label>
+            <input type="text" id="inp-char-name" placeholder="Firstname Lastname" style="width:100%;">
+          </div>
+          <div>
+            <label class="field-label">Home World</label>
+            <select id="inp-char-world" onchange="onWorldSelectChange()">
+              <option value="">— Select World —</option>
+            </select>
+            <div id="char-world-custom-wrap" style="display:none; margin-top:6px;">
+              <input type="text" id="inp-char-world-custom" placeholder="Enter world name…" oninput="onWorldSelectChange()">
+            </div>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px; flex-wrap:wrap;">
+          <button id="btn-char-lookup" class="btn btn-gold" style="padding:8px 16px; font-size:13px; white-space:nowrap;" onclick="lookupCharacter(false)" title="Look up on Lodestone" disabled>🔍 Look up on Lodestone</button>
+          <span id="char-lookup-hint" style="font-size:11px; color:var(--text-muted);">Select a Home World above to enable lookup</span>
+          <span style="font-size:11px; color:var(--text-muted);">or</span>
+          <input type="text" id="inp-lodestone-url" placeholder="Paste character url here" style="flex:1; min-width:180px; padding:6px 8px; font-size:12px;">
+          <button class="btn btn-outline" style="padding:6px 12px; font-size:12px; white-space:nowrap;" onclick="applyLodestoneUrl()">Load</button>
+        </div>
+        <div id="char-lookup-result"></div>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+      <button class="btn btn-gold" onclick="applyProgress()">Update Progress</button>
+      <button class="btn btn-outline" onclick="shareURL()">📋 Copy Share Link</button>
+      <button class="btn btn-danger" onclick="resetAll()">Reset</button>
+      <span style="font-size:11px; color:var(--text-muted); margin-left:2px;">
+        Press <kbd style="background:var(--input-bg); border:1px solid var(--border); border-radius:3px; padding:1px 5px; font-size:10px; color:var(--text);">Enter</kbd> in any field to update
+      </span>
+      <button id="btn-char-card" class="btn btn-outline" style="margin-left:auto; font-size:12px; padding:6px 14px; white-space:nowrap;" onclick="generateCharCard()">🎴 Create Character Card</button>
+    </div>
+    </div><!-- /z-index wrapper -->
+  </div>
+
+  <!-- ══ PROGRESS BARS ═══════════════════════════════════ -->
+  <div class="grid-2-col" style="margin-bottom:18px;">
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+        <div class="section-title" style="border:none; margin:0; padding:0; font-size:0.75rem;">Season Progress</div>
+        <span id="season-pct" style="font-size:1.4rem; font-weight:700; color:var(--gold);">0%</span>
+      </div>
+      <div class="progress-track" style="margin-bottom:7px;"><div class="progress-fill" id="season-bar" style="width:0%"></div></div>
+      <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted);">
+        <span>Lv. 1</span><span id="season-xp-label">0 / 0 XP</span><span id="season-goal-label">Goal: Lv. 25</span>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+        <div class="section-title" style="border:none; margin:0; padding:0; font-size:0.75rem;">Current Level</div>
+        <span id="level-pct" style="font-size:1.4rem; font-weight:700; color:var(--blue);">0%</span>
+      </div>
+      <div class="progress-track" style="margin-bottom:7px;"><div class="progress-fill pf-blue" id="level-bar" style="width:0%"></div></div>
+      <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted);">
+        <span id="lv-label">Level 1</span><span id="level-xp-label">0 / 2,000 XP</span><span id="lv-next-label">→ Level 2</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ STAT GRID ════════════════════════════════════════ -->
+  <div class="grid-4-col" style="margin-bottom:18px;">
+    <div class="stat-card"><div class="stat-label">Total XP Earned</div><div class="stat-value" id="s-total-xp" style="color:var(--gold);">0</div></div>
+    <div class="stat-card"><div class="stat-label">XP to Goal</div><div class="stat-value" id="s-xp-rem">—</div></div>
+    <div class="stat-card"><div class="stat-label" id="s-xp-day-label">Avg XP / Day</div><div class="stat-value" id="s-xp-day" style="color:var(--blue);">—</div></div>
+    <div class="stat-card"><div class="stat-label">Min XP / Day Needed</div><div class="stat-value" id="s-min-xp-day" style="color:var(--yellow);">—</div></div>
+    <div class="stat-card"><div class="stat-label">Days Left in Series</div><div class="stat-value" id="s-days-left">—</div></div>
+    <div class="stat-card"><div class="stat-label">Days to Goal</div><div class="stat-value" id="s-days-goal">—</div></div>
+    <div class="stat-card"><div class="stat-label">Est. Completion</div><div class="stat-value" id="s-completion" style="font-size:0.95rem; color:var(--green);">—</div></div>
+    <div class="stat-card"><div class="stat-label">Will You Make It?</div><div class="stat-value" id="s-make-it" style="font-size:1rem;">—</div></div>
+  </div>
+
+  <!-- ══ CATCH-UP SECTION (shown when behind pace) ════════ -->
+  <div id="catchup-section">
+    <div class="catchup-title">⚠ Catch-Up Required</div>
+    <div class="grid-2-col" style="margin-bottom:14px;">
+      <div>
+        <div class="catchup-row"><span style="color:var(--text-muted); flex:1;">Minimum XP/day needed</span><strong id="cu-min-xp" style="color:var(--yellow);">—</strong></div>
+        <div class="catchup-row"><span style="color:var(--text-muted); flex:1;">Your current pace</span><strong id="cu-cur-xp">—</strong></div>
+        <div class="catchup-row"><span style="color:var(--text-muted); flex:1;">Shortfall per day</span><strong id="cu-deficit" style="color:var(--red);">—</strong></div>
+      </div>
+      <div>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">To close the gap, add each day:</p>
+        <div id="cu-options"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ UPCOMING + ACTIVITY CALCULATOR ══════════════════ -->
+  <div class="grid-2-col" style="margin-bottom:18px;">
+
+    <div class="card">
+      <div class="section-title">Upcoming Rewards</div>
+      <div style="font-size:11px; color:var(--text-muted); margin-bottom:10px;" id="next-level-info">—</div>
+      <div id="upcoming-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Activity Calculator</div>
+      <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">
+        Daily match counts to project your completion. Frontline daily bonus (+1,250 XP) applied automatically.
+      </p>
+      <div style="display:flex; flex-direction:column; gap:9px; margin-bottom:12px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span class="act-label">⚔ Crystalline Conflict</span>
+          <input type="number" id="c-cc" min="0" value="0" style="width:58px; padding:6px 8px; flex-shrink:0;">
+          <span style="font-size:11px; color:var(--text-muted);">~800 XP</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span class="act-label">⚔ Frontline</span>
+          <input type="number" id="c-fl" min="0" value="1" style="width:58px; padding:6px 8px; flex-shrink:0;">
+          <span style="font-size:11px; color:var(--text-muted);">~1,250 + 1,250 bonus</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span class="act-label">⚔ Rival Wings</span>
+          <input type="number" id="c-rw" min="0" value="0" style="width:58px; padding:6px 8px; flex-shrink:0;">
+          <span style="font-size:11px; color:var(--text-muted);">~1,000 XP</span>
+        </div>
+        <div style="padding:8px 10px; border-radius:6px; background:var(--gold-dim); border:1px solid var(--border-gold); font-size:11.5px; color:var(--text-muted);">
+          🎯 Assuming 1 daily frontline: bonus auto-included when Frontline &gt; 0
+        </div>
+      </div>
+      <div id="calc-output"></div>
+      <button class="btn btn-gold" style="width:100%; margin-top:10px; justify-content:center;" onclick="calcActivities()">Calculate</button>
+    </div>
+  </div>
+
+  <!-- ══ XP HISTORY SPARKLINE ════════════════════════════ -->
+  <div class="card" id="xp-sparkline-section" style="margin-bottom:18px; display:none;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+      <div class="section-title" style="border:none; margin:0; padding:0; font-size:0.75rem;">XP History</div>
+      <span id="spk-current-xp" style="font-size:12px; font-weight:700; color:var(--gold);">—</span>
+    </div>
+    <div id="xp-sparkline" style="width:100%; height:80px;"></div>
+    <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-muted); margin-top:4px;">
+      <span id="spk-start-date">—</span><span id="spk-end-date">—</span>
+    </div>
+  </div>
+
+  <!-- ══ REWARDS GRID ═════════════════════════════════════ -->
+  <div class="card" style="margin-bottom:18px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <div id="rewards-title" class="section-title" style="border:none; margin:0; padding:0;">Series 10 Rewards</div>
+      <span style="font-size:11px; color:var(--text-muted);">Click special rewards for details</span>
+    </div>
+    <div id="milestone-counter-wrap" style="display:none; margin-bottom:12px;"></div>
+    <div id="rewards-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(110px,1fr)); gap:10px;"></div>
+  </div>
+
+  </div><!-- /tab-tracker-content -->
+
+  <!-- ══ DATA TAB ════════════════════════════════════════════ -->
+  <div id="tab-data-content" style="display:none;">
+    <div style="margin-bottom:18px;">
+      <div class="font-cinzel" style="color:var(--gold); font-size:0.78rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:6px;">All PvP Series</div>
+      <p style="font-size:12px; color:var(--text-muted);">A reference of every Malmstone series — active series shows key rewards, past series shows your personal progress and which items you collected.</p>
+    </div>
+    <div id="streak-display" style="display:none; margin-bottom:14px;"></div>
+    <div id="data-series-list"></div>
+  </div>
+
+</div>
+
+<!-- ══ MODAL ════════════════════════════════════════════ -->
+<div id="modal-overlay" onclick="maybeCloseModal(event)">
+  <div id="modal-card">
+    <button id="modal-close" onclick="closeModal()">✕</button>
+    <div style="text-align:center; margin-bottom:16px;">
+      <div style="width:100px; height:100px; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; background:var(--gold-dim); border-radius:12px; border:1px solid var(--border-gold);">
+        <img id="modal-img" src="" alt="" style="max-width:80px; max-height:80px; object-fit:contain; image-rendering:pixelated;">
+        <span id="modal-emoji" style="display:none; font-size:3.5rem;"></span>
+      </div>
+      <div id="modal-level" style="font-size:11px; color:var(--text-muted); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:6px;"></div>
+      <h3 id="modal-name" class="font-cinzel" style="font-size:1.1rem; color:var(--gold); margin-bottom:8px;"></h3>
+      <div id="modal-badge-wrap" style="margin-bottom:12px;"></div>
+    </div>
+    <hr style="border:none; border-top:1px solid var(--border); margin-bottom:14px;">
+    <p id="modal-desc" style="font-size:13px; color:var(--text-muted); line-height:1.7; margin-bottom:14px;"></p>
+    <div id="modal-xp-info" style="font-size:12px; padding:10px; background:rgba(255,255,255,0.03); border-radius:6px; border:1px solid var(--border);"></div>
+    <div id="modal-demo"></div>
+    <button class="btn btn-outline" style="width:100%; margin-top:16px; justify-content:center;" onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+<canvas id="confetti-canvas"></canvas>
+
+<!-- ══ CHARACTER CARD PREVIEW ══════════════════════════ -->
+<div id="card-preview-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:2000; align-items:center; justify-content:center; padding:20px;" onclick="closeCardPreview(event)">
+  <div style="background:var(--card); border:1px solid var(--border-gold); border-radius:12px; padding:20px; max-width:960px; width:100%; box-shadow:0 24px 64px rgba(0,0,0,0.6);">
+    <div style="overflow-x:auto; margin-bottom:14px; border-radius:6px; line-height:0;">
+      <img id="card-preview-img" src="" alt="Character card" style="width:100%; max-width:900px; border-radius:6px; display:block;">
+    </div>
+    <div class="card-preview-actions" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+      <span class="card-hint-text" style="font-size:11px; color:var(--text-muted); flex:1;">Right-click the image to save, or use the buttons →</span>
+      <button class="btn btn-outline" style="font-size:12px; padding:6px 14px;" onclick="closeCardPreview()">✕ Close</button>
+      <button id="card-copy-btn" class="btn btn-outline" style="font-size:12px; padding:6px 14px;" onclick="copyCardImage()">📋 Copy Image</button>
+      <button id="card-download-btn" class="btn btn-gold" style="font-size:12px; padding:6px 14px;" onclick="downloadCardImage()">⬇ Download PNG</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/series.js" defer></script>
+</body>
+</html>

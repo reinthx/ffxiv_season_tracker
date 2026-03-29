@@ -4,17 +4,18 @@ import { handleApi }  from './api';
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const { pathname } = new URL(request.url);
+    const url      = new URL(request.url);
+    const pathname = url.pathname;
 
-    // CORS preflight — same-origin deployment, but handle it cleanly
-    if (request.method === 'OPTIONS') {
-      return new Response(null, { status: 204 });
-    }
+    if (request.method === 'OPTIONS') return new Response(null, { status: 204 });
 
     if (pathname.startsWith('/auth/')) return handleAuth(request, env);
     if (pathname.startsWith('/api/'))  return handleApi(request, env);
 
-    // Everything else → serve static assets (index.html, js/, css/, data/, etc.)
+    // Root → redirect to series tracker
+    // All other paths (static assets, /series/*, /moogle/*) are served
+    // directly by the Assets binding without going through the Worker.
+
     return env.ASSETS.fetch(request);
   },
 };

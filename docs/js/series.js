@@ -1660,14 +1660,14 @@ function loadTheme() {
 async function loadData() {
   const errEl = document.getElementById('data-load-error');
   try {
-    const r = await fetch('./data/series.json');
+    const r = await fetch('../data/series.json');
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const data = await r.json();
     if (Array.isArray(data.levelThresholds)) LEVEL_THRESHOLDS = data.levelThresholds;
     if (data.extraLevelCost) EXTRA_LEVEL_COST = data.extraLevelCost;
     const cur = data.series?.find(s => s.current);
     if (cur) {
-      if (cur.rewards) REWARDS = cur.rewards;
+      if (cur.rewards) REWARDS = cur.rewards.map(r => r.imgUrl ? { ...r, imgUrl: '../' + r.imgUrl } : r);
       const patchEndEstimated = !cur.patchEnd && !!cur.patchStart;
       CURRENT_SERIES = { num:cur.num, name:cur.name||'Series '+cur.num, patch:cur.patch||'', patchStart:cur.patchStart, patchEnd:cur.patchEnd || (patchEndEstimated ? estimatePatchEnd(cur.patchStart) : ''), patchEndEstimated };
       setText('banner-series-name', CURRENT_SERIES.name);
@@ -1677,7 +1677,8 @@ async function loadData() {
     }
     const old = data.series?.filter(s => !s.current) || [];
     if (old.length) OLD_SERIES = old.map(s => {
-      return { num:s.num, name:s.name||'Series '+s.num, patch:s.patch, start:s.patchStart, end:s.patchEnd, rewards:s.rewards||null, milestones:extractMilestones(s.rewards) };
+      const rewards = s.rewards ? s.rewards.map(r => r.imgUrl ? { ...r, imgUrl: '../' + r.imgUrl } : r) : null;
+      return { num:s.num, name:s.name||'Series '+s.num, patch:s.patch, start:s.patchStart, end:s.patchEnd, rewards, milestones:extractMilestones(rewards) };
     });
     if (errEl) errEl.style.display = 'none';
   } catch (e) {
