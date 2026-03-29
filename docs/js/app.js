@@ -2189,6 +2189,12 @@ async function handleLogout() {
   showToast('Logged out.');
 }
 
+function toggleProfileMenu() {
+  const menu = document.getElementById('profile-menu');
+  if (!menu) return;
+  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+
 function renderAuthUI(user) {
   const el = document.getElementById('discord-auth-widget');
   if (!el) return;
@@ -2197,49 +2203,78 @@ function renderAuthUI(user) {
     return;
   }
   const avatarSrc = user.avatar
-    ? `https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.png?size=32`
+    ? `https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.png?size=64`
     : null;
-  const avatarTag = avatarSrc
-    ? `<img src="${avatarSrc}" style="width:20px;height:20px;border-radius:50%;vertical-align:middle;margin-right:5px;" onerror="this.style.display='none'">`
-    : '';
+  const avatarInner = avatarSrc
+    ? `<img src="${avatarSrc}" style="width:32px;height:32px;border-radius:50%;display:block;" onerror="this.style.display='none'">`
+    : `<span style="font-size:14px;">⚔</span>`;
+  el.style.position = 'relative';
   el.innerHTML = `
-    <span style="font-size:11px;color:var(--text-muted);vertical-align:middle;">${avatarTag}${user.username}</span>
-    <button class="btn btn-outline" style="font-size:11px;padding:4px 10px;margin-left:6px;" onclick="handleLogout()">Logout</button>`;
+    <button onclick="toggleProfileMenu()" title="${user.username}"
+      style="background:none;border:2px solid var(--border);border-radius:50%;padding:0;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:border-color 0.15s;"
+      onmouseover="this.style.borderColor='var(--border-gold)'" onmouseout="this.style.borderColor='var(--border)'">
+      ${avatarInner}
+    </button>
+    <div id="profile-menu" style="display:none;position:absolute;top:44px;left:0;z-index:500;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;min-width:270px;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,0.45);">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+        ${avatarSrc ? `<img src="${avatarSrc}" style="width:40px;height:40px;border-radius:50%;flex-shrink:0;">` : ''}
+        <div>
+          <div style="font-size:13px;font-weight:600;">${user.username}</div>
+          <div style="font-size:10px;color:var(--text-muted);">Discord account linked</div>
+        </div>
+      </div>
+      <div id="profile-char-list"></div>
+      <button class="btn btn-outline" onclick="handleLogout()"
+        style="width:100%;justify-content:center;font-size:11px;padding:6px;margin-top:10px;">
+        Logout
+      </button>
+    </div>`;
+  renderCharSwitcher();
 }
 
 function renderCharSwitcher() {
-  const el = document.getElementById('cloud-char-switcher');
+  const el = document.getElementById('profile-char-list');
   if (!el) return;
-  if (!_cloudUser || _cloudChars.length === 0) { el.style.display = 'none'; return; }
-  el.style.display = 'block';
+  if (_cloudChars.length === 0) {
+    el.innerHTML = `<div style="font-size:11px;color:var(--text-muted);text-align:center;padding:8px 0;">No characters saved yet.<br>Update your progress to save one.</div>`;
+    return;
+  }
   el.innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-      <div class="section-title" style="font-size:0.72rem;border:none;margin:0;padding:0;">Cloud Characters</div>
-      <span style="font-size:10px;color:var(--text-muted);">Click to switch • saves across all devices</span>
-    </div>
-    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+    <div style="font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Characters</div>
+    <div style="display:flex;flex-direction:column;gap:6px;">
       ${_cloudChars.map(c => {
         const isActive = c.lodestoneId === _activeCloudCharId;
         const label    = c.label || c.characterName;
-        const world    = c.characterWorld ? ` @ ${c.characterWorld}` : '';
+        const world    = c.characterWorld || 'Unknown World';
         const avatarTag = c.avatarUrl
-          ? `<img src="${c.avatarUrl}" style="width:28px;height:28px;border-radius:4px;flex-shrink:0;object-fit:cover;" onerror="this.style.display='none'">`
-          : `<span style="width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;background:var(--gold-dim);border-radius:4px;font-size:14px;">⚔</span>`;
-        return `<div
-          onclick="loadCloudCharacter('${c.lodestoneId}')"
-          style="display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;border:1px solid ${isActive ? 'var(--border-gold)' : 'var(--border)'};background:${isActive ? 'var(--gold-dim)' : 'transparent'};cursor:pointer;min-width:0;max-width:220px;">
+          ? `<img src="${c.avatarUrl}" style="width:36px;height:36px;border-radius:6px;flex-shrink:0;object-fit:cover;" onerror="this.style.display='none'">`
+          : `<span style="width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;background:var(--gold-dim);border-radius:6px;font-size:16px;flex-shrink:0;">⚔</span>`;
+        return `
+        <div onclick="loadCloudCharacter('${c.lodestoneId}');toggleProfileMenu();"
+          style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;border:1px solid ${isActive ? 'var(--border-gold)' : 'var(--border)'};background:${isActive ? 'var(--gold-dim)' : 'transparent'};cursor:pointer;">
           ${avatarTag}
           <div style="flex:1;min-width:0;">
             <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${label}</div>
-            <div style="font-size:10px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${world}</div>
+            <div style="font-size:10px;color:var(--text-muted);">
+              ${world}${isActive ? ' &nbsp;<span style="color:var(--gold);">● active</span>' : ''}
+            </div>
           </div>
-          <div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0;">
-            <button class="btn btn-ghost" style="padding:1px 5px;font-size:10px;line-height:1.4;" title="Rename"
+          <div style="display:flex;gap:3px;flex-shrink:0;">
+            <button class="btn btn-ghost" style="padding:3px 6px;font-size:11px;" title="Rename"
               onclick="event.stopPropagation();renameCloudCharacter('${c.lodestoneId}','${(c.label||c.characterName).replace(/'/g,"\\'")}')">✎</button>
-            <button class="btn btn-ghost" style="padding:1px 5px;font-size:10px;line-height:1.4;" title="Remove from cloud"
+            <button class="btn btn-ghost" style="padding:3px 6px;font-size:11px;" title="Remove"
               onclick="event.stopPropagation();deleteCloudCharacter('${c.lodestoneId}')">✕</button>
           </div>
         </div>`;
       }).join('')}
     </div>`;
 }
+
+// Close profile menu on outside click
+document.addEventListener('click', e => {
+  const widget = document.getElementById('discord-auth-widget');
+  const menu   = document.getElementById('profile-menu');
+  if (menu && menu.style.display !== 'none' && widget && !widget.contains(e.target)) {
+    menu.style.display = 'none';
+  }
+});

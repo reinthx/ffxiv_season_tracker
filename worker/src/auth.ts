@@ -104,16 +104,10 @@ async function handleCallback(request: Request, env: Env): Promise<Response> {
   const userId = await upsertUser(env, discordId, username, avatar);
   const token  = await createSession(env, { userId, discordId, username, avatar });
 
-  return new Response(null, {
-    status: 302,
-    headers: {
-      Location: '/?auth=success',
-      'Set-Cookie': [
-        clearStateCookie,
-        sessionCookie(token, SESSION_TTL_SECONDS),
-      ].join(', '),
-    },
-  });
+  const headers = new Headers({ Location: '/?auth=success' });
+  headers.append('Set-Cookie', clearStateCookie);
+  headers.append('Set-Cookie', sessionCookie(token, SESSION_TTL_SECONDS));
+  return new Response(null, { status: 302, headers });
 }
 
 // ── /auth/logout ───────────────────────────────────────────────────────
