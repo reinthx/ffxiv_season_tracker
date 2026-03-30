@@ -1,6 +1,6 @@
-import type { Env, PutCharacterBody } from './types';
+import type { Env, PutCharacterBody, PutMoogleBody } from './types';
 import { getSession } from './session';
-import { getCharacters, getCharacter, putCharacter, patchCharacterLabel, deleteCharacter } from './db';
+import { getCharacters, getCharacter, putCharacter, patchCharacterLabel, deleteCharacter, getMoogleProgress, putMoogleProgress } from './db';
 import { jsonResponse, errorResponse, requireAuth } from './utils';
 
 export async function handleApi(request: Request, env: Env): Promise<Response> {
@@ -37,6 +37,36 @@ export async function handleApi(request: Request, env: Env): Promise<Response> {
       data:           r.data,
       updatedAt:      r.updated_at,
     })));
+  }
+
+  // /api/moogle/:eventKey — GET + PUT
+  const moogleMatch = pathname.match(/^\/api\/moogle\/([^/]+)$/);
+  if (moogleMatch) {
+    const eventKey = decodeURIComponent(moogleMatch[1]);
+    if (!/^[a-z0-9-]+$/.test(eventKey)) return errorResponse('Invalid event key', 400);
+
+    if (method === 'GET') {
+      const row = await getMoogleProgress(env, s.userId, eventKey);
+      if (!row) return errorResponse('Not found', 404);
+      return jsonResponse({
+        eventKey:           row.event_key,
+        wishlist:           row.wishlist,
+        tomesCurrent:       row.tomes_current,
+        weeklyObjectives:   row.weekly_objectives,
+        standardObjectives: row.standard_objectives,
+        minimogChallenges:  row.minimog_challenges,
+        ultimogChallenges:  row.ultimog_challenges,
+        updatedAt:          row.updated_at,
+      });
+    }
+
+    if (method === 'PUT') {
+      let body: PutMoogleBody;
+      try { body = await request.json() as PutMoogleBody; } catch { return errorResponse('Invalid JSON', 400); }
+      if (typeof body.tomes_current !== 'number') return errorResponse('tomes_current must be a number', 400);
+      await putMoogleProgress(env, s.userId, eventKey, body);
+      return new Response(null, { status: 204 });
+    }
   }
 
   // Routes with a :lodestoneId segment

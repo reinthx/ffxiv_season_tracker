@@ -22,7 +22,12 @@ export async function handleAuth(request: Request, env: Env): Promise<Response> 
 
 // ── /auth/login ────────────────────────────────────────────────────────
 
-function handleLogin(_request: Request, env: Env): Response {
+function handleLogin(request: Request, env: Env): Response {
+  const url     = new URL(request.url);
+  const rawBack = url.searchParams.get('returnTo') || '/';
+  // Only allow relative paths to prevent open-redirect
+  const returnTo = rawBack.startsWith('/') ? rawBack : '/';
+
   const state = crypto.randomUUID();
   const params = new URLSearchParams({
     client_id:     env.DISCORD_CLIENT_ID,
@@ -31,13 +36,10 @@ function handleLogin(_request: Request, env: Env): Response {
     scope:         'identify',
     state,
   });
-  return new Response(null, {
-    status: 302,
-    headers: {
-      Location:   `${DISCORD_AUTH_URL}?${params}`,
-      'Set-Cookie': `__discord_state=${state}; HttpOnly; Secure; SameSite=Lax; Path=/auth; Max-Age=${STATE_COOKIE_TTL}`,
-    },
-  });
+  const headers = new Headers({ Location: `${DISCORD_AUTH_URL}?${params}` });
+  headers.append('Set-Cookie', `__discord_state=${state}; HttpOnly; Secure; SameSite=Lax; Path=/auth; Max-Age=${STATE_COOKIE_TTL}`);
+  headers.append('Set-Cookie', `__return_to=${encodeURIComponent(returnTo)}; HttpOnly; Secure; SameSite=Lax; Path=/auth; Max-Age=${STATE_COOKIE_TTL}`);
+  return new Response(null, { status: 302, headers });
 }
 
 // ── /auth/callback ─────────────────────────────────────────────────────
@@ -47,15 +49,18 @@ async function handleCallback(request: Request, env: Env): Promise<Response> {
   const code   = url.searchParams.get('code');
   const state  = url.searchParams.get('state');
   const stored = getCookie(request, '__discord_state');
+  const rawBack = decodeURIComponent(getCookie(request, '__return_to') || '/');
+  const returnTo = rawBack.startsWith('/') ? rawBack : '/';
 
   // Clear the CSRF state cookie regardless of outcome
-  const clearStateCookie = `__discord_state=; HttpOnly; Secure; SameSite=Lax; Path=/auth; Max-Age=0`;
+  const clearStateCookie  = `__discord_state=; HttpOnly; Secure; SameSite=Lax; Path=/auth; Max-Age=0`;
+  const clearReturnCookie = `__return_to=; HttpOnly; Secure; SameSite=Lax; Path=/auth; Max-Age=0`;
 
   if (!code || !state || state !== stored) {
-    return new Response(null, {
-      status: 302,
-      headers: { Location: '/?auth=error', 'Set-Cookie': clearStateCookie },
-    });
+    const errHeaders = new Headers({ Location: returnTo + (returnTo.includes('?') ? '&' : '?') + 'auth=error' });
+    errHeaders.append('Set-Cookie', clearStateCookie);
+    errHeaders.append('Set-Cookie', clearReturnCookie);
+    return new Response(null, { status: 302, headers: errHeaders });
   }
 
   // Exchange code for access token
@@ -76,10 +81,10 @@ async function handleCallback(request: Request, env: Env): Promise<Response> {
     const tokenData = await tokenResp.json() as { access_token: string };
     accessToken = tokenData.access_token;
   } catch {
-    return new Response(null, {
-      status: 302,
-      headers: { Location: '/?auth=error', 'Set-Cookie': clearStateCookie },
-    });
+    const errHeaders = new Headers({ Location: returnTo + (returnTo.includes('?') ? '&' : '?') + 'auth=error' });
+    errHeaders.append('Set-Cookie', clearStateCookie);
+    errHeaders.append('Set-Cookie', clearReturnCookie);
+    return new Response(null, { status: 302, headers: errHeaders });
   }
 
   // Fetch Discord user info
@@ -94,18 +99,20 @@ async function handleCallback(request: Request, env: Env): Promise<Response> {
     username  = me.global_name ?? me.username;
     avatar    = me.avatar ?? null;
   } catch {
-    return new Response(null, {
-      status: 302,
-      headers: { Location: '/?auth=error', 'Set-Cookie': clearStateCookie },
-    });
+    const errHeaders = new Headers({ Location: returnTo + (returnTo.includes('?') ? '&' : '?') + 'auth=error' });
+    errHeaders.append('Set-Cookie', clearStateCookie);
+    errHeaders.append('Set-Cookie', clearReturnCookie);
+    return new Response(null, { status: 302, headers: errHeaders });
   }
 
   // Upsert user row, create session
   const userId = await upsertUser(env, discordId, username, avatar);
   const token  = await createSession(env, { userId, discordId, username, avatar });
 
-  const headers = new Headers({ Location: '/?auth=success' });
+  const successUrl = returnTo + (returnTo.includes('?') ? '&' : '?') + 'auth=success';
+  const headers = new Headers({ Location: successUrl });
   headers.append('Set-Cookie', clearStateCookie);
+  headers.append('Set-Cookie', clearReturnCookie);
   headers.append('Set-Cookie', sessionCookie(token, SESSION_TTL_SECONDS));
   return new Response(null, { status: 302, headers });
 }

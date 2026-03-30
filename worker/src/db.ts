@@ -1,4 +1,4 @@
-import type { Env, CharacterRow, PutCharacterBody } from './types';
+import type { Env, CharacterRow, PutCharacterBody, MoogleProgressRow, PutMoogleBody } from './types';
 
 // ── Users ──────────────────────────────────────────────────────────────
 
@@ -101,6 +101,50 @@ export async function patchCharacterLabel(
   ).bind(label, userId, lodestoneId).run();
   return (result.meta.changes ?? 0) > 0;
 }
+
+// ── Moogle progress ────────────────────────────────────────────────────
+
+export async function getMoogleProgress(
+  env: Env,
+  userId: number,
+  eventKey: string,
+): Promise<MoogleProgressRow | null> {
+  return env.DB.prepare(
+    `SELECT event_key, wishlist, tomes_current, weekly_objectives, standard_objectives,
+            minimog_challenges, ultimog_challenges, updated_at
+     FROM moogle_progress
+     WHERE user_id = ? AND event_key = ?`
+  ).bind(userId, eventKey).first<MoogleProgressRow>();
+}
+
+export async function putMoogleProgress(
+  env: Env,
+  userId: number,
+  eventKey: string,
+  body: PutMoogleBody,
+): Promise<void> {
+  await env.DB.prepare(
+    `INSERT INTO moogle_progress
+       (user_id, event_key, wishlist, tomes_current, weekly_objectives,
+        standard_objectives, minimog_challenges, ultimog_challenges, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+     ON CONFLICT(user_id, event_key) DO UPDATE SET
+       wishlist            = excluded.wishlist,
+       tomes_current       = excluded.tomes_current,
+       weekly_objectives   = excluded.weekly_objectives,
+       standard_objectives = excluded.standard_objectives,
+       minimog_challenges  = excluded.minimog_challenges,
+       ultimog_challenges  = excluded.ultimog_challenges,
+       updated_at          = datetime('now')`
+  ).bind(
+    userId, eventKey,
+    body.wishlist, body.tomes_current,
+    body.weekly_objectives, body.standard_objectives,
+    body.minimog_challenges, body.ultimog_challenges,
+  ).run();
+}
+
+// ── Character saves ────────────────────────────────────────────────────
 
 /** Delete a character save. Returns true if a row was actually deleted. */
 export async function deleteCharacter(

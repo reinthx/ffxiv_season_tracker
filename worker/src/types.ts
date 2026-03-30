@@ -29,6 +29,28 @@ export interface CharacterRow {
   updated_at: string;
 }
 
+/** Row shape returned from moogle_progress queries */
+export interface MoogleProgressRow {
+  event_key:            string;
+  wishlist:             string;
+  tomes_current:        number;
+  weekly_objectives:    string;
+  standard_objectives:  string;
+  minimog_challenges:   string;
+  ultimog_challenges:   string;
+  updated_at:           string;
+}
+
+/** Request body for PUT /api/moogle/:eventKey */
+export interface PutMoogleBody {
+  wishlist:            string;  // JSON
+  tomes_current:       number;
+  weekly_objectives:   string;  // JSON
+  standard_objectives: string;  // JSON
+  minimog_challenges:  string;  // JSON
+  ultimog_challenges:  string;  // JSON
+}
+
 /** Request body for PUT /api/characters/:lodestoneId */
 export interface PutCharacterBody {
   characterName: string;

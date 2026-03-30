@@ -8,6 +8,22 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .shop-row {
+      display: flex; align-items: center; gap: 12px; padding: 10px 14px;
+      border-radius: 8px; border: 1px solid var(--border); border-left: 3px solid var(--border);
+      cursor: pointer; transition: background 0.15s, opacity 0.15s; margin-bottom: 6px; background: transparent;
+    }
+    .shop-row:hover                { background: rgba(255,255,255,0.04); }
+    .shop-row.is-wished            { border-left-color: var(--gold);  background: var(--gold-dim); }
+    .shop-row.is-wished:hover      { background: rgba(200,169,110,0.18); }
+    .shop-row.is-purchased         { border-left-color: var(--green); background: rgba(74,222,128,0.06); }
+    .shop-row.is-purchased:hover   { background: rgba(74,222,128,0.12); }
+    .shop-row.is-collected         { border-left-color: var(--blue);  background: rgba(91,160,224,0.06); }
+    .shop-row.is-collected:hover   { background: rgba(91,160,224,0.12); }
+    .shop-row.is-dim               { opacity: 0.45; }
+    .shop-row-actions              { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  </style>
 </head>
 <body>
 
@@ -29,7 +45,8 @@
     <h1 class="font-cinzel" style="font-size:clamp(1.8rem,5vw,3rem); font-weight:700; color:var(--gold); margin-bottom:6px; line-height:1.1;">Moogle Tome Tracker</h1>
     <p style="color:var(--text-muted); font-size:0.83rem;">Moogle Treasure Trove — wishlist, farming routes &amp; challenge objectives</p>
     <div style="margin-top:10px; display:flex; align-items:center; justify-content:center; gap:16px; font-size:0.8rem; flex-wrap:wrap;">
-      <a href="/series" style="color:var(--text-muted); text-decoration:none; font-size:0.78rem;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-muted)'">← Series Tracker</a>
+      <a href="/" style="color:var(--text-muted); text-decoration:none; font-size:0.78rem;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-muted)'">← Home</a>
+      <a href="/series/" style="color:var(--text-muted); text-decoration:none; font-size:0.78rem;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-muted)'">Series Tracker →</a>
       <span id="event-name-header" style="color:var(--gold); font-weight:600;"></span>
       <span id="event-dates-header" style="color:var(--text-muted);"></span>
     </div>
@@ -53,6 +70,7 @@
   </div>
 
   <div id="data-load-error" style="display:none; background:rgba(248,113,113,0.12); border:1px solid rgba(248,113,113,0.4); border-radius:8px; padding:12px 16px; font-size:13px; color:var(--red); margin-bottom:18px;"></div>
+  <div id="upcoming-event-banner" style="display:none; background:rgba(200,169,110,0.07); border:1px solid var(--border-gold); border-radius:10px; padding:18px 20px; margin-bottom:18px;"></div>
   <div id="no-active-event" style="display:none; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:24px; text-align:center; color:var(--text-muted); margin-bottom:18px;">
     No active Moogle Tome event right now. Check back when the next Treasure Trove begins!
   </div>
@@ -65,10 +83,50 @@
       <button class="tab-btn active" id="tab-btn-wishlist"   onclick="switchTab('wishlist')">🎁 Wishlist</button>
       <button class="tab-btn"        id="tab-btn-farm"       onclick="switchTab('farm')">⚔ Farming</button>
       <button class="tab-btn"        id="tab-btn-challenges" onclick="switchTab('challenges')">📋 Challenges</button>
+      <button class="tab-btn"        id="tab-btn-history"    onclick="switchTab('history')">📜 Past Events</button>
     </nav>
 
     <!-- ══ WISHLIST TAB ════════════════════════════════════ -->
     <div id="tab-wishlist-content">
+
+      <!-- ── Character section ───────────────────────────── -->
+      <div class="card char-card-section" style="margin-bottom:18px;">
+        <div class="char-card-header" onclick="this.closest('.char-card-section').classList.toggle('open')">
+          <em class="char-toggle-icon">▶</em>
+          <span class="font-cinzel" style="font-size:0.82rem; letter-spacing:0.06em;">⚔ Link Your Character</span>
+          <span style="font-size:10px; color:var(--text-muted); font-weight:400; margin-left:2px;">— enables FFXIV Collect integration</span>
+        </div>
+        <!-- Character display (shown when linked) -->
+        <div id="mog-char-display" style="display:none; align-items:center; gap:10px; margin-top:10px; padding:8px 10px; border-radius:8px; border:1px solid var(--border-gold); background:var(--gold-dim);"></div>
+        <div class="char-card-body">
+          <p style="font-size:11px; color:var(--text-muted); margin-bottom:12px; line-height:1.6;">
+            Link your Lodestone character to enable automatic FFXIV Collect integration for tracking owned mounts, minions, emotes, and more.
+          </p>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+            <div>
+              <label class="field-label">Character Name</label>
+              <input type="text" id="mog-char-name" placeholder="Firstname Lastname" style="width:100%;">
+            </div>
+            <div>
+              <label class="field-label">Home World</label>
+              <select id="mog-char-world" onchange="onWorldSelectChange()">
+                <option value="">— Select World —</option>
+              </select>
+              <div id="mog-world-custom-wrap" style="display:none; margin-top:6px;">
+                <input type="text" id="mog-char-world-custom" placeholder="Enter world name…" oninput="onWorldSelectChange()">
+              </div>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px; flex-wrap:wrap;">
+            <button id="mog-btn-lookup" class="btn btn-gold" style="padding:8px 16px; font-size:13px; white-space:nowrap;" onclick="lookupCharacter(false)" disabled>🔍 Look up on Lodestone</button>
+            <span id="mog-lookup-hint" style="font-size:11px; color:var(--text-muted);">Select a Home World above to enable lookup</span>
+            <span style="font-size:11px; color:var(--text-muted);">or</span>
+            <input type="text" id="mog-lodestone-url" placeholder="Paste character URL here" style="flex:1; min-width:180px; padding:6px 8px; font-size:12px;">
+            <button class="btn btn-outline" style="padding:6px 12px; font-size:12px; white-space:nowrap;" onclick="applyLodestoneUrl()">Load</button>
+          </div>
+          <div id="mog-lookup-result"></div>
+        </div>
+      </div>
 
       <!-- Tome totals summary -->
       <div class="grid-4-col" style="margin-bottom:18px;">
@@ -102,9 +160,9 @@
       <div class="card" style="margin-bottom:18px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
           <div class="section-title" style="border:none; margin:0; padding:0;">Shop Items</div>
-          <span style="font-size:11px; color:var(--text-muted);">Click to cycle: Wished → Purchased → Not wished</span>
+          <span style="font-size:11px; color:var(--text-muted);">Click any item to preview · Use buttons to wishlist</span>
         </div>
-        <div id="shop-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(160px,1fr)); gap:10px;"></div>
+        <div id="shop-grid"></div>
       </div>
 
     </div><!-- /tab-wishlist-content -->
@@ -192,6 +250,9 @@
 
     </div><!-- /tab-challenges-content -->
 
+    <!-- ══ PAST EVENTS TAB ═══════════════════════════════ -->
+    <div id="tab-history-content" style="display:none;"></div>
+
   </div><!-- /main-content -->
 
 </div>
@@ -203,10 +264,16 @@
     <div style="text-align:center; margin-bottom:16px;">
       <div style="width:100px; height:100px; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; background:var(--gold-dim); border-radius:12px; border:1px solid var(--border-gold);">
         <img id="modal-img" src="" alt="" style="max-width:80px; max-height:80px; object-fit:contain; image-rendering:pixelated;">
+        <span id="modal-emoji" style="display:none; font-size:3.5rem;">🎁</span>
       </div>
-      <div id="modal-category" style="font-size:11px; color:var(--text-muted); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:6px;"></div>
       <h3 id="modal-name" class="font-cinzel" style="font-size:1.1rem; color:var(--gold); margin-bottom:8px;"></h3>
-      <div id="modal-cost" style="font-size:13px; color:var(--text-muted); margin-bottom:12px;"></div>
+      <div id="modal-badge-wrap" style="margin-bottom:8px;"></div>
+      <div id="modal-status" style="display:none; margin-bottom:10px;"></div>
+      <div id="modal-actions" style="margin-bottom:12px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap;"></div>
+      <a id="modal-collect-link" href="#" target="_blank" rel="noopener" style="display:none; align-items:center; gap:6px; justify-content:center; font-size:11px; color:var(--text-muted); text-decoration:none; padding:4px 10px; border:1px solid var(--border); border-radius:6px;"
+        onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">
+        🔗 View on FFXIV Collect
+      </a>
     </div>
     <hr style="border:none; border-top:1px solid var(--border); margin-bottom:14px;">
     <div id="modal-media"></div>
@@ -217,5 +284,9 @@
 <div id="toast"></div>
 
 <script src="../js/moogle.js" defer></script>
+<script src="../js/moogle-render.js" defer></script>
+<script src="../js/moogle-collect.js" defer></script>
+<script src="../js/moogle-character.js" defer></script>
+<script src="../js/moogle-auth.js" defer></script>
 </body>
 </html>
