@@ -44,6 +44,16 @@ test('moogle_events.json has active Astronomy event with valid shop/duties', asy
   expect(uolon.collectId).toBe(414);
 });
 
+test('version.json identifies the built commit', async ({ request }) => {
+  // scripts/build.js stamps this (gitignored). Run a build first if missing.
+  const resp = await request.get('/data/version.json');
+  expect(resp.ok()).toBeTruthy();
+  const v = await resp.json();
+  expect(v.commit).toMatch(/^[0-9a-f]{40}$/);
+  expect(v.short).toBe(v.commit.slice(0, 7));
+  expect(Number.isNaN(new Date(v.builtAt).getTime())).toBe(false);
+});
+
 const COLLECTABLE = new Set(['mount', 'minion', 'emote', 'hairstyle', 'barding', 'orchestrion', 'triad']);
 
 test('all moogle events have unique duty ids', async ({ request }) => {

@@ -11,4 +11,7 @@ test('landing shows both trackers and ACTIVE moogle badge', async ({ page }) => 
   const badge = page.locator('#moogle-card-badge');
   await expect(badge).toBeVisible();
   await expect(badge).toContainText('ACTIVE');
+
+  // Build check valve: footer shows which commit this bundle came from
+  await expect(page.locator('#site-version')).toContainText('build');
 });

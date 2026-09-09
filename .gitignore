@@ -7,3 +7,4 @@ playwright-report/
 scripts/*.py
 scripts/*.png
 notes/
+docs/data/version.json

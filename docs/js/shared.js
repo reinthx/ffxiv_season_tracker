@@ -123,3 +123,16 @@ function setW(id, p)    { const e = document.getElementById(id); if (e) e.style.
 function cap(s)          { return s ? s.charAt(0).toUpperCase() + s.slice(1).replace(/_/g, ' ') : ''; }
 function fmtDate(d)      { return new Date(d + 'T00:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }); }
 function showToast(msg)  { const e = document.getElementById('toast'); if (!e) return; e.textContent = msg; e.classList.add('show'); clearTimeout(e._t); e._t = setTimeout(() => e.classList.remove('show'), 2600); }
+
+// ── Build version stamp ─────────────────────────────────
+// scripts/build.js writes docs/data/version.json (gitignored) with the commit
+// the bundle was built from. Surface it so the live site can always be matched
+// back to a commit. Hidden when the file is absent (e.g. unbuilt checkout).
+fetch('/data/version.json').then(r => { if (!r.ok) throw new Error(); return r.json(); }).then(v => {
+  const el = document.getElementById('site-version');
+  if (!el || !v || !v.commit) return;
+  const when = v.builtAt ? new Date(v.builtAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '';
+  const short = v.short || String(v.commit).slice(0, 7);
+  el.innerHTML = `build <a href="https://github.com/reinthx/ffxiv_season_tracker/commit/${v.commit}" target="_blank" rel="noopener" style="color:inherit;">${short}</a>${when ? ' · ' + when : ''}`;
+  el.style.display = 'block';
+}).catch(() => {});

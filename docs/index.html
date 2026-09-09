@@ -37,6 +37,8 @@
     </a>
   </div>
 
+  <div id="site-version" style="display:none; text-align:center; margin-top:22px; font-size:10px; color:var(--text-muted); opacity:0.75;"></div>
+
 </div>
 
 <script>
@@ -155,6 +157,15 @@
         badge.style.display = 'block';
       }
     } catch {}
+    // Build version stamp (shared.js equivalent — landing doesn't load it)
+    fetch('/data/version.json').then(r => { if (!r.ok) throw new Error(); return r.json(); }).then(v => {
+      const el = document.getElementById('site-version');
+      if (!el || !v || !v.commit) return;
+      const when = v.builtAt ? new Date(v.builtAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '';
+      const short = v.short || String(v.commit).slice(0, 7);
+      el.innerHTML = `build <a href="https://github.com/reinthx/ffxiv_season_tracker/commit/${v.commit}" target="_blank" rel="noopener" style="color:inherit;">${short}</a>${when ? ' · ' + when : ''}`;
+      el.style.display = 'block';
+    }).catch(() => {});
   })();
 </script>
 </body>

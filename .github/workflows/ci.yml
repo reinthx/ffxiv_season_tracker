@@ -17,6 +17,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
+      - run: npm run build # also stamps docs/data/version.json for the version test
       - run: npx playwright test
 
   deploy:
