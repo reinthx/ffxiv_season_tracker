@@ -379,7 +379,7 @@ function _renderSummaryPanel(pfx, total, remaining, purchased, projected, afterC
       tokEl.innerHTML = short <= 0 ? `🎟 Tokens: <strong>${have}/${need}</strong> ✓ covered`
         : attainable ? `🎟 Tokens: <strong>${have}/${need}</strong> — need ${short} more (still earnable)`
         : `🎟 Tokens: <strong>${have}/${need}</strong> — ⚠ need ${short} more, carry to Second Hunt!`;
-      tokEl.style.color = short <= 0 ? 'var(--green)' : (attainable ? 'var(--yellow)' : 'var(--red)');
+      tokEl.style.color = short <= 0 ? 'var(--green)' : (attainable ? 'var(--purple)' : 'var(--red)');
     } else if (have > 0) {
       tokEl.style.display = 'block';
       tokEl.textContent = `🎟 Tokens earned: ${have}`;
@@ -430,7 +430,7 @@ function renderActiveChallengesWidget() {
         <span style="font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;">${ch.name}</span>
       </div>
       <span style="font-size:9px;padding:1px 5px;border-radius:4px;background:rgba(107,122,150,0.15);color:var(--text-muted);flex-shrink:0;">${label}</span>
-      <span style="font-size:11px;font-weight:700;color:var(--gold);flex-shrink:0;">+${ch.bonus}${ch.tokens ? ` +${ch.tokens}🎟` : ''}</span>
+      <span style="font-size:11px;font-weight:700;color:var(--gold);flex-shrink:0;">+${ch.bonus}${ch.tokens ? `<span style="color:var(--purple);"> +${ch.tokens}🎟</span>` : ''}</span>
     </div>`).join('');
 
   for (const pfx of ['w', 'f']) {
