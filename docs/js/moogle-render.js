@@ -214,7 +214,8 @@ function renderShopGrid() {
       ? `<div style="flex-shrink:0;min-width:44px;text-align:center;"><span style="font-size:16px;font-weight:800;color:var(--text-muted);">✓</span></div>`
       : `<div style="flex-shrink:0;min-width:44px;text-align:center;padding:4px 6px;border-radius:6px;background:${isWished ? 'rgba(200,169,110,0.15)' : 'rgba(255,255,255,0.04)'};border:1px solid ${isWished ? 'var(--border-gold)' : 'var(--border)'};">
           <div style="font-size:17px;font-weight:800;color:${isWished ? 'var(--gold)' : 'var(--text-muted);opacity:0.8'};">${item.cost}</div>
-          <div style="font-size:9px;color:var(--text-muted);margin-top:-1px;">tome${item.cost !== 1 ? 's' : ''}${!item.unique ? '/ea' : ''}${item.tokenCost ? ` + ${item.tokenCost}🎟` : ''}</div>
+          <div style="font-size:9px;color:var(--text-muted);margin-top:-1px;">tome${item.cost !== 1 ? 's' : ''}${!item.unique ? '/ea' : ''}</div>${item.tokenCost ? `
+          <div style="font-size:9px;color:var(--purple);font-weight:700;margin-top:2px;white-space:nowrap;">+${item.tokenCost}🎟</div>` : ''}
         </div>`;
 
     // Qty controls for non-unique items — always visible so target can be set before wishing

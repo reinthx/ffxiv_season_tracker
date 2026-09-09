@@ -7,12 +7,17 @@ module.exports = defineConfig({
   fullyParallel: true,
   reporter: 'list',
   use: {
-    baseURL: 'http://127.0.0.1:8787',
+    baseURL: process.env.E2E_BASE_URL || 'http://127.0.0.1:8787',
     trace: 'retain-on-failure',
   },
-  webServer: {
-    command: 'node scripts/serve-docs.js 8787',
-    port: 8787,
-    reuseExistingServer: true,
-  },
+  // Against a live URL (E2E_BASE_URL set), skip the local static server.
+  ...(process.env.E2E_BASE_URL
+    ? {}
+    : {
+        webServer: {
+          command: 'node scripts/serve-docs.js 8787',
+          port: 8787,
+          reuseExistingServer: true,
+        },
+      }),
 });
