@@ -19,19 +19,8 @@
     {
       "binding": "DB",
       "database_name": "ffxiv-tracker-db",
-      "database_id": "19f10690-b59c-4580-8fa8-c4008eb95be4"
-    }
-  ],
-
-  // KV namespace — session tokens (auto-expiry via TTL)
-  // After creation, paste IDs returned by:
-  //   wrangler kv namespace create SESSIONS
-  //   wrangler kv namespace create SESSIONS --preview
-  "kv_namespaces": [
-    {
-      "binding": "SESSIONS",
-      "id": "f2134c4632b34154be4c475af89cb023",
-      "preview_id": "412067716881466c97d184fac6df986d"
+      "database_id": "19f10690-b59c-4580-8fa8-c4008eb95be4",
+      "migrations_dir": "worker/migrations"
     }
   ],
 

@@ -1,0 +1,14 @@
+version: 2
+updates:
+  # Group Cloudflare tooling so wrangler + workers-types move together
+  # (wrangler pins a peer range on workers-types).
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      cloudflare:
+        patterns:
+          - "wrangler"
+          - "@cloudflare/*"
+    # CI reads the wrangler version from package.json, so no manual pin sync needed.

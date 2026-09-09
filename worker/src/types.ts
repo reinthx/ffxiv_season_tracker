@@ -1,13 +1,12 @@
 export interface Env {
   DB: D1Database;
-  SESSIONS: KVNamespace;
   ASSETS: Fetcher;
   DISCORD_CLIENT_ID: string;
   DISCORD_CLIENT_SECRET: string;
   DISCORD_REDIRECT_URI: string;
 }
 
-/** Stored in KV under `session:<token>` */
+/** Stored in D1 `sessions` (moved off KV in migration 0004) */
 export interface Session {
   userId: number;       // users.id (auto-increment)
   discordId: string;
