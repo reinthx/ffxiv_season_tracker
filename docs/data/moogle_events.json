@@ -905,14 +905,6 @@
           "casual": true
         },
         {
-          "id": "a1_4",
-          "name": "Alexander Raid A1-A4",
-          "tomes": 1,
-          "avgMinutes": 4,
-          "category": "raid",
-          "casual": true
-        },
-        {
           "id": "s1t7",
           "name": "Containment Bay S1T7",
           "tomes": 2,
@@ -1685,7 +1677,8 @@
           "cost": 50,
           "category": "minion",
           "unique": true,
-          "img": ""
+          "img": "",
+          "collectId": 360
         },
         {
           "id": "emote_sweep",

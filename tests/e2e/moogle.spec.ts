@@ -38,6 +38,18 @@ test('token status tracks wished Uolon Horn (0/10, still earnable)', async ({ pa
   await expect(status).toContainText('still earnable');
 });
 
+test('Collect lookup without an ID does no network and returns null', async ({ page }) => {
+  // The list API ignores search=, so name lookups silently returned wrong
+  // items. fetchCollectItem must only resolve by numeric collectId.
+  const result = await page.evaluate(async () => {
+    (window as any).fetch = () => {
+      throw new Error('fetchCollectItem must not hit the network without a collectId');
+    };
+    return await (window as any).fetchCollectItem('mount', 'Uolon');
+  });
+  expect(result).toBeNull();
+});
+
 test('marking Uolon Horn bought with no tokens warns', async ({ page }) => {
   await page.evaluate(() => {
     localStorage.setItem(

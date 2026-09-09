@@ -64,31 +64,22 @@ function _applyCollectCache(ownedIds) {
 // Returns { image, icon, id } for a given item; results cached to avoid duplicate fetches.
 // `image` = large preview (192x192 for mounts/minions, 104x128 for cards), may be null.
 // `icon`  = small 40x40 game icon, or 192x192 hairstyle sample for hairstyle category.
-// Pass `collectId` to fetch by numeric ID directly (skips name search, more reliable).
+// Lookup is by numeric collectId ONLY: the list endpoint ignores `search=`,
+// so name search silently returns unrelated items and must not be used.
+// Pass null/undefined collectId to skip the lookup (returns null, no network).
 async function fetchCollectItem(category, name, collectId = null) {
   const resource = COLLECT_CATEGORY_MAP[category];
   if (!resource) return null;
-  const cacheKey = collectId != null ? `${category}:id:${collectId}` : `${category}:${name}`;
+  if (collectId == null) return null;
+  const cacheKey = `${category}:id:${collectId}`;
   if (_collectIconCache[cacheKey] !== undefined) return _collectIconCache[cacheKey];
   try {
-    let match;
-    if (collectId != null) {
-      const resp = await fetch(
-        `https://ffxivcollect.com/api/${resource}/${collectId}`,
-        { headers: { Accept: 'application/json' } }
-      );
-      if (!resp.ok) { _collectIconCache[cacheKey] = null; return null; }
-      match = await resp.json();
-    } else {
-      const resp = await fetch(
-        `https://ffxivcollect.com/api/${resource}?search=${encodeURIComponent(name)}&limit=5`,
-        { headers: { Accept: 'application/json' } }
-      );
-      if (!resp.ok) { _collectIconCache[cacheKey] = null; return null; }
-      const json = await resp.json();
-      const results = Array.isArray(json) ? json : (json.results || []);
-      match = results.find(r => r.name?.toLowerCase() === name.toLowerCase()) || results[0];
-    }
+    const resp = await fetch(
+      `https://ffxivcollect.com/api/${resource}/${collectId}`,
+      { headers: { Accept: 'application/json' } }
+    );
+    if (!resp.ok) { _collectIconCache[cacheKey] = null; return null; }
+    const match = await resp.json();
     const result = match ? { image: match.image || null, icon: match.icon || null, id: match.id ?? null } : null;
     _collectIconCache[cacheKey] = result;
     return result;
@@ -96,12 +87,6 @@ async function fetchCollectItem(category, name, collectId = null) {
     _collectIconCache[cacheKey] = null;
     return null;
   }
-}
-
-// Convenience wrapper: returns just the image URL (for modal icon lazy-load)
-async function fetchCollectIcon(category, name) {
-  const result = await fetchCollectItem(category, name);
-  return result?.image ?? null;
 }
 
 // Fetch this character's owned collectibles from FFXIV Collect and auto-mark already-owned unique items.

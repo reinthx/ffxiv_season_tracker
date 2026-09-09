@@ -43,3 +43,27 @@ test('moogle_events.json has active Astronomy event with valid shop/duties', asy
   expect(uolon.tokenCost).toBe(10);
   expect(uolon.collectId).toBe(414);
 });
+
+const COLLECTABLE = new Set(['mount', 'minion', 'emote', 'hairstyle', 'barding', 'orchestrion', 'triad']);
+
+test('all moogle events have unique duty ids', async ({ request }) => {
+  const data = await (await request.get('/data/moogle_events.json')).json();
+  for (const ev of data.events) {
+    const ids = (ev.duties || []).map((d: any) => d.id);
+    expect(new Set(ids).size, `${ev.key} duplicate duty ids`).toBe(ids.length);
+  }
+});
+
+test('Mogpendium-era events have collectIds on all Collect-tracked items', async ({ request }) => {
+  // Collect integration only resolves by numeric ID (the list API ignores
+  // search=), so every unique mount/minion/emote/hairstyle/barding/
+  // orchestrion/triad item in a current-schema event must carry one.
+  const data = await (await request.get('/data/moogle_events.json')).json();
+  for (const ev of data.events) {
+    if (!ev.weeks) continue; // pre-Mogpendium seed data exempt
+    const missing = (ev.shop || [])
+      .filter((i: any) => i.unique && COLLECTABLE.has(i.category) && typeof i.collectId !== 'number')
+      .map((i: any) => i.id);
+    expect(missing, `${ev.key} items without collectId`).toEqual([]);
+  }
+});
