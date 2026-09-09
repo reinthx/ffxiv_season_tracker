@@ -8,7 +8,7 @@
 
   // Static assets — served for any path not handled by the Worker
   "assets": {
-    "directory": "./docs",
+    "directory": "./dist",
     "binding": "ASSETS",
     "not_found_handling": "none"
   },

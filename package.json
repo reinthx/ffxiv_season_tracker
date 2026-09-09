@@ -4,10 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "deploy": "npm run build && wrangler deploy",
+    "build": "node scripts/build.js",
+    "test:e2e": "playwright test",
+    "test:e2e:install": "playwright install --with-deps chromium"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250526.0",
+    "@playwright/test": "^1.63.0",
+    "terser": "^5.39.0",
     "typescript": "^5.8.3",
     "wrangler": "^4.0.0"
   }

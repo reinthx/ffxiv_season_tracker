@@ -1,5 +1,9 @@
 node_modules/
 .wrangler/
 dist/
+test-results/
+playwright-report/
 *.local
-scripts/
+scripts/*.py
+scripts/*.png
+notes/

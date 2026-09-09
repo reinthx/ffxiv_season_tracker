@@ -27,10 +27,19 @@ export interface CharacterRow {
   avatar_url: string | null;
   data: string;
   updated_at: string;
+  ffxiv_cache: string | null;
+  ffxiv_cache_dt: string | null;
+  ffxiv_collect_synced_at: string | null;
+  lodestone_title: string | null;
+  lodestone_fc: string | null;
+  lodestone_class: string | null;
+  lodestone_class_level: number | null;
+  lodestone_classes: string | null; // JSON: [{ name, level, type }]
 }
 
 /** Row shape returned from moogle_progress queries */
 export interface MoogleProgressRow {
+  lodestone_id:         string;
   event_key:            string;
   wishlist:             string;
   tomes_current:        number;
@@ -43,6 +52,7 @@ export interface MoogleProgressRow {
 
 /** Request body for PUT /api/moogle/:eventKey */
 export interface PutMoogleBody {
+  lodestone_id:        string;  // '' = account-level fallback
   wishlist:            string;  // JSON
   tomes_current:       number;
   weekly_objectives:   string;  // JSON
@@ -58,5 +68,17 @@ export interface PutCharacterBody {
   label?: string | null;
   portraitUrl?: string | null;
   avatarUrl?: string | null;
+  lodestoneTitle?: string | null;
+  lodestoneFC?: string | null;
+  lodestoneClass?: string | null;
+  lodestoneClassLevel?: number | null;
+  lodestoneClasses?: string | null; // JSON: [{ name, level, type }]
   data: string;
+}
+
+/** Request body for PUT /api/characters/:lodestoneId/collect-cache */
+export interface PutCollectCacheBody {
+  cache:        string;           // JSON — { mounts:[...], minions:[...], ... }
+  last_parsed:  string | null;    // ISO datetime from FFXIV Collect response
+  force_synced: boolean;          // true → stamp ffxiv_collect_synced_at = now
 }

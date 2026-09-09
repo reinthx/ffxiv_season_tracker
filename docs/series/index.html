@@ -11,10 +11,10 @@
 </head>
 <body>
 
-<div style="max-width:1120px; margin:0 auto; padding:32px 16px 64px;">
+<div class="page-wrap">
 
   <!-- ══ HEADER ══════════════════════════════════════════ -->
-  <header style="text-align:center; margin-bottom:20px; position:relative;">
+  <header class="page-header">
     <div style="position:absolute; top:0; left:0;">
       <div id="discord-auth-widget"></div>
     </div>
@@ -25,35 +25,11 @@
       <button class="theme-swatch" data-theme="dawn"     style="background:linear-gradient(135deg,#f0ead8,#fffcf4); border-color:#8b6514;" title="Dawn (light)" onclick="setTheme('dawn')"></button>
       <button class="theme-swatch" data-theme="aether"   style="background:linear-gradient(135deg,#030c18,#071628); border-color:#38cce0;" title="Aether"       onclick="setTheme('aether')"></button>
     </div>
-    <div style="font-size:0.72rem; letter-spacing:0.15em; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px;">Final Fantasy XIV</div>
+    <div class="page-eyebrow">Final Fantasy XIV</div>
     <h1 class="font-cinzel" style="font-size:clamp(1.8rem,5vw,3rem); font-weight:700; color:var(--gold); margin-bottom:6px; line-height:1.1;">Series Tracker</h1>
     <p style="color:var(--text-muted); font-size:0.83rem;">PvP Series (Malmstone) progress tracker — rewards, XP rate &amp; series timeline</p>
-    <div style="margin-top:10px; display:flex; align-items:center; justify-content:center; gap:16px; font-size:0.8rem; flex-wrap:wrap;">
-      <a href="/" style="color:var(--text-muted); text-decoration:none; font-size:0.78rem;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-muted)'">← Home</a>
-      <a href="/moogle/" style="color:var(--text-muted); text-decoration:none; font-size:0.78rem;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-muted)'">Moogle Tome Tracker →</a>
-    </div>
+    <div id="site-nav"></div>
   </header>
-
-  <!-- ══ TAB NAV ════════════════════════════════════════════ -->
-  <nav class="tab-nav">
-    <button class="tab-btn active" id="tab-btn-tracker" onclick="switchTab('tracker')">📊 Tracker</button>
-    <button class="tab-btn" id="tab-btn-data" onclick="switchTab('data')">📜 Series Data</button>
-  </nav>
-
-  <!-- ══ SHARE VIEW BANNER ═══════════════════════════════ -->
-  <div id="share-view-banner" style="display:none; background:rgba(167,139,250,0.1); border:1px solid rgba(167,139,250,0.35); border-radius:8px; padding:10px 16px; font-size:13px; color:var(--text); margin-bottom:14px; align-items:center; gap:12px; flex-wrap:wrap;">
-    <span style="font-size:15px;">👁</span>
-    <div style="flex:1; min-width:0;">
-      <strong>Viewing shared progress</strong><span id="share-view-charname" style="color:var(--text-muted);"></span>
-      <span style="color:var(--text-muted); font-size:12px;"> — your own data is still saved.</span>
-    </div>
-    <button class="btn btn-outline" style="font-size:12px; padding:5px 12px; border-color:rgba(167,139,250,0.5); white-space:nowrap;" onclick="loadOwnProgress()">← Back to your progress</button>
-  </div>
-
-<div id="data-load-error" style="display:none; background:rgba(248,113,113,0.12); border:1px solid rgba(248,113,113,0.4); border-radius:8px; padding:12px 16px; font-size:13px; color:var(--red); margin-bottom:18px;"></div>
-
-  <!-- ══ TRACKER TAB ═════════════════════════════════════════ -->
-  <div id="tab-tracker-content">
 
   <!-- ══ SERIES TIMELINE BANNER ══════════════════════════ -->
   <div class="series-banner">
@@ -64,7 +40,7 @@
       </div>
       <div id="banner-dates" style="font-size:0.8rem; color:var(--text-muted);">Dec 16, 2025 → Apr 28, 2026</div>
       <div style="display:flex; gap:16px; font-size:0.82rem;">
-        <span><span id="banner-elapsed" style="color:var(--text); font-weight:600;">—</span> <span style="color:var(--text-muted);">days elapsed</span></span>
+        <!-- <span><span id="banner-elapsed" style="color:var(--text); font-weight:600;">—</span> <span style="color:var(--text-muted);">days elapsed</span></span> -->
         <span><span id="banner-remain" style="color:var(--gold); font-weight:600;">—</span> <span style="color:var(--text-muted);">days left</span></span>
       </div>
     </div>
@@ -78,29 +54,33 @@
     </div>
   </div>
 
+  <!-- ══ TAB NAV ════════════════════════════════════════════ -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" id="tab-btn-tracker" onclick="switchTab('tracker')">Tracker</button>
+    <button class="tab-btn" id="tab-btn-data" onclick="switchTab('data')">Past Series</button>
+  </nav>
+
+  <!-- ══ SHARE VIEW BANNER ═══════════════════════════════ -->
+  <div id="share-view-banner" style="display:none; background:rgba(167,139,250,0.1); border:1px solid rgba(167,139,250,0.35); border-radius:8px; padding:10px 16px; font-size:13px; color:var(--text); margin-bottom:14px; align-items:center; gap:12px; flex-wrap:wrap;">
+    <span style="font-size:15px;">👁</span>
+    <div style="flex:1; min-width:0;">
+      <strong>Viewing shared progress</strong><span id="share-view-charname" style="color:var(--text-muted);"></span>
+      <span style="color:var(--text-muted); font-size:12px;"> — your own data is still saved.</span>
+    </div>
+    <button class="btn btn-outline" style="font-size:12px; padding:5px 12px; border-color:rgba(167,139,250,0.5); white-space:nowrap;" onclick="loadOwnProgress()">← Back to your progress</button>
+  </div>
+
+<div id="data-load-error" class="error-banner"></div>
+
+  <!-- ══ TRACKER TAB ═════════════════════════════════════════ -->
+  <div id="tab-tracker-content">
+
   <!-- ══ SETUP PANEL ═════════════════════════════════════ -->
   <div class="card" id="progress-card" style="margin-bottom:18px; position:relative; overflow:hidden;">
     <div id="progress-portrait-bg"></div>
     <div style="position:relative; z-index:1;">
     <div class="card-header-row">
       <div class="section-title">Your Progress</div>
-      <div id="char-display">
-        <img id="char-avatar-img" class="char-avatar" src="" alt="" style="display:none;">
-        <div class="char-info">
-          <div class="char-name-row">
-            <span id="char-name-display"></span>
-            <span id="char-world-display"></span>
-          </div>
-          <div class="char-meta-row">
-            <span id="char-title-display" style="display:none;"></span>
-            <span id="char-class-display" style="display:none;"></span>
-            <span id="char-fc-display" style="display:none;"></span>
-            <a id="char-lodestone-link" href="#" target="_blank" rel="noopener" style="display:none;">🔗 Lodestone</a>
-            <button id="char-refresh-btn" class="btn-ghost btn" style="padding:1px 6px; font-size:10px; display:none;" title="Re-fetch from Lodestone">↻</button>
-            <button class="btn-ghost btn" style="padding:1px 6px; font-size:10px;" onclick="clearCharacter()">✕</button>
-          </div>
-        </div>
-      </div>
     </div>
     <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:13px; margin-bottom:16px;">
       <div>
@@ -129,9 +109,11 @@
     <div class="char-card-section" style="margin-bottom:12px;">
       <div class="char-card-header">
         <em class="char-toggle-icon">▶</em>
-        <span class="font-cinzel" style="font-size:0.82rem; letter-spacing:0.06em;">⚔ Link Your Character</span>
+        <span class="font-cinzel" style="font-size:0.82rem; letter-spacing:0.06em;">Link Your Character</span>
         <span style="font-size:10px; color:var(--text-muted); font-weight:400; margin-left:2px;">— Lodestone lookup, portrait &amp; class</span>
       </div>
+      <!-- Character display (shown when linked, populated by renderCharBadge) -->
+      <div id="char-display" class="char-badge" style="display:none;"></div>
       <div class="char-card-body">
         <p style="font-size:11px; color:var(--text-muted); margin-bottom:12px; line-height:1.6;">
           Link your Lodestone character to show your full-body portrait, active job, and a direct profile link in your share URL.
@@ -178,7 +160,7 @@
   <div class="grid-2-col" style="margin-bottom:18px;">
     <div class="card">
       <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
-        <div class="section-title" style="border:none; margin:0; padding:0; font-size:0.75rem;">Season Progress</div>
+        <div class="section-title bare small">Season Progress</div>
         <span id="season-pct" style="font-size:1.4rem; font-weight:700; color:var(--gold);">0%</span>
       </div>
       <div class="progress-track" style="margin-bottom:7px;"><div class="progress-fill" id="season-bar" style="width:0%"></div></div>
@@ -188,7 +170,7 @@
     </div>
     <div class="card">
       <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
-        <div class="section-title" style="border:none; margin:0; padding:0; font-size:0.75rem;">Current Level</div>
+        <div class="section-title bare small">Current Level</div>
         <span id="level-pct" style="font-size:1.4rem; font-weight:700; color:var(--blue);">0%</span>
       </div>
       <div class="progress-track" style="margin-bottom:7px;"><div class="progress-fill pf-blue" id="level-bar" style="width:0%"></div></div>
@@ -242,17 +224,17 @@
       </p>
       <div style="display:flex; flex-direction:column; gap:9px; margin-bottom:12px;">
         <div style="display:flex; align-items:center; gap:10px;">
-          <span class="act-label">⚔ Crystalline Conflict</span>
+          <span class="act-label"> Crystalline Conflict</span>
           <input type="number" id="c-cc" min="0" value="0" style="width:58px; padding:6px 8px; flex-shrink:0;">
           <span style="font-size:11px; color:var(--text-muted);">~800 XP</span>
         </div>
         <div style="display:flex; align-items:center; gap:10px;">
-          <span class="act-label">⚔ Frontline</span>
+          <span class="act-label"> Frontline</span>
           <input type="number" id="c-fl" min="0" value="1" style="width:58px; padding:6px 8px; flex-shrink:0;">
           <span style="font-size:11px; color:var(--text-muted);">~1,250 + 1,250 bonus</span>
         </div>
         <div style="display:flex; align-items:center; gap:10px;">
-          <span class="act-label">⚔ Rival Wings</span>
+          <span class="act-label"> Rival Wings</span>
           <input type="number" id="c-rw" min="0" value="0" style="width:58px; padding:6px 8px; flex-shrink:0;">
           <span style="font-size:11px; color:var(--text-muted);">~1,000 XP</span>
         </div>
@@ -268,7 +250,7 @@
   <!-- ══ XP HISTORY SPARKLINE ════════════════════════════ -->
   <div class="card" id="xp-sparkline-section" style="margin-bottom:18px; display:none;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-      <div class="section-title" style="border:none; margin:0; padding:0; font-size:0.75rem;">XP History</div>
+      <div class="section-title bare small">XP History</div>
       <span id="spk-current-xp" style="font-size:12px; font-weight:700; color:var(--gold);">—</span>
     </div>
     <div id="xp-sparkline" style="width:100%; height:80px;"></div>
@@ -280,7 +262,7 @@
   <!-- ══ REWARDS GRID ═════════════════════════════════════ -->
   <div class="card" style="margin-bottom:18px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-      <div id="rewards-title" class="section-title" style="border:none; margin:0; padding:0;">Series 10 Rewards</div>
+      <div id="rewards-title" class="section-title bare">Series 10 Rewards</div>
       <span style="font-size:11px; color:var(--text-muted);">Click special rewards for details</span>
     </div>
     <div id="milestone-counter-wrap" style="display:none; margin-bottom:12px;"></div>
@@ -340,6 +322,9 @@
   </div>
 </div>
 
+<script src="../js/shared.js"></script>
+<script src="../js/shared-character.js"></script>
+<script src="../js/site-nav.js"></script>
 <script src="../js/series.js" defer></script>
 </body>
 </html>

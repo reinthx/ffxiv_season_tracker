@@ -7,7 +7,7 @@ const DISCORD_AUTH_URL  = 'https://discord.com/oauth2/authorize';
 const DISCORD_TOKEN_URL = 'https://discord.com/api/oauth2/token';
 const DISCORD_ME_URL    = 'https://discord.com/api/users/@me';
 
-const SESSION_TTL_SECONDS = 7 * 24 * 60 * 60;
+const SESSION_TTL_SECONDS = 90 * 24 * 60 * 60;
 const STATE_COOKIE_TTL    = 600; // 10 minutes for CSRF state
 
 export async function handleAuth(request: Request, env: Env): Promise<Response> {

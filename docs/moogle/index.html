@@ -8,29 +8,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
-  <style>
-    .shop-row {
-      display: flex; align-items: center; gap: 12px; padding: 10px 14px;
-      border-radius: 8px; border: 1px solid var(--border); border-left: 3px solid var(--border);
-      cursor: pointer; transition: background 0.15s, opacity 0.15s; margin-bottom: 6px; background: transparent;
-    }
-    .shop-row:hover                { background: rgba(255,255,255,0.04); }
-    .shop-row.is-wished            { border-left-color: var(--gold);  background: var(--gold-dim); }
-    .shop-row.is-wished:hover      { background: rgba(200,169,110,0.18); }
-    .shop-row.is-purchased         { border-left-color: var(--green); background: rgba(74,222,128,0.06); }
-    .shop-row.is-purchased:hover   { background: rgba(74,222,128,0.12); }
-    .shop-row.is-collected         { border-left-color: var(--blue);  background: rgba(91,160,224,0.06); }
-    .shop-row.is-collected:hover   { background: rgba(91,160,224,0.12); }
-    .shop-row.is-dim               { opacity: 0.45; }
-    .shop-row-actions              { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-  </style>
 </head>
 <body>
 
-<div style="max-width:1120px; margin:0 auto; padding:32px 16px 64px;">
+<div class="page-wrap">
 
   <!-- ══ HEADER ══════════════════════════════════════════ -->
-  <header style="text-align:center; margin-bottom:20px; position:relative;">
+  <header class="page-header">
     <div style="position:absolute; top:0; left:0;">
       <div id="discord-auth-widget"></div>
     </div>
@@ -41,15 +25,10 @@
       <button class="theme-swatch" data-theme="dawn"     style="background:linear-gradient(135deg,#f0ead8,#fffcf4); border-color:#8b6514;" title="Dawn (light)" onclick="setTheme('dawn')"></button>
       <button class="theme-swatch" data-theme="aether"   style="background:linear-gradient(135deg,#030c18,#071628); border-color:#38cce0;" title="Aether"       onclick="setTheme('aether')"></button>
     </div>
-    <div style="font-size:0.72rem; letter-spacing:0.15em; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px;">Final Fantasy XIV</div>
+    <div class="page-eyebrow">Final Fantasy XIV</div>
     <h1 class="font-cinzel" style="font-size:clamp(1.8rem,5vw,3rem); font-weight:700; color:var(--gold); margin-bottom:6px; line-height:1.1;">Moogle Tome Tracker</h1>
     <p style="color:var(--text-muted); font-size:0.83rem;">Moogle Treasure Trove — wishlist, farming routes &amp; challenge objectives</p>
-    <div style="margin-top:10px; display:flex; align-items:center; justify-content:center; gap:16px; font-size:0.8rem; flex-wrap:wrap;">
-      <a href="/" style="color:var(--text-muted); text-decoration:none; font-size:0.78rem;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-muted)'">← Home</a>
-      <a href="/series/" style="color:var(--text-muted); text-decoration:none; font-size:0.78rem;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-muted)'">Series Tracker →</a>
-      <span id="event-name-header" style="color:var(--gold); font-weight:600;"></span>
-      <span id="event-dates-header" style="color:var(--text-muted);"></span>
-    </div>
+    <div id="site-nav"></div>
   </header>
 
   <!-- ══ EVENT BANNER ════════════════════════════════════ -->
@@ -67,9 +46,14 @@
     <div class="progress-track thin">
       <div class="progress-fill pf-purple" id="event-timeline-bar" style="width:0%"></div>
     </div>
+    <div style="display:flex; justify-content:space-between; font-size:10.5px; color:var(--text-muted); margin-top:5px;">
+      <span id="banner-event-start-label">—</span>
+      <span id="banner-event-pct-label" style="color:var(--purple);">—% elapsed</span>
+      <span id="banner-event-end-label">—</span>
+    </div>
   </div>
 
-  <div id="data-load-error" style="display:none; background:rgba(248,113,113,0.12); border:1px solid rgba(248,113,113,0.4); border-radius:8px; padding:12px 16px; font-size:13px; color:var(--red); margin-bottom:18px;"></div>
+<div id="data-load-error" class="error-banner"></div>
   <div id="upcoming-event-banner" style="display:none; background:rgba(200,169,110,0.07); border:1px solid var(--border-gold); border-radius:10px; padding:18px 20px; margin-bottom:18px;"></div>
   <div id="no-active-event" style="display:none; background:var(--card); border:1px solid var(--border); border-radius:8px; padding:24px; text-align:center; color:var(--text-muted); margin-bottom:18px;">
     No active Moogle Tome event right now. Check back when the next Treasure Trove begins!
@@ -80,27 +64,28 @@
 
     <!-- ══ TAB NAV ═════════════════════════════════════════ -->
     <nav class="tab-nav">
-      <button class="tab-btn active" id="tab-btn-wishlist"   onclick="switchTab('wishlist')">🎁 Wishlist</button>
-      <button class="tab-btn"        id="tab-btn-farm"       onclick="switchTab('farm')">⚔ Farming</button>
-      <button class="tab-btn"        id="tab-btn-challenges" onclick="switchTab('challenges')">📋 Challenges</button>
-      <button class="tab-btn"        id="tab-btn-history"    onclick="switchTab('history')">📜 Past Events</button>
+      <button class="tab-btn active" id="tab-btn-wishlist"   onclick="switchTab('wishlist')">Wishlist</button>
+      <button class="tab-btn"        id="tab-btn-farm"       onclick="switchTab('farm')">Farming</button>
+      <button class="tab-btn"        id="tab-btn-challenges" onclick="switchTab('challenges')">Mogpendium</button>
+      <!-- <button class="tab-btn"        id="tab-btn-history"    onclick="switchTab('history')">📜 Past Events</button> -->
     </nav>
 
     <!-- ══ WISHLIST TAB ════════════════════════════════════ -->
     <div id="tab-wishlist-content">
 
       <!-- ── Character section ───────────────────────────── -->
-      <div class="card char-card-section" style="margin-bottom:18px;">
+      <div class="char-card-section" style="margin-bottom:18px;">
         <div class="char-card-header" onclick="this.closest('.char-card-section').classList.toggle('open')">
           <em class="char-toggle-icon">▶</em>
-          <span class="font-cinzel" style="font-size:0.82rem; letter-spacing:0.06em;">⚔ Link Your Character</span>
+          <span class="font-cinzel" style="font-size:0.82rem; letter-spacing:0.06em;">Link Your Character</span>
           <span style="font-size:10px; color:var(--text-muted); font-weight:400; margin-left:2px;">— enables FFXIV Collect integration</span>
         </div>
         <!-- Character display (shown when linked) -->
-        <div id="mog-char-display" style="display:none; align-items:center; gap:10px; margin-top:10px; padding:8px 10px; border-radius:8px; border:1px solid var(--border-gold); background:var(--gold-dim);"></div>
+        <div id="mog-char-display" class="char-badge" style="display:none;"></div>
         <div class="char-card-body">
           <p style="font-size:11px; color:var(--text-muted); margin-bottom:12px; line-height:1.6;">
-            Link your Lodestone character to enable automatic FFXIV Collect integration for tracking owned mounts, minions, emotes, and more.
+            Link your Lodestone character to enable automatic FFXIV Collect integration for tracking owned collectibles.
+          <br><span style="color:var(--gold);">Note:</span> FFXIV Collect automatically tracks <strong>achievements, mounts, minions,</strong> and <strong>facewear</strong> from the Lodestone. All other categories (hairstyles, emotes, bardings, orchestrions, cards) must be manually added by you on <a href="https://ffxivcollect.com" target="_blank" rel="noopener" style="color:var(--text-muted);text-decoration:underline;">ffxivcollect.com</a> before they appear here automatically. Alternatively, you can use the "Owned" toggle in item list here.
           </p>
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
             <div>
@@ -128,28 +113,41 @@
         </div>
       </div>
 
-      <!-- Tome totals summary -->
-      <div class="grid-4-col" style="margin-bottom:18px;">
-        <div class="stat-card"><div class="stat-label">Tomes on Hand</div><div class="stat-value" id="w-tomes-current" style="color:var(--gold);">0</div></div>
-        <div class="stat-card"><div class="stat-label">Wishlist Cost</div><div class="stat-value" id="w-tomes-needed">—</div></div>
-        <div class="stat-card"><div class="stat-label">Still Needed</div><div class="stat-value" id="w-tomes-remaining" style="color:var(--yellow);">—</div></div>
-        <div class="stat-card"><div class="stat-label">Items Purchased</div><div class="stat-value" id="w-items-purchased" style="color:var(--green);">0</div></div>
-      </div>
-
-      <!-- Tomes on hand input -->
-      <div class="card" style="margin-bottom:18px;">
-        <div class="card-header-row">
-          <div class="section-title">Your Tomes</div>
-        </div>
-        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-          <div>
-            <label class="field-label">Current Tome Count</label>
-            <input type="number" id="inp-tomes" min="0" value="0" style="width:120px;">
+      <!-- Your Tomes panel (summary stats + portrait flair) -->
+      <div class="card" style="margin-bottom:18px; position:relative; overflow:hidden;">
+        <div id="tomes-portrait-bg"></div>
+        <div style="position:relative; z-index:1;">
+          <div style="display:grid; grid-template-columns:1fr auto 1fr; align-items:center; margin-bottom:14px;">
+            <div class="section-title bare">Your Tomes</div>
+            <button class="btn btn-ghost" style="font-size:11px; padding:4px 10px;" onclick="switchTab('farm')">⚡ Update tomes →</button>
+            <div></div>
           </div>
-          <button class="btn btn-gold" style="margin-top:16px;" onclick="applyTomes()">Update</button>
-          <span style="font-size:11px; color:var(--text-muted); margin-top:16px;">
-            Press <kbd style="background:var(--input-bg); border:1px solid var(--border); border-radius:3px; padding:1px 5px; font-size:10px;">Enter</kbd> to update
-          </span>
+          <!-- Active weekly challenges widget -->
+          <div id="w-active-weeklies" style="margin-bottom:14px; display:flex; flex-direction:column; gap:6px;"></div>
+          <div class="grid-4-col" style="margin-bottom:10px;">
+            <div class="stat-card"><div class="stat-label">Tomes on Hand</div><div class="stat-value" id="w-tomes-current" style="color:var(--gold);">0</div></div>
+            <div class="stat-card"><div class="stat-label">Wishlist Cost</div><div class="stat-value" id="w-tomes-needed">—</div></div>
+            <div class="stat-card"><div class="stat-label">Still Needed</div><div class="stat-value" id="w-tomes-remaining" style="color:var(--yellow);">—</div></div>
+            <div class="stat-card"><div class="stat-label">Items Purchased</div><div class="stat-value" id="w-items-purchased" style="color:var(--green);">0</div></div>
+          </div>
+          <!-- Projected earnings + pace — hidden until wishlist has items -->
+          <div id="w-projections" style="display:none; padding-top:10px; border-top:1px solid var(--border); flex-wrap:wrap; gap:10px; align-items:flex-start; justify-content:center;">
+            <div class="stat-card" style="flex:1; min-width:160px; text-align:center;" title="Bonus tomes from challenges you haven't completed yet (active/past weeks + all non-weekly tasks)">
+              <div class="stat-label">Projected from Challenges</div>
+              <div style="display:flex; align-items:baseline; gap:6px; flex-wrap:wrap; justify-content:center;">
+                <div class="stat-value" id="w-projected-challenges" style="color:var(--purple);">—</div>
+                <div id="w-after-challenges" style="font-size:11px; color:var(--text-muted);"></div>
+              </div>
+            </div>
+            <div class="stat-card" id="w-pace-card" style="flex:1; min-width:160px; text-align:center;" title="Tomes needed per remaining week from duties (after challenges)">
+              <div class="stat-label">Needed / Week from Duties</div>
+              <div style="display:flex; align-items:baseline; gap:6px; flex-wrap:wrap; justify-content:center;">
+                <div class="stat-value" id="w-pace" style="color:var(--blue);">—</div>
+                <div id="w-weeks-left" style="font-size:11px; color:var(--text-muted);"></div>
+              </div>
+            </div>
+            <div id="w-token-status" style="display:none; flex-basis:100%; text-align:center; font-size:12px; padding-top:2px;"></div>
+          </div>
         </div>
       </div>
 
@@ -159,7 +157,7 @@
       <!-- Shop grid -->
       <div class="card" style="margin-bottom:18px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-          <div class="section-title" style="border:none; margin:0; padding:0;">Shop Items</div>
+          <div class="section-title bare">Shop Items</div>
           <span style="font-size:11px; color:var(--text-muted);">Click any item to preview · Use buttons to wishlist</span>
         </div>
         <div id="shop-grid"></div>
@@ -170,28 +168,65 @@
     <!-- ══ FARMING TAB ═════════════════════════════════════ -->
     <div id="tab-farm-content" style="display:none;">
 
-      <!-- Mode toggle -->
-      <div class="card" style="margin-bottom:18px;">
-        <div class="card-header-row" style="margin-bottom:12px;">
-          <div class="section-title">Farming Route</div>
-          <div style="display:flex; gap:8px;">
-            <button id="mode-btn-casual"    class="btn btn-gold"    onclick="setFarmMode('casual')"   >🌸 Casual</button>
-            <button id="mode-btn-efficient" class="btn btn-outline"  onclick="setFarmMode('efficient')">⚡ Efficient</button>
+      <!-- Your Tomes panel (farming tab copy) -->
+      <div class="card" style="margin-bottom:18px; position:relative; overflow:hidden;">
+        <div id="f-tomes-portrait-bg"></div>
+        <div style="position:relative; z-index:1;">
+          <div style="display:flex; justify-content:center; align-items:center; margin-bottom:14px;">
+            <div class="section-title bare">Your Tomes</div>
+          </div>
+          <div id="f-active-weeklies" style="margin-bottom:14px; display:flex; flex-direction:column; gap:6px;"></div>
+          <div class="grid-4-col" style="margin-bottom:10px;">
+            <div class="stat-card"><div class="stat-label">Tomes on Hand</div><div class="stat-value" id="f-tomes-current" style="color:var(--gold);">0</div></div>
+            <div class="stat-card"><div class="stat-label">Wishlist Cost</div><div class="stat-value" id="f-tomes-needed">—</div></div>
+            <div class="stat-card"><div class="stat-label">Still Needed</div><div class="stat-value" id="f-tomes-remaining" style="color:var(--yellow);">—</div></div>
+            <div class="stat-card"><div class="stat-label">Items Purchased</div><div class="stat-value" id="f-items-purchased" style="color:var(--green);">0</div></div>
+          </div>
+          <div id="f-projections" style="display:none; padding-top:10px; border-top:1px solid var(--border); flex-wrap:wrap; gap:10px; align-items:flex-start; justify-content:center;">
+            <div class="stat-card" style="flex:1; min-width:160px; text-align:center;">
+              <div class="stat-label">Projected from Challenges</div>
+              <div style="display:flex; align-items:baseline; gap:6px; flex-wrap:wrap; justify-content:center;">
+                <div class="stat-value" id="f-projected-challenges" style="color:var(--purple);">—</div>
+                <div id="f-after-challenges" style="font-size:11px; color:var(--text-muted);"></div>
+              </div>
+            </div>
+            <div class="stat-card" id="f-pace-card" style="flex:1; min-width:160px; text-align:center;">
+              <div class="stat-label">Needed / Week from Duties</div>
+              <div style="display:flex; align-items:baseline; gap:6px; flex-wrap:wrap; justify-content:center;">
+                <div class="stat-value" id="f-pace" style="color:var(--blue);">—</div>
+                <div id="f-weeks-left" style="font-size:11px; color:var(--text-muted);"></div>
+              </div>
+            </div>
+            <div id="f-token-status" style="display:none; flex-basis:100%; text-align:center; font-size:12px; padding-top:2px;"></div>
           </div>
         </div>
-        <p id="farm-mode-desc" style="font-size:12px; color:var(--text-muted); margin-bottom:0;"></p>
       </div>
 
-      <!-- Optimizer output -->
+      <!-- Tome count input -->
       <div class="card" style="margin-bottom:18px;">
-        <div class="section-title">Recommended Route</div>
-        <div id="route-output"></div>
+        <div class="card-header-row" style="margin-bottom:10px;">
+          <div class="section-title">Current Tomes</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+          <input type="number" id="inp-tomes" min="0" value="0" style="width:130px;">
+          <button class="btn btn-gold" onclick="applyTomes()">Update</button>
+          <span style="font-size:11px; color:var(--text-muted);">
+            Press <kbd style="background:var(--input-bg); border:1px solid var(--border); border-radius:3px; padding:1px 5px; font-size:10px;">Enter</kbd> to update
+          </span>
+        </div>
+      </div>
+
+      <!-- Announcements -->
+      <div class="card" id="farm-announcements" style="margin-bottom:18px; display:none;">
+        <div class="section-title">Community Notes</div>
+        <div id="announcements-content"></div>
       </div>
 
       <!-- Run counter -->
       <div class="card" style="margin-bottom:18px;">
         <div class="section-title">Session Progress</div>
-        <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">Track runs completed this session. Tome count updates automatically.</p>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Track runs completed this session. Tome count updates automatically.</p>
+        <div id="farm-category-filters" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;"></div>
         <div id="run-counters" style="display:flex; flex-direction:column; gap:8px;"></div>
         <div style="margin-top:14px; padding-top:14px; border-top:1px solid var(--border); display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
           <span style="font-size:12px; color:var(--text-muted);">Session tomes earned: <strong id="session-tomes" style="color:var(--gold);">0</strong></span>
@@ -202,7 +237,7 @@
       <!-- Tome history chart (Discord only) -->
       <div class="card" id="tome-history-section" style="display:none; margin-bottom:18px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <div class="section-title" style="border:none; margin:0; padding:0; font-size:0.75rem;">Tome History</div>
+          <div class="section-title bare small">Tome History</div>
           <span id="th-current" style="font-size:12px; font-weight:700; color:var(--gold);">—</span>
         </div>
         <div id="tome-sparkline" style="width:100%; height:80px;"></div>
@@ -219,33 +254,23 @@
       <div class="grid-2-col" style="margin-bottom:18px;">
 
         <div class="card">
-          <div class="section-title">Weekly Challenges</div>
+          <div class="section-title">Weekly Tasks</div>
           <p style="font-size:11px; color:var(--text-muted); margin-bottom:12px;">Resets each week. Complete for bonus tomes.</p>
           <div id="challenges-weekly" style="display:flex; flex-direction:column; gap:8px;"></div>
         </div>
 
         <div class="card">
-          <div class="section-title">Standard Challenges</div>
-          <p style="font-size:11px; color:var(--text-muted); margin-bottom:12px;">One-time per event.</p>
-          <div id="challenges-standard" style="display:flex; flex-direction:column; gap:8px;"></div>
-        </div>
-
-      </div>
-
-      <div class="grid-2-col" style="margin-bottom:18px;">
-
-        <div class="card">
-          <div class="section-title" style="color:var(--purple);">Minimog Challenges</div>
+          <div class="section-title" style="color:var(--purple);">Minimog Tasks</div>
           <p style="font-size:11px; color:var(--text-muted); margin-bottom:12px;">Special tier. Significant tome bonus on completion.</p>
           <div id="challenges-minimog" style="display:flex; flex-direction:column; gap:8px;"></div>
         </div>
 
-        <div class="card">
-          <div class="section-title" style="color:var(--gold);">Ultimog Challenges</div>
-          <p style="font-size:11px; color:var(--text-muted); margin-bottom:12px;">Hardest tier. Maximum tome reward.</p>
-          <div id="challenges-ultimog" style="display:flex; flex-direction:column; gap:8px;"></div>
-        </div>
+      </div>
 
+      <div class="card" style="margin-bottom:18px;">
+        <div class="section-title" style="color:var(--gold);">Ultimog Tasks</div>
+        <p style="font-size:11px; color:var(--text-muted); margin-bottom:12px;">Hardest tier. Maximum tome reward.</p>
+        <div id="challenges-ultimog" style="display:flex; flex-direction:column; gap:8px;"></div>
       </div>
 
     </div><!-- /tab-challenges-content -->
@@ -262,27 +287,33 @@
   <div id="modal-card">
     <button id="modal-close" onclick="closeModal()">✕</button>
     <div style="text-align:center; margin-bottom:16px;">
-      <div style="width:100px; height:100px; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; background:var(--gold-dim); border-radius:12px; border:1px solid var(--border-gold);">
+      <div id="modal-img-wrap" style="width:100px; height:100px; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; background:var(--gold-dim); border-radius:12px; border:1px solid var(--border-gold); transition:width 0.2s,height 0.2s; overflow:hidden;">
         <img id="modal-img" src="" alt="" style="max-width:80px; max-height:80px; object-fit:contain; image-rendering:pixelated;">
         <span id="modal-emoji" style="display:none; font-size:3.5rem;">🎁</span>
       </div>
-      <h3 id="modal-name" class="font-cinzel" style="font-size:1.1rem; color:var(--gold); margin-bottom:8px;"></h3>
-      <div id="modal-badge-wrap" style="margin-bottom:8px;"></div>
-      <div id="modal-status" style="display:none; margin-bottom:10px;"></div>
-      <div id="modal-actions" style="margin-bottom:12px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap;"></div>
-      <a id="modal-collect-link" href="#" target="_blank" rel="noopener" style="display:none; align-items:center; gap:6px; justify-content:center; font-size:11px; color:var(--text-muted); text-decoration:none; padding:4px 10px; border:1px solid var(--border); border-radius:6px;"
-        onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">
-        🔗 View on FFXIV Collect
-      </a>
+      <div id="modal-event-label" style="font-size:11px; color:var(--text-muted); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:2px; line-height:1.2;"></div>
+      <h3 id="modal-name" class="font-cinzel" style="font-size:1.1rem; color:var(--gold); margin:0 0 8px;"></h3>
+      <div id="modal-badge-wrap" style="margin-bottom:12px;"></div>
     </div>
     <hr style="border:none; border-top:1px solid var(--border); margin-bottom:14px;">
-    <div id="modal-media"></div>
+    <p id="modal-desc" style="font-size:13px; color:var(--text-muted); line-height:1.7; margin-bottom:14px; display:none;"></p>
+    <div id="modal-item-info" style="font-size:12px; padding:6px; background:rgba(255,255,255,0.03); border-radius:6px; border:1px solid var(--border); display:none;">
+      <div id="modal-actions" style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center;"></div>
+    </div>
+    <div id="modal-demo"></div>
     <button class="btn btn-outline" style="width:100%; margin-top:16px; justify-content:center;" onclick="closeModal()">Close</button>
   </div>
 </div>
 
 <div id="toast"></div>
 
+<footer style="text-align:center;padding:24px 16px 16px;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:32px;">
+  Collection data provided by <a href="https://ffxivcollect.com" target="_blank" rel="noopener" style="color:var(--text-muted);text-decoration:underline;">FFXIV Collect</a>
+</footer>
+
+<script src="../js/shared.js"></script>
+<script src="../js/shared-character.js"></script>
+<script src="../js/site-nav.js"></script>
 <script src="../js/moogle.js" defer></script>
 <script src="../js/moogle-render.js" defer></script>
 <script src="../js/moogle-collect.js" defer></script>

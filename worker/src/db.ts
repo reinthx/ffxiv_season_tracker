@@ -1,4 +1,4 @@
-import type { Env, CharacterRow, PutCharacterBody, MoogleProgressRow, PutMoogleBody } from './types';
+import type { Env, CharacterRow, PutCharacterBody, MoogleProgressRow, PutMoogleBody, PutCollectCacheBody } from './types';
 
 // ── Users ──────────────────────────────────────────────────────────────
 
@@ -35,7 +35,9 @@ export async function upsertUser(
 export async function getCharacters(env: Env, userId: number): Promise<CharacterRow[]> {
   const result = await env.DB.prepare(
     `SELECT id, lodestone_id, character_name, character_world, label,
-            portrait_url, avatar_url, data, updated_at
+            portrait_url, avatar_url, data, updated_at,
+            lodestone_title, lodestone_fc, lodestone_class,
+            lodestone_class_level, lodestone_classes
      FROM tracker_saves
      WHERE user_id = ?
      ORDER BY updated_at DESC`
@@ -51,11 +53,28 @@ export async function getCharacter(
 ): Promise<CharacterRow | null> {
   return env.DB.prepare(
     `SELECT id, lodestone_id, character_name, character_world, label,
-            portrait_url, avatar_url, data, updated_at
+            portrait_url, avatar_url, data, updated_at,
+            lodestone_title, lodestone_fc, lodestone_class,
+            lodestone_class_level, lodestone_classes
      FROM tracker_saves
      WHERE user_id = ? AND lodestone_id = ?`
   ).bind(userId, lodestoneId).first<CharacterRow>();
 }
+
+const MAX_CHARACTERS_PER_USER = 20;
+
+/**
+ * Returns the number of existing character rows for a user.
+ * Used to enforce the per-user character cap before inserting a new row.
+ */
+export async function countCharacters(env: Env, userId: number): Promise<number> {
+  const row = await env.DB.prepare(
+    'SELECT COUNT(*) AS n FROM tracker_saves WHERE user_id = ?'
+  ).bind(userId).first<{ n: number }>();
+  return row?.n ?? 0;
+}
+
+export { MAX_CHARACTERS_PER_USER };
 
 /** Upsert a character save (create or overwrite). */
 export async function putCharacter(
@@ -66,16 +85,23 @@ export async function putCharacter(
 ): Promise<void> {
   await env.DB.prepare(
     `INSERT INTO tracker_saves
-       (user_id, lodestone_id, character_name, character_world, label, portrait_url, avatar_url, data, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+       (user_id, lodestone_id, character_name, character_world, label, portrait_url, avatar_url,
+        lodestone_title, lodestone_fc, lodestone_class, lodestone_class_level, lodestone_classes,
+        data, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
      ON CONFLICT(user_id, lodestone_id) DO UPDATE SET
-       character_name  = excluded.character_name,
-       character_world = excluded.character_world,
-       label           = COALESCE(excluded.label, tracker_saves.label),
-       portrait_url    = COALESCE(excluded.portrait_url, tracker_saves.portrait_url),
-       avatar_url      = COALESCE(excluded.avatar_url, tracker_saves.avatar_url),
-       data            = excluded.data,
-       updated_at      = datetime('now')`
+       character_name        = excluded.character_name,
+       character_world       = excluded.character_world,
+       label                 = COALESCE(excluded.label, tracker_saves.label),
+       portrait_url          = COALESCE(excluded.portrait_url, tracker_saves.portrait_url),
+       avatar_url            = COALESCE(excluded.avatar_url, tracker_saves.avatar_url),
+       lodestone_title       = COALESCE(excluded.lodestone_title, tracker_saves.lodestone_title),
+       lodestone_fc          = COALESCE(excluded.lodestone_fc, tracker_saves.lodestone_fc),
+       lodestone_class       = COALESCE(excluded.lodestone_class, tracker_saves.lodestone_class),
+       lodestone_class_level = COALESCE(excluded.lodestone_class_level, tracker_saves.lodestone_class_level),
+       lodestone_classes     = COALESCE(excluded.lodestone_classes, tracker_saves.lodestone_classes),
+       data                  = excluded.data,
+       updated_at            = datetime('now')`
   ).bind(
     userId,
     lodestoneId,
@@ -84,6 +110,11 @@ export async function putCharacter(
     body.label ?? null,
     body.portraitUrl ?? null,
     body.avatarUrl ?? null,
+    body.lodestoneTitle ?? null,
+    body.lodestoneFC ?? null,
+    body.lodestoneClass ?? null,
+    body.lodestoneClassLevel ?? null,
+    body.lodestoneClasses ?? null,
     body.data,
   ).run();
 }
@@ -104,17 +135,39 @@ export async function patchCharacterLabel(
 
 // ── Moogle progress ────────────────────────────────────────────────────
 
+/**
+ * Fetch moogle progress for a specific character.
+ * If no row exists for the given lodestoneId, falls back to lodestone_id = ''
+ * (account-level save) so pre-migration data and no-character sessions still load.
+ */
 export async function getMoogleProgress(
   env: Env,
   userId: number,
+  lodestoneId: string,
   eventKey: string,
 ): Promise<MoogleProgressRow | null> {
-  return env.DB.prepare(
-    `SELECT event_key, wishlist, tomes_current, weekly_objectives, standard_objectives,
-            minimog_challenges, ultimog_challenges, updated_at
+  const row = await env.DB.prepare(
+    `SELECT lodestone_id, event_key, wishlist, tomes_current, weekly_objectives,
+            standard_objectives, minimog_challenges, ultimog_challenges, updated_at
      FROM moogle_progress
-     WHERE user_id = ? AND event_key = ?`
-  ).bind(userId, eventKey).first<MoogleProgressRow>();
+     WHERE user_id = ? AND lodestone_id = ? AND event_key = ?`
+  ).bind(userId, lodestoneId, eventKey).first<MoogleProgressRow>();
+
+  if (row) return row;
+
+  // Fallback: if a specific character was requested but no row found,
+  // try the account-level slot (lodestone_id = ''). Covers migrated data
+  // and users who haven't linked a character yet.
+  if (lodestoneId !== '') {
+    return env.DB.prepare(
+      `SELECT lodestone_id, event_key, wishlist, tomes_current, weekly_objectives,
+              standard_objectives, minimog_challenges, ultimog_challenges, updated_at
+       FROM moogle_progress
+       WHERE user_id = ? AND lodestone_id = '' AND event_key = ?`
+    ).bind(userId, eventKey).first<MoogleProgressRow>();
+  }
+
+  return null;
 }
 
 export async function putMoogleProgress(
@@ -123,12 +176,13 @@ export async function putMoogleProgress(
   eventKey: string,
   body: PutMoogleBody,
 ): Promise<void> {
+  const lodestoneId = body.lodestone_id ?? '';
   await env.DB.prepare(
     `INSERT INTO moogle_progress
-       (user_id, event_key, wishlist, tomes_current, weekly_objectives,
+       (user_id, lodestone_id, event_key, wishlist, tomes_current, weekly_objectives,
         standard_objectives, minimog_challenges, ultimog_challenges, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
-     ON CONFLICT(user_id, event_key) DO UPDATE SET
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+     ON CONFLICT(user_id, lodestone_id, event_key) DO UPDATE SET
        wishlist            = excluded.wishlist,
        tomes_current       = excluded.tomes_current,
        weekly_objectives   = excluded.weekly_objectives,
@@ -137,11 +191,46 @@ export async function putMoogleProgress(
        ultimog_challenges  = excluded.ultimog_challenges,
        updated_at          = datetime('now')`
   ).bind(
-    userId, eventKey,
+    userId, lodestoneId, eventKey,
     body.wishlist, body.tomes_current,
     body.weekly_objectives, body.standard_objectives,
     body.minimog_challenges, body.ultimog_challenges,
   ).run();
+}
+
+// ── FFXIV Collect cache ────────────────────────────────────────────────
+
+export async function getCollectCache(
+  env: Env,
+  userId: number,
+  lodestoneId: string,
+): Promise<{ cache: string | null; cache_dt: string | null; synced_at: string | null } | null> {
+  const row = await env.DB.prepare(
+    `SELECT ffxiv_cache, ffxiv_cache_dt, ffxiv_collect_synced_at
+     FROM tracker_saves
+     WHERE user_id = ? AND lodestone_id = ?`
+  ).bind(userId, lodestoneId).first<{
+    ffxiv_cache: string | null;
+    ffxiv_cache_dt: string | null;
+    ffxiv_collect_synced_at: string | null;
+  }>();
+  if (!row) return null;
+  return { cache: row.ffxiv_cache, cache_dt: row.ffxiv_cache_dt, synced_at: row.ffxiv_collect_synced_at };
+}
+
+export async function putCollectCache(
+  env: Env,
+  userId: number,
+  lodestoneId: string,
+  body: PutCollectCacheBody,
+): Promise<void> {
+  await env.DB.prepare(
+    `UPDATE tracker_saves SET
+       ffxiv_cache             = ?,
+       ffxiv_cache_dt          = datetime('now'),
+       ffxiv_collect_synced_at = CASE WHEN ? THEN datetime('now') ELSE ffxiv_collect_synced_at END
+     WHERE user_id = ? AND lodestone_id = ?`
+  ).bind(body.cache, body.force_synced ? 1 : 0, userId, lodestoneId).run();
 }
 
 // ── Character saves ────────────────────────────────────────────────────

@@ -1,50 +1,4 @@
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-//  CHARACTER TRACKING
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-const WORLD_DATA = {
-  'NA': {
-    'Aether':   ['Adamantoise','Cactuar','Faerie','Gilgamesh','Jenova','Midgardsormr','Sargatanas','Siren'],
-    'Crystal':  ['Balmung','Brynhildr','Coeurl','Diabolos','Goblin','Malboro','Mateus','Zalera'],
-    'Dynamis':  ['Halicarnassus','Maduin','Marilith','Seraph','Cuchulainn','Golem','Kraken','Rafflesia'],
-    'Primal':   ['Behemoth','Excalibur','Exodus','Famfrit','Hyperion','Lamia','Leviathan','Ultros'],
-  },
-  'EU': {
-    'Chaos':    ['Cerberus','Louisoix','Moogle','Omega','Phantom','Ragnarok','Sagittarius','Spriggan'],
-    'Light':    ['Alpha','Lich','Odin','Phoenix','Raiden','Shiva','Twintania','Zodiark'],
-    'Shadow':   ['Innocence','Pixie','Titania','Tycoon'],
-  },
-  'JP': {
-    'Elemental': ['Aegis','Atomos','Carbuncle','Garuda','Gungnir','Kujata','Tonberry','Typhon'],
-    'Gaia':      ['Alexander','Bahamut','Durandal','Fenrir','Ifrit','Ridill','Tiamat','Ultima'],
-    'Mana':      ['Anima','Asura','Chocobo','Hades','Ixion','Masamune','Pandaemonium','Titan'],
-    'Meteor':    ['Belias','Mandragora','Ramuh','Shinryu','Unicorn','Valefor','Yojimbo','Zeromus'],
-  },
-  'OCE': {
-    'Materia': ['Bismarck','Ravana','Sephirot','Sophia','Zurvan'],
-  },
-};
-
-function buildWorldSelect() {
-  const sel = document.getElementById('mog-char-world');
-  if (!sel) return;
-  sel.innerHTML = '<option value="">— Select World —</option>';
-  for (const [region, dcs] of Object.entries(WORLD_DATA)) {
-    for (const [dc, worlds] of Object.entries(dcs)) {
-      const og = document.createElement('optgroup');
-      og.label = `${region} — ${dc}`;
-      worlds.forEach(w => {
-        const opt = document.createElement('option');
-        opt.value = w; opt.textContent = w;
-        og.appendChild(opt);
-      });
-      sel.appendChild(og);
-    }
-  }
-  const customOpt = document.createElement('option');
-  customOpt.value = '__custom__'; customOpt.textContent = '— Other / Unlisted world…';
-  sel.appendChild(customOpt);
-}
 
 function getWorldVal() {
   const wSel    = document.getElementById('mog-char-world');
@@ -63,26 +17,6 @@ function onWorldSelectChange() {
   const wSel = document.getElementById('mog-char-world');
   const customWrap = document.getElementById('mog-world-custom-wrap');
   if (wSel && customWrap) customWrap.style.display = (wSel.value === '__custom__') ? 'block' : 'none';
-}
-
-// Character Lodestone cache (7-day TTL)
-const CHAR_CACHE_KEY = 'moogle-char-cache';
-const CHAR_CACHE_TTL = 7 * 24 * 60 * 60 * 1000;
-function loadCharCache() { try { return JSON.parse(localStorage.getItem(CHAR_CACHE_KEY) || '{}'); } catch { return {}; } }
-function saveCharCache(cache) {
-  const cutoff = Date.now() - CHAR_CACHE_TTL;
-  for (const key of Object.keys(cache)) { if ((cache[key].cachedAt || 0) < cutoff) delete cache[key]; }
-  try { localStorage.setItem(CHAR_CACHE_KEY, JSON.stringify(cache)); } catch {}
-}
-
-function parseCharFromDoc(html, doc) {
-  const portraitEl = doc.querySelector('.js__image_popup > img')
-    || doc.querySelector('.character__detail__image img')
-    || doc.querySelector('img[src*="img2.finalfantasyxiv.com"][src*="_gc"]');
-  const portrait = portraitEl ? (portraitEl.getAttribute('src') || null) : null;
-  const soulMatch = html.match(/Soul of the ([A-Z][A-Za-z ]{2,28}?)(?=["<&\n])/);
-  const activeClass = soulMatch ? soulMatch[1].trim() : null;
-  return { portrait, activeClass };
 }
 
 async function lookupCharacter(forceRefresh = false) {
@@ -116,7 +50,19 @@ async function lookupCharacter(forceRefresh = false) {
     const entry     = { name: nameVal, world: worldVal, lodestoneId, avatarUrl, cachedAt: Date.now() };
     try {
       const cr = await fetchViaProxy('https://na.finalfantasyxiv.com/lodestone/character/' + lodestoneId + '/');
-      if (cr.ok) { const ch = await cr.text(); const parsed = parseCharFromDoc(ch, new DOMParser().parseFromString(ch, 'text/html')); if (parsed.portrait) entry.portrait = parsed.portrait; if (parsed.activeClass) entry.activeClass = parsed.activeClass; }
+      if (cr.ok) {
+        const ch = await cr.text();
+        const charDoc2 = new DOMParser().parseFromString(ch, 'text/html');
+        const parsed = parseCharFromDoc(ch, charDoc2);
+        // Prefer full name parsed from the character page over the typed search term
+        const nameEl2 = charDoc2.querySelector('.frame__chara__name') || charDoc2.querySelector('.character__name');
+        if (nameEl2 && nameEl2.textContent.trim()) entry.name = nameEl2.textContent.trim();
+        if (parsed.portrait)         entry.portrait         = parsed.portrait;
+        if (parsed.activeClass)      entry.activeClass      = parsed.activeClass;
+        if (parsed.activeClassLevel) entry.activeClassLevel = parsed.activeClassLevel;
+        if (parsed.charTitle)        entry.charTitle        = parsed.charTitle;
+        if (parsed.freeCompany)      entry.freeCompany      = parsed.freeCompany;
+      }
     } catch {}
     const cache = loadCharCache(); cache[cacheKey] = entry; saveCharCache(cache);
     showCharResult(resultEl, entry);
@@ -146,7 +92,14 @@ async function applyLodestoneUrl() {
     const avatarEl  = charDoc.querySelector('.character__detail__face img') || charDoc.querySelector('.js__c_face img');
     const avatarUrl = avatarEl ? (avatarEl.getAttribute('src') || '') : '';
     const parsed    = parseCharFromDoc(charHtml, charDoc);
-    const entry     = { name: charName, world: charWorld, lodestoneId, avatarUrl, cachedAt: Date.now(), ...(parsed.portrait ? { portrait: parsed.portrait } : {}), ...(parsed.activeClass ? { activeClass: parsed.activeClass } : {}) };
+    const entry     = {
+      name: charName, world: charWorld, lodestoneId, avatarUrl, cachedAt: Date.now(),
+      ...(parsed.portrait         ? { portrait:         parsed.portrait         } : {}),
+      ...(parsed.activeClass      ? { activeClass:      parsed.activeClass      } : {}),
+      ...(parsed.activeClassLevel ? { activeClassLevel: parsed.activeClassLevel } : {}),
+      ...(parsed.charTitle        ? { charTitle:        parsed.charTitle        } : {}),
+      ...(parsed.freeCompany      ? { freeCompany:      parsed.freeCompany      } : {}),
+    };
     const cacheKey  = `${charName.toLowerCase()}|${charWorld.toLowerCase()}`;
     const cache = loadCharCache(); cache[cacheKey] = entry; saveCharCache(cache);
     showCharResult(resultEl, entry);
@@ -182,11 +135,22 @@ function showCharResult(resultEl, entry) {
 
 function applyCharacter(name, world, lodestoneId, avatarUrl) {
   CHAR = { name, world, lodestoneId, avatarUrl: avatarUrl || null };
-  // Try to pull portrait from cache
+  // Pull portrait and extended lodestone data from cache
   const cacheKey = `${name.toLowerCase()}|${world.toLowerCase()}`;
   const cache    = loadCharCache();
   const cached   = cache[cacheKey] || Object.values(cache).find(e => e.lodestoneId === lodestoneId);
-  if (cached?.portrait) CHAR.portrait = cached.portrait;
+  // Prefer a fuller name from cache (e.g. when user typed just first name but cache has full name)
+  if (cached?.name && cached.name.includes(' ') && !name.includes(' ')) CHAR.name = cached.name;
+  if (cached?.portrait)         CHAR.portrait         = cached.portrait;
+  if (cached?.activeClass)      CHAR.activeClass      = cached.activeClass;
+  if (cached?.activeClassLevel) CHAR.activeClassLevel = cached.activeClassLevel;
+  if (cached?.charTitle)        CHAR.charTitle        = cached.charTitle;
+  if (cached?.freeCompany)      CHAR.freeCompany      = cached.freeCompany;
+  // Fall back to DB record (already in memory) for fields still missing after local cache
+  if (lodestoneId && typeof _enrichCharFromRecord === 'function') {
+    const rec = (typeof _cloudChars !== 'undefined' ? _cloudChars : []).find(c => c.lodestoneId === lodestoneId);
+    if (rec) _enrichCharFromRecord(rec);
+  }
   saveCharData();
   renderCharDisplay();
   saveToCloud();
@@ -204,23 +168,12 @@ function clearCharacter() {
 function renderCharDisplay() {
   const el = document.getElementById('mog-char-display');
   if (!el) return;
-  if (!CHAR.name) { el.innerHTML = ''; el.style.display = 'none'; return; }
-  el.style.display = 'flex';
-  el.style.flexWrap = 'wrap';
-  const avatarTag = CHAR.avatarUrl
-    ? `<img src="${CHAR.avatarUrl}" style="width:28px;height:28px;border-radius:4px;flex-shrink:0;object-fit:cover;" onerror="this.style.display='none'">`
-    : `<span style="width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;background:var(--gold-dim);border-radius:4px;font-size:14px;flex-shrink:0;">⚔</span>`;
-  // Show FFXIV Collect check button only when character has a real Lodestone ID and event has collectibles
-  const hasCollectibles = EVENT && (EVENT.shop || []).some(i => i.unique && COLLECT_CATEGORY_MAP[i.category]);
+  if (typeof renderTomesPortraitBg === 'function') renderTomesPortraitBg();
+  const hasCollectibles = EVENT && (EVENT.shop || []).some(i => i.unique && i.collectId != null && COLLECT_CATEGORY_MAP[i.category]);
   const collectBtn = (CHAR.lodestoneId && hasCollectibles)
-    ? `<button class="btn btn-outline" id="btn-check-collect" style="padding:3px 8px;font-size:10px;flex-shrink:0;" title="Auto-mark items you already own via FFXIV Collect" onclick="checkCollectedViaFFXIVCollect()">🔍 Check owned</button>`
+    ? `<button class="btn btn-outline" id="btn-check-collect" style="padding:3px 8px;font-size:10px;flex-shrink:0;" title="Auto-mark items you already own via FFXIV Collect" onclick="checkCollectedViaFFXIVCollect()">🔍 Check owned</button>
+       <button class="btn btn-ghost" style="padding:3px 6px;font-size:10px;flex-shrink:0;color:var(--text-muted);" title="Re-fetch from FFXIV Collect" onclick="checkCollectedViaFFXIVCollect(true)">↺</button>`
     : '';
-  el.innerHTML = `
-    ${avatarTag}
-    <div style="flex:1;min-width:0;">
-      <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${CHAR.name}</div>
-      <div style="font-size:10px;color:var(--text-muted);">${CHAR.world || ''}</div>
-    </div>
-    ${collectBtn}
-    <button class="btn btn-ghost" style="padding:2px 6px;font-size:10px;" title="Clear character" onclick="clearCharacter()">✕</button>`;
+  const clearBtn = `<button class="btn btn-ghost" style="padding:2px 6px;font-size:10px;" title="Clear character" onclick="clearCharacter()">✕</button>`;
+  renderCharBadge(el, CHAR.name ? CHAR : null, collectBtn + clearBtn);
 }

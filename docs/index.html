@@ -7,63 +7,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-  <style>
-    .landing-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 20px;
-      max-width: 640px;
-      margin: 40px auto 0;
-    }
-    .landing-card {
-      display: block;
-      text-decoration: none;
-      border-radius: 12px;
-      padding: 28px 24px;
-      transition: border-color .2s, transform .15s;
-      position: relative;
-      overflow: hidden;
-    }
-    .landing-card:hover { transform: translateY(-2px); }
-    .landing-card-series {
-      background: linear-gradient(145deg, rgba(88,101,242,0.18) 0%, rgba(10,5,25,0) 55%), var(--card);
-      border: 1px solid rgba(88,101,242,0.4);
-    }
-    .landing-card-series:hover { border-color: #7289da; }
-    .landing-card-moogle {
-      background: linear-gradient(145deg, rgba(200,169,110,0.2) 0%, rgba(244,114,182,0.08) 55%), var(--card);
-      border: 1px solid var(--border-gold);
-    }
-    .landing-card-moogle:hover { border-color: var(--gold); }
-    .card-bg-glyph {
-      position: absolute;
-      right: 16px;
-      bottom: 12px;
-      font-size: 4.5rem;
-      opacity: 0.06;
-      pointer-events: none;
-      line-height: 1;
-      font-family: serif;
-    }
-    .card-title { font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--gold); margin-bottom: 6px; }
-    .card-desc  { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
-    .divider-rune {
-      display: flex; align-items: center; gap: 14px; max-width: 400px; margin: 28px auto 0; opacity: 0.35;
-    }
-    .divider-rune::before, .divider-rune::after {
-      content: ''; flex: 1; height: 1px; background: var(--border-gold);
-    }
-  </style>
 </head>
 <body>
-<div style="max-width:800px; margin:0 auto; padding:32px 16px 64px;">
+<div class="page-wrap" style="max-width:800px;">
 
   <!-- ── Header with auth widget ── -->
-  <header style="position:relative; text-align:center; margin-bottom:20px;">
+  <header class="page-header">
     <div style="position:absolute; top:0; left:0; z-index:10;">
       <div id="discord-auth-widget"></div>
     </div>
-    <div style="font-size:0.72rem; letter-spacing:0.15em; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px; padding-top:4px;">Final Fantasy XIV</div>
+    <div class="page-eyebrow">Final Fantasy XIV</div>
     <h1 class="font-cinzel" style="font-size:clamp(2rem,6vw,3.2rem); color:var(--gold); margin-bottom:10px; line-height:1.1;">FFXIV Trackers</h1>
     <p style="color:var(--text-muted); font-size:0.85rem; max-width:440px; margin:0 auto;">Community tools for tracking your progress in Eorzea.</p>
   </header>
@@ -72,12 +25,12 @@
 
   <div class="landing-grid">
     <a href="/series/" class="landing-card landing-card-series">
-      <div class="card-bg-glyph">⚔</div>
+      <div class="card-bg-glyph"><img src="/data/series/conflict.png" alt="Series Tracker" style="width:65%"></div>
       <div class="card-title">Series Tracker</div>
       <div class="card-desc">Track your PvP Series progress, rewards, and trophy crystal milestones across every season.</div>
     </a>
     <a href="/moogle/" id="moogle-card" class="landing-card landing-card-moogle">
-      <div class="card-bg-glyph">🧸</div>
+      <div class="card-bg-glyph"><img src="/data/moogle/moogle.png" alt="Moogle Tome Tracker" style="margin-bottom:-8px"></div>
       <div class="card-title">Moogle Tome Tracker</div>
       <div class="card-desc">Wishlist, farming routes, and challenge objectives for Moogle Treasure Trove events.</div>
       <div id="moogle-card-badge" style="display:none; margin-top:10px; font-size:0.72rem; font-weight:600; letter-spacing:0.05em;"></div>
@@ -118,7 +71,7 @@
         : null;
       const avatarInner = avatarSrc
         ? `<img src="${avatarSrc}" style="width:28px;height:28px;border-radius:50%;display:block;" onerror="this.style.display='none'">`
-        : `<span style="font-size:13px;">⚔</span>`;
+        : `<span style="font-size:13px;"></span>`;
       const displayName = user.username.length > 14 ? user.username.slice(0,13) + '…' : user.username;
 
       const charListHTML = chars.length === 0
@@ -127,7 +80,7 @@
            <div style="display:flex;flex-direction:column;gap:6px;">${chars.map(c => {
              const avatarTag = c.avatarUrl
                ? `<img src="${c.avatarUrl}" style="width:32px;height:32px;border-radius:5px;flex-shrink:0;object-fit:cover;" onerror="this.style.display='none'">`
-               : `<span style="width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;background:var(--gold-dim);border-radius:5px;font-size:14px;flex-shrink:0;">⚔</span>`;
+               : `<span style="width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;background:var(--gold-dim);border-radius:5px;font-size:14px;flex-shrink:0;"></span>`;
              return `<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:7px;border:1px solid var(--border);">
                ${avatarTag}
                <div style="flex:1;min-width:0;">

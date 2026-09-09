@@ -1,4 +1,8 @@
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  UTILS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 //  DATA — loaded from data/series.json at runtime
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -20,34 +24,6 @@ const TYPE_META = {
 };
 
 const ACT_AVG = { cc:800, fl:1250, rw:1000, dailyBonus:1250 };
-
-// CORS proxy pool — tried in parallel, fastest working one wins
-const CORS_PROXIES = [
-  url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-  url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-];
-const PROXY_TIMEOUT_MS = 8000;
-
-async function fetchViaProxy(url) {
-  const controllers = CORS_PROXIES.map(() => new AbortController());
-  const timer = setTimeout(() => controllers.forEach(c => c.abort()), PROXY_TIMEOUT_MS);
-
-  try {
-    return await Promise.any(
-      CORS_PROXIES.map(async (makeProxy, i) => {
-        const resp = await fetch(makeProxy(url), { signal: controllers[i].signal });
-        if (!resp.ok) throw new Error('HTTP ' + resp.status);
-        // Cancel remaining in-flight requests
-        controllers.forEach((c, j) => { if (j !== i) c.abort(); });
-        return resp;
-      })
-    );
-  } catch {
-    throw new Error('All proxies failed or timed out');
-  } finally {
-    clearTimeout(timer);
-  }
-}
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 //  LEVEL MATH
@@ -73,7 +49,6 @@ let _sharedSeriesData = null; // decoded past-series from a share link [{seriesN
 // ── Cloud sync state (populated only when logged in via Discord) ──────
 let _cloudUser  = null;  // { id, discordId, username, avatar } | null
 let _cloudChars = [];    // array of server-side character saves
-let _activeCloudCharId = null; // lodestoneId of the currently loaded cloud char
 
 function encodeS(s, includeSd = false) {
   const p = new URLSearchParams();
@@ -282,23 +257,7 @@ function badgeHTML(type) { const m = TYPE_META[type] || TYPE_META.start; return 
 function extractMilestones(rewards) {
   return (rewards || []).filter(r => r.milestone).map(r => ({ lv:r.level, type:r.type, icon:r.icon, name:r.name, imgUrl:r.imgUrl||null, demoUrl:r.demoUrl||null, desc:r.desc||'' }));
 }
-function parseCharFromDoc(html, doc) {
-  const portraitEl = doc.querySelector('.js__image_popup > img')
-    || doc.querySelector('.character__detail__image img')
-    || doc.querySelector('img[src*="img2.finalfantasyxiv.com"][src*="_gc"]')
-    || doc.querySelector('.character-block__portrait img');
-  const portrait = portraitEl ? (portraitEl.getAttribute('src') || null) : null;
-  const soulMatch = html.match(/Soul of the ([A-Z][A-Za-z ]{2,28}?)(?=["<&\n])/);
-  const activeClass = soulMatch ? soulMatch[1].trim() : null;
-  const classDataEl = doc.querySelector('.character__class__data > p:nth-child(1)');
-  const lvMatch = classDataEl ? classDataEl.textContent.match(/LEVEL\s*(\d+)/i) : null;
-  const activeClassLevel = lvMatch ? parseInt(lvMatch[1]) : null;
-  const titleEl = doc.querySelector('.frame__chara__title');
-  const charTitle = titleEl ? (titleEl.textContent.trim() || null) : null;
-  const fcEl = doc.querySelector('.character__freecompany__name > h4:nth-child(2) > a:nth-child(1)');
-  const freeCompany = fcEl ? (fcEl.textContent.trim() || null) : null;
-  return { portrait, activeClass, activeClassLevel, charTitle, freeCompany };
-}
+// parseCharFromDoc is provided by shared.js
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 //  RENDER
@@ -1282,115 +1241,40 @@ function clearCharacter() {
 
 function renderCharDisplay() {
   const el = document.getElementById('char-display');
-  if (S.charName) {
-    el.style.display = 'flex';
-    const avatarEl = document.getElementById('char-avatar-img');
-    if (avatarEl) {
-      if (S.charAvatar) { avatarEl.src = S.charAvatar; avatarEl.style.display = 'block'; }
-      else avatarEl.style.display = 'none';
-    }
-    setText('char-name-display', S.charName);
-    setText('char-world-display', S.charWorld ? '@ ' + S.charWorld : '');
-    const classEl = document.getElementById('char-class-display');
-    if (classEl) {
-      if (S.charClass) {
-        classEl.textContent = S.charClass + (S.charClassLevel ? ' Lv.' + S.charClassLevel : '');
-        classEl.style.display = 'inline';
-      } else { classEl.style.display = 'none'; }
-    }
-    const titleEl2 = document.getElementById('char-title-display');
-    if (titleEl2) { titleEl2.textContent = S.charTitle || ''; titleEl2.style.display = S.charTitle ? 'inline' : 'none'; }
-    const fcEl2 = document.getElementById('char-fc-display');
-    if (fcEl2) { fcEl2.textContent = S.charFC ? '‹' + S.charFC + '›' : ''; fcEl2.style.display = S.charFC ? 'inline' : 'none'; }
-    // Lodestone link — always show if ID known, else show search link
-    const lodestoneEl = document.getElementById('char-lodestone-link');
-    if (lodestoneEl) {
-      if (S.charLodestoneId) {
-        lodestoneEl.href = `https://na.finalfantasyxiv.com/lodestone/character/${S.charLodestoneId}/`;
-        lodestoneEl.style.display = 'inline';
-      } else {
-        // Link to search page so user can find the ID manually
-        const q = encodeURIComponent(S.charName);
-        const w = encodeURIComponent(S.charWorld || '');
-        lodestoneEl.href = `https://na.finalfantasyxiv.com/lodestone/character/?q=${q}&worldname=${w}`;
-        lodestoneEl.style.display = 'inline';
-      }
-      lodestoneEl.textContent = '🔗 Lodestone';
-    }
-    // Refresh button — re-run lookup to pull fresh data and update cache
-    const refreshEl = document.getElementById('char-refresh-btn');
-    if (refreshEl) {
-      refreshEl.style.display = 'inline-block';
-      refreshEl.onclick = () => {
-        // Populate name/world fields from state so lookupCharacter can read them
-        const nameInput = document.getElementById('inp-char-name');
-        const wSel      = document.getElementById('inp-char-world');
-        if (nameInput && S.charName) nameInput.value = S.charName;
-        if (wSel && S.charWorld) {
-          const opts = Array.from(wSel.options).map(o => o.value);
-          if (opts.includes(S.charWorld)) { wSel.value = S.charWorld; onWorldSelectChange(); }
-        }
-        // Open char section if collapsed
-        const section = document.querySelector('.char-card-section');
-        if (section && !section.classList.contains('open')) section.classList.add('open');
-        lookupCharacter(true);
-      };
-    }
-  } else {
-    el.style.display = 'none';
+  if (!el) return;
+  if (!S.charName) { renderCharBadge(el, null, ''); return; }
+  const charObj = {
+    name:            S.charName,
+    world:           S.charWorld,
+    lodestoneId:     S.charLodestoneId,
+    avatarUrl:       S.charAvatar,
+    activeClass:     S.charClass,
+    activeClassLevel:S.charClassLevel,
+    charTitle:       S.charTitle,
+    freeCompany:     S.charFC,
+  };
+  const refreshBtn = `<button id="char-refresh-btn" class="btn btn-ghost" style="padding:1px 6px;font-size:10px;" title="Re-fetch from Lodestone" onclick="_seriesRefreshChar()">↻</button>`;
+  const clearBtn   = `<button class="btn btn-ghost" style="padding:1px 6px;font-size:10px;" onclick="clearCharacter()">✕</button>`;
+  renderCharBadge(el, charObj, refreshBtn + clearBtn);
+}
+
+function _seriesRefreshChar() {
+  const nameInput = document.getElementById('inp-char-name');
+  const wSel      = document.getElementById('inp-char-world');
+  if (nameInput && S.charName) nameInput.value = S.charName;
+  if (wSel && S.charWorld) {
+    const opts = Array.from(wSel.options).map(o => o.value);
+    if (opts.includes(S.charWorld)) { wSel.value = S.charWorld; onWorldSelectChange(); }
   }
+  const section = document.querySelector('.char-card-section');
+  if (section && !section.classList.contains('open')) section.classList.add('open');
+  lookupCharacter(true);
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 //  CHARACTER WORLD SELECT HELPERS
+// WORLD_DATA, buildWorldSelect(selectId) are in shared.js
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-const WORLD_DATA = {
-  'NA': {
-    'Aether':  ['Adamantoise','Cactuar','Faerie','Gilgamesh','Jenova','Midgardsormr','Sargatanas','Siren'],
-    'Crystal': ['Balmung','Brynhildr','Coeurl','Diabolos','Goblin','Malboro','Mateus','Zalera'],
-    'Dynamis': ['Cuchulainn','Halicarnassus','Maduin','Marilith','Seraph','Spriggan'],
-    'Primal':  ['Behemoth','Excalibur','Exodus','Famfrit','Hyperion','Lamia','Leviathan','Ultros'],
-  },
-  'EU': {
-    'Chaos':  ['Cerberus','Louisoix','Moogle','Omega','Phantom','Ragnarok','Shiva','Zodiark'],
-    'Light':  ['Alpha','Lich','Odin','Phoenix','Raiden','Shemhazai','Twintania'],
-    'Shadow': ['Innocence','Pixie','Titania','Tycoon'],
-  },
-  'JP': {
-    'Elemental': ['Aegis','Atomos','Carbuncle','Garuda','Gungnir','Kujata','Tonberry','Typhon'],
-    'Gaia':      ['Alexander','Bahamut','Durandal','Fenrir','Ifrit','Ridill','Tiamat','Ultima'],
-    'Mana':      ['Anima','Asura','Chocobo','Hades','Ixion','Masamune','Pandaemonium','Titan'],
-    'Meteor':    ['Belias','Mandragora','Ramuh','Shinryu','Unicorn','Valefor','Yojimbo','Zeromus'],
-  },
-  'OCE': {
-    'Materia': ['Bismarck','Ravana','Sephirot','Sophia','Zurvan'],
-  },
-};
-
-function buildWorldSelect() {
-  const sel = document.getElementById('inp-char-world');
-  if (!sel) return;
-  sel.innerHTML = '<option value="">— Select World —</option>';
-  for (const [region, dcs] of Object.entries(WORLD_DATA)) {
-    for (const [dc, worlds] of Object.entries(dcs)) {
-      const og = document.createElement('optgroup');
-      og.label = `${region} — ${dc}`;
-      worlds.forEach(w => {
-        const opt = document.createElement('option');
-        opt.value = w; opt.textContent = w;
-        og.appendChild(opt);
-      });
-      sel.appendChild(og);
-    }
-  }
-  // Custom entry option
-  const customOpt = document.createElement('option');
-  customOpt.value = '__custom__'; customOpt.textContent = '— Other / Unlisted world…';
-  sel.appendChild(customOpt);
-
-  // change event handled by onWorldSelectChange() (inline onchange in HTML)
-}
 
 function syncWorldSelectFromState() {
   const sel = document.getElementById('inp-char-world');
@@ -1408,22 +1292,9 @@ function syncWorldSelectFromState() {
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 //  LODESTONE CHARACTER LOOKUP (via CORS proxy)
+// CHAR_CACHE_KEY, CHAR_CACHE_TTL, loadCharCache, saveCharCache
+// are provided by shared-character.js
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-const CHAR_CACHE_KEY = 'ffxiv-char-cache';
-const CHAR_CACHE_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days
-
-function loadCharCache() {
-  try { return JSON.parse(localStorage.getItem(CHAR_CACHE_KEY) || '{}'); } catch { return {}; }
-}
-function saveCharCache(cache) {
-  // Prune entries older than TTL before saving
-  const cutoff = Date.now() - CHAR_CACHE_TTL;
-  for (const key of Object.keys(cache)) {
-    if ((cache[key].cachedAt || 0) < cutoff) delete cache[key];
-  }
-  try { localStorage.setItem(CHAR_CACHE_KEY, JSON.stringify(cache)); } catch {}
-}
 
 function getWorldVal() {
   const wSel    = document.getElementById('inp-char-world');
@@ -1481,7 +1352,7 @@ async function lookupCharacter(forceRefresh = false) {
       if (m) { linkEl = a; lodestoneId = m[1]; break; }
     }
     if (!linkEl) {
-      resultEl.innerHTML = `<span style="color:var(--text-muted);">No characters found for "${nameVal}" on ${worldVal}. <a href="${searchUrl}" target="_blank" rel="noopener" style="color:var(--blue);">Search on Lodestone</a></span>`;
+      resultEl.innerHTML = `<span style="color:var(--text-muted);">No characters found for "${esc(nameVal)}" on ${esc(worldVal)}. <a href="${searchUrl}" target="_blank" rel="noopener" style="color:var(--blue);">Search on Lodestone</a></span>`;
       return;
     }
 
@@ -1513,7 +1384,7 @@ async function lookupCharacter(forceRefresh = false) {
     saveCharCache(cache);
     showCharResult(resultEl, entry);
   } catch (e) {
-    resultEl.innerHTML = `<span style="color:var(--red);font-size:12px;">⚠ Lookup failed: ${e.message} — try pasting your character URL in the field above.</span>`;
+    resultEl.innerHTML = `<span style="color:var(--red);font-size:12px;">⚠ Lookup failed: ${esc(e.message)} — try pasting your character URL in the field above.</span>`;
   }
 }
 
@@ -1634,24 +1505,7 @@ function applyLookupResult(name, server, lodestoneId, avatarUrl) {
 }
 
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-//  THEME
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-function setTheme(name) {
-  document.documentElement.setAttribute('data-theme', name === 'dusk' ? '' : name);
-  document.querySelectorAll('.theme-swatch').forEach(btn => btn.classList.toggle('active', btn.dataset.theme === name));
-  try { localStorage.setItem('ffxiv-theme', name); } catch {}
-}
-function loadTheme() {
-  try {
-    const saved = localStorage.getItem('ffxiv-theme');
-    if (saved) { setTheme(saved); return; }
-    // No saved preference — detect from OS
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    setTheme(prefersDark ? 'midnight' : 'dawn');
-  } catch { setTheme('dusk'); }
-}
+// setTheme, loadTheme are provided by shared.js
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 //  JSON LOADER
@@ -1961,13 +1815,7 @@ function renderDataCard(s, isCurrent, now, psOverrideMap) {
   </div>`;
 }
 
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-//  HELPERS
-// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-function setText(id, v) { const e = document.getElementById(id); if (e) e.textContent = v; }
-function setW(id, p) { const e = document.getElementById(id); if (e) e.style.width = p + '%'; }
-function showToast(msg) { const e = document.getElementById('toast'); e.textContent = msg; e.classList.add('show'); clearTimeout(e._t); e._t = setTimeout(() => e.classList.remove('show'), 2600); }
+// setText, setW, showToast are provided by shared.js
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 //  INIT
@@ -1976,7 +1824,7 @@ function showToast(msg) { const e = document.getElementById('toast'); e.textCont
 window.addEventListener('load', async () => {
   loadTheme();
   try { localStorage.removeItem('ffxiv-icon-cache'); } catch {}
-  buildWorldSelect();
+  buildWorldSelect('inp-char-world');
 
   // Detect whether we're opening a share link while local data already exists
   const _initHash = location.hash.slice(1);
@@ -2091,6 +1939,21 @@ async function syncCloudCharacters() {
     if (!resp.ok) return;
     _cloudChars = await resp.json();
     renderCharSwitcher();
+    // Enrich current character with any lodestone fields missing from local state.
+    // Covers new-device loads where ffxiv-char-ext is empty but DB has the data.
+    if (S.charLodestoneId) {
+      const rec = _cloudChars.find(c => c.lodestoneId === S.charLodestoneId);
+      if (rec) {
+        let changed = false;
+        if (!S.charPortrait   && rec.portraitUrl)          { S.charPortrait    = rec.portraitUrl;          changed = true; }
+        if (!S.charAvatar     && rec.avatarUrl)             { S.charAvatar      = rec.avatarUrl;            changed = true; }
+        if (!S.charTitle      && rec.lodestoneTitle)        { S.charTitle       = rec.lodestoneTitle;       changed = true; }
+        if (!S.charFC         && rec.lodestoneFC)           { S.charFC          = rec.lodestoneFC;          changed = true; }
+        if (!S.charClass      && rec.lodestoneClass)        { S.charClass       = rec.lodestoneClass;       changed = true; }
+        if (!S.charClassLevel && rec.lodestoneClassLevel)   { S.charClassLevel  = rec.lodestoneClassLevel;  changed = true; }
+        if (changed) { saveCharExt(); renderCharDisplay(); renderPortraitBg(); }
+      }
+    }
   } catch {}
 }
 
@@ -2106,11 +1969,15 @@ async function saveToCloud() {
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        characterName:  S.charName,
-        characterWorld: S.charWorld  || null,
-        portraitUrl:    S.charPortrait || null,
-        avatarUrl:      S.charAvatar   || null,
-        data:           encodeS(S, true),
+        characterName:       S.charName,
+        characterWorld:      S.charWorld        || null,
+        portraitUrl:         S.charPortrait     || null,
+        avatarUrl:           S.charAvatar       || null,
+        lodestoneTitle:      S.charTitle        || null,
+        lodestoneFC:         S.charFC           || null,
+        lodestoneClass:      S.charClass        || null,
+        lodestoneClassLevel: S.charClassLevel   || null,
+        data:                encodeS(S, true),
       }),
     });
     await syncCloudCharacters();
@@ -2125,16 +1992,14 @@ async function loadCloudCharacter(lodestoneId) {
   if (!s) return;
   s.charPortrait = char.portraitUrl || null;
   s.charAvatar   = char.avatarUrl   || null;
-  // Re-attach extended data from local cache if it matches
+  // Prefer cloud-saved lodestone data; fall back to local cache for older saves
   const ext = loadCharExt();
-  if (ext && ext.lodestoneId && ext.lodestoneId === s.charLodestoneId) {
-    s.charClass      = ext.cls    || null;
-    s.charClassLevel = ext.clsLv  || null;
-    s.charTitle      = ext.title  || null;
-    s.charFC         = ext.fc     || null;
-  }
+  const extMatch = ext && ext.lodestoneId && ext.lodestoneId === s.charLodestoneId;
+  s.charTitle      = char.lodestoneTitle      || (extMatch ? ext.title : null) || null;
+  s.charFC         = char.lodestoneFC         || (extMatch ? ext.fc    : null) || null;
+  s.charClass      = char.lodestoneClass      || (extMatch ? ext.cls   : null) || null;
+  s.charClassLevel = char.lodestoneClassLevel || (extMatch ? ext.clsLv : null) || null;
   S = s;
-  _activeCloudCharId = lodestoneId;
   _viewingShare = false;
   document.getElementById('inp-level').value      = S.level;
   document.getElementById('inp-xp').value         = S.xp;
@@ -2183,9 +2048,8 @@ async function renameCloudCharacter(lodestoneId, currentLabel) {
 
 async function handleLogout() {
   try { await fetch('/auth/logout', { method: 'POST', credentials: 'same-origin' }); } catch {}
-  _cloudUser         = null;
-  _cloudChars        = [];
-  _activeCloudCharId = null;
+  _cloudUser  = null;
+  _cloudChars = [];
   renderAuthUI(null);
   renderCharSwitcher();
   showToast('Logged out.');
@@ -2214,7 +2078,7 @@ function renderAuthUI(user) {
     : null;
   const avatarInner = avatarSrc
     ? `<img src="${avatarSrc}" style="width:28px;height:28px;border-radius:50%;display:block;" onerror="this.style.display='none'">`
-    : `<span style="font-size:13px;">⚔</span>`;
+    : `<span style="font-size:13px;"></span>`;
   const displayName = user.username.length > 14 ? user.username.slice(0, 13) + '…' : user.username;
   el.style.position = 'relative';
   el.innerHTML = `
@@ -2255,20 +2119,20 @@ function renderCharSwitcher() {
     <div style="font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Characters</div>
     <div style="display:flex;flex-direction:column;gap:6px;">
       ${_cloudChars.map(c => {
-        const isActive = c.lodestoneId === _activeCloudCharId;
+        const isActive = c.lodestoneId === S.charLodestoneId;
         const label    = c.label || c.characterName;
         const world    = c.characterWorld || 'Unknown World';
         const avatarTag = c.avatarUrl
           ? `<img src="${c.avatarUrl}" style="width:36px;height:36px;border-radius:6px;flex-shrink:0;object-fit:cover;" onerror="this.style.display='none'">`
-          : `<span style="width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;background:var(--gold-dim);border-radius:6px;font-size:16px;flex-shrink:0;">⚔</span>`;
+          : `<span style="width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;background:var(--gold-dim);border-radius:6px;font-size:16px;flex-shrink:0;"></span>`;
         return `
         <div onclick="loadCloudCharacter('${c.lodestoneId}');toggleProfileMenu();"
           style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;border:1px solid ${isActive ? 'var(--border-gold)' : 'var(--border)'};background:${isActive ? 'var(--gold-dim)' : 'transparent'};cursor:pointer;">
           ${avatarTag}
           <div style="flex:1;min-width:0;">
-            <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${label}</div>
+            <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(label)}</div>
             <div style="font-size:10px;color:var(--text-muted);">
-              ${world}${isActive ? ' &nbsp;<span style="color:var(--gold);">● active</span>' : ''}
+              ${esc(world)}${isActive ? ' &nbsp;<span style="color:var(--gold);">● active</span>' : ''}
             </div>
           </div>
           <div style="display:flex;gap:3px;flex-shrink:0;">

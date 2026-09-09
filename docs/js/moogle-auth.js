@@ -21,6 +21,18 @@ async function initCloudAuth() {
 // Fetch cloud-saved characters and apply the most recently updated one if it's
 // newer than whatever is in localStorage. This ensures that linking your character
 // on Series automatically appears on Moogle after Discord login.
+// Apply lodestone fields from a _cloudChars record into CHAR for any fields
+// not already populated. Returns true if anything changed.
+function _enrichCharFromRecord(rec) {
+  let changed = false;
+  if (!CHAR.portrait         && rec.portraitUrl)          { CHAR.portrait         = rec.portraitUrl;          changed = true; }
+  if (!CHAR.activeClass      && rec.lodestoneClass)       { CHAR.activeClass      = rec.lodestoneClass;       changed = true; }
+  if (!CHAR.activeClassLevel && rec.lodestoneClassLevel)  { CHAR.activeClassLevel = rec.lodestoneClassLevel;  changed = true; }
+  if (!CHAR.charTitle        && rec.lodestoneTitle)       { CHAR.charTitle        = rec.lodestoneTitle;       changed = true; }
+  if (!CHAR.freeCompany      && rec.lodestoneFC)          { CHAR.freeCompany      = rec.lodestoneFC;          changed = true; }
+  return changed;
+}
+
 async function syncCloudCharacters() {
   try {
     const resp = await fetch('/api/characters', { credentials: 'same-origin' });
@@ -39,29 +51,43 @@ async function syncCloudCharacters() {
       ? (parseInt(localStorage.getItem('moogle-char-updated') || '0') || 0)
       : 0;
 
-    if (cloudTime <= localTime) return; // local is fresh enough, keep it
-
-    // Skip synthetic manual: keys — only auto-apply real Lodestone characters
-    const lid = latest.lodestoneId;
-    CHAR = {
-      name:        latest.characterName,
-      world:       latest.characterWorld,
-      lodestoneId: lid?.startsWith('manual:') ? null : lid,
-      avatarUrl:   latest.avatarUrl || null,
-    };
-    saveCharData();
-    renderCharDisplay();
+    if (cloudTime > localTime) {
+      // Cloud is newer — replace CHAR entirely, including all lodestone fields
+      const lid = latest.lodestoneId;
+      CHAR = {
+        name:             latest.characterName,
+        world:            latest.characterWorld,
+        lodestoneId:      lid?.startsWith('manual:') ? null : lid,
+        avatarUrl:        latest.avatarUrl        || null,
+        portrait:         latest.portraitUrl      || null,
+        activeClass:      latest.lodestoneClass      || null,
+        activeClassLevel: latest.lodestoneClassLevel || null,
+        charTitle:        latest.lodestoneTitle      || null,
+        freeCompany:      latest.lodestoneFC         || null,
+      };
+      saveCharData();
+      renderCharDisplay();
+    } else if (CHAR.lodestoneId) {
+      // Local is fresh — but fill in any lodestone fields that are missing
+      // (e.g. first load after migration 0003, or new device with no lookup cache)
+      const rec = _cloudChars.find(c => c.lodestoneId === CHAR.lodestoneId);
+      if (rec && _enrichCharFromRecord(rec)) {
+        saveCharData();
+        renderCharDisplay();
+      }
+    }
   } catch {}
 }
 
 async function saveToCloud() {
-  if (!_cloudUser || !EVENT) return;
+  if (!_cloudUser || !EVENT || !CHAR.lodestoneId) return;
   try {
     await fetch('/api/moogle/' + encodeURIComponent(EVENT.key), {
       method: 'PUT',
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        lodestone_id:        CHAR.lodestoneId || '',
         wishlist:            JSON.stringify(WISHLIST),
         tomes_current:       TOMES,
         weekly_objectives:   JSON.stringify(filterChallenges('weekly')),
@@ -83,7 +109,8 @@ function filterChallenges(type) {
 async function loadFromCloud() {
   if (!_cloudUser || !EVENT) return;
   try {
-    const resp = await fetch('/api/moogle/' + encodeURIComponent(EVENT.key), { credentials: 'same-origin' });
+    const charParam = CHAR.lodestoneId ? '?character=' + encodeURIComponent(CHAR.lodestoneId) : '';
+    const resp = await fetch('/api/moogle/' + encodeURIComponent(EVENT.key) + charParam, { credentials: 'same-origin' });
     if (!resp.ok) return; // 404 = no cloud save yet, keep local state
     const data = await resp.json();
     const cloudWishlist = JSON.parse(data.wishlist || '{}');
@@ -128,7 +155,7 @@ function renderAuthUI(user) {
     : null;
   const avatarInner = avatarSrc
     ? `<img src="${avatarSrc}" style="width:28px;height:28px;border-radius:50%;display:block;" onerror="this.style.display='none'">`
-    : `<span style="font-size:13px;">⚔</span>`;
+    : `<span style="font-size:13px;"></span>`;
   const displayName = user.username.length > 14 ? user.username.slice(0, 13) + '…' : user.username;
   el.style.position = 'relative';
   el.innerHTML = `
@@ -148,7 +175,6 @@ function renderAuthUI(user) {
         </div>
       </div>
       <div id="profile-char-list"></div>
-      <a href="/series/" style="display:block;font-size:12px;color:var(--text-muted);text-decoration:none;padding:4px 0;margin-top:8px;" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--text-muted)'">← Series Tracker</a>
       <button class="btn btn-outline" onclick="handleLogout()" style="width:100%;justify-content:center;font-size:11px;padding:6px;margin-top:10px;">Logout</button>
     </div>`;
   renderMoogleCharSwitcher();
@@ -165,12 +191,12 @@ function renderMoogleCharSwitcher() {
     <div style="font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Characters</div>
     <div style="display:flex;flex-direction:column;gap:6px;">
       ${_cloudChars.map(c => {
-        const isActive = CHAR.lodestoneId ? c.lodestoneId === CHAR.lodestoneId : (c.characterName === CHAR.name && c.characterWorld === CHAR.world);
+        const isActive = c.lodestoneId === CHAR.lodestoneId;
         const label    = c.characterName;
         const world    = c.characterWorld || '';
         const avatarTag = c.avatarUrl
           ? `<img src="${c.avatarUrl}" style="width:36px;height:36px;border-radius:6px;flex-shrink:0;object-fit:cover;" onerror="this.style.display='none'">`
-          : `<span style="width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;background:var(--gold-dim);border-radius:6px;font-size:16px;flex-shrink:0;">⚔</span>`;
+          : `<span style="width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;background:var(--gold-dim);border-radius:6px;font-size:16px;flex-shrink:0;"></span>`;
         return `
         <div onclick="applyCharacter('${label.replace(/'/g,"\\'")}','${world.replace(/'/g,"\\'")}','${(c.lodestoneId||'').replace(/'/g,"\\'")}','${(c.avatarUrl||'').replace(/'/g,"\\'")}');toggleProfileMenu();"
           style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;border:1px solid ${isActive ? 'var(--border-gold)' : 'var(--border)'};background:${isActive ? 'var(--gold-dim)' : 'transparent'};cursor:pointer;">
