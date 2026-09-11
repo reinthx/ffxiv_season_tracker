@@ -13,13 +13,27 @@ function esc(s) {
 }
 
 // ── CORS proxy ─────────────────────────────────────────
+// Primary path is our own Worker route (same-origin, cached, no third-party).
+// Public proxies below are last-resort fallbacks for static hosts without
+// the Worker (and if Lodestone ever blocks our edge IPs).
 const CORS_PROXIES = [
   url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
   url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
 ];
 const PROXY_TIMEOUT_MS = 8000;
+const WORKER_PROXY_TIMEOUT_MS = 20000;
 
 async function fetchViaProxy(url) {
+  // 1) Same-origin Worker proxy. A non-OK status (404 on static hosts without
+  //    the Worker, 502 when Lodestone blocks our edge) falls through to the
+  //    public proxies below — never fail here.
+  try {
+    const resp = await fetch('/api/lodestone?url=' + encodeURIComponent(url), {
+      signal: AbortSignal.timeout(WORKER_PROXY_TIMEOUT_MS),
+    });
+    if (resp.ok) return resp;
+  } catch { /* worker proxy unavailable — use public fallbacks */ }
+  // 2) Public fallback proxies, raced.
   const controllers = CORS_PROXIES.map(() => new AbortController());
   const timer = setTimeout(() => controllers.forEach(c => c.abort()), PROXY_TIMEOUT_MS);
   try {

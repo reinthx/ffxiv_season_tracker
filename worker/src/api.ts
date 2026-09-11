@@ -1,5 +1,6 @@
 import type { Env, PutCharacterBody, PutMoogleBody, PutCollectCacheBody } from './types';
 import { getSession } from './session';
+import { handleLodestoneProxy } from './lodestone';
 import { getCharacters, getCharacter, putCharacter, patchCharacterLabel, deleteCharacter, getMoogleProgress, putMoogleProgress, getCollectCache, putCollectCache, countCharacters, MAX_CHARACTERS_PER_USER } from './db';
 import { jsonResponse, errorResponse, requireAuth, readBodyCapped, isValidImageUrl } from './utils';
 
@@ -8,7 +9,12 @@ export async function handleApi(request: Request, env: Env): Promise<Response> {
   const pathname = url.pathname;
   const method   = request.method;
 
-  // All /api/* routes require a valid session
+  // GET /api/lodestone?url=... — PUBLIC Lodestone fetch proxy (no login required;
+  // character search must work for logged-out users). Host-allowlisted + cached.
+  // Must stay above the session check below.
+  if (pathname === '/api/lodestone') return handleLodestoneProxy(request);
+
+  // All other /api/* routes require a valid session
   const session = await getSession(env, request);
   const authErr = requireAuth(session);
   if (authErr) return authErr;
