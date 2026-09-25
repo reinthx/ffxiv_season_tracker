@@ -18,7 +18,9 @@ const _COLLECT_CACHE_TTL = 7 * 24 * 3600000;
 
 function _buildCacheBlob(charData) {
   const blob = {};
-  for (const key of ['mounts','minions','cards','emotes','hairstyles','bardings','orchestrions']) {
+  // 'achievements' rides along for the artifact hub (shared DB row + key
+  // space are merged, never replaced, on write — see artifact-collect.js).
+  for (const key of ['mounts','minions','cards','emotes','hairstyles','bardings','orchestrions','achievements']) {
     if (charData[key]?.ids) blob[key] = charData[key].ids;
   }
   return blob;
@@ -239,7 +241,9 @@ function categoryBadgeHTML(category) {
 }
 
 function ytId(url) {
-  return url?.match(/(?:v=|youtu\.be\/)([^&?/]+)/)?.[1] ?? null;
+  if (!url) return null;
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : null;
 }
 
 function playYtEmbed(el, vid) {

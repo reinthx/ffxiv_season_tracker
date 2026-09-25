@@ -18,13 +18,7 @@
     <div style="position:absolute; top:0; left:0;">
       <div id="discord-auth-widget"></div>
     </div>
-    <div style="position:absolute; top:0; right:0; display:flex; align-items:center; gap:8px;">
-      <span style="font-size:10px; color:var(--text-muted); letter-spacing:0.05em; text-transform:uppercase;">Theme</span>
-      <button class="theme-swatch" data-theme="dusk"     style="background:linear-gradient(135deg,#080b10,#10141c); border-color:#c8a96e;" title="Dusk"         onclick="setTheme('dusk')"></button>
-      <button class="theme-swatch" data-theme="midnight" style="background:linear-gradient(135deg,#050505,#0c0c10); border-color:#f0c040;" title="Midnight"     onclick="setTheme('midnight')"></button>
-      <button class="theme-swatch" data-theme="dawn"     style="background:linear-gradient(135deg,#f0ead8,#fffcf4); border-color:#8b6514;" title="Dawn (light)" onclick="setTheme('dawn')"></button>
-      <button class="theme-swatch" data-theme="aether"   style="background:linear-gradient(135deg,#030c18,#071628); border-color:#38cce0;" title="Aether"       onclick="setTheme('aether')"></button>
-    </div>
+    <div id="header-theme-controls" style="position:absolute; top:0; right:0; display:flex; align-items:center; gap:8px;"></div>
     <div class="page-eyebrow">Final Fantasy XIV</div>
     <h1 class="font-cinzel" style="font-size:clamp(1.8rem,5vw,3rem); font-weight:700; color:var(--gold); margin-bottom:6px; line-height:1.1;">Moogle Tome Tracker</h1>
     <p style="color:var(--text-muted); font-size:0.83rem;">Moogle Treasure Trove — wishlist, farming routes &amp; challenge objectives</p>
@@ -315,6 +309,7 @@
 <script src="../js/shared.js"></script>
 <script src="../js/shared-character.js"></script>
 <script src="../js/site-nav.js"></script>
+<script src="../js/site-header.js"></script>
 <script src="../js/moogle.js" defer></script>
 <script src="../js/moogle-render.js" defer></script>
 <script src="../js/moogle-collect.js" defer></script>

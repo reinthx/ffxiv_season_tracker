@@ -1,7 +1,7 @@
-import type { Env, PutCharacterBody, PutMoogleBody, PutCollectCacheBody } from './types';
+import type { Env, PutCharacterBody, PutMoogleBody, PutCollectCacheBody, PutArtifactBody } from './types';
 import { getSession } from './session';
 import { handleLodestoneProxy } from './lodestone';
-import { getCharacters, getCharacter, putCharacter, patchCharacterLabel, deleteCharacter, getMoogleProgress, putMoogleProgress, getCollectCache, putCollectCache, countCharacters, MAX_CHARACTERS_PER_USER } from './db';
+import { getCharacters, getCharacter, putCharacter, patchCharacterLabel, deleteCharacter, getMoogleProgress, putMoogleProgress, getCollectCache, putCollectCache, getArtifactProgress, putArtifactProgress, countCharacters, MAX_CHARACTERS_PER_USER } from './db';
 import { jsonResponse, errorResponse, requireAuth, readBodyCapped, isValidImageUrl } from './utils';
 
 export async function handleApi(request: Request, env: Env): Promise<Response> {
@@ -83,6 +83,49 @@ export async function handleApi(request: Request, env: Env): Promise<Response> {
       try { body = JSON.parse(raw) as PutMoogleBody; } catch { return errorResponse('Invalid JSON', 400); }
       if (typeof body.tomes_current !== 'number') return errorResponse('tomes_current must be a number', 400);
       await putMoogleProgress(env, s.userId, eventKey, body);
+      return new Response(null, { status: 204 });
+    }
+  }
+
+  // /api/artifacts/:expansionKey — GET + PUT (Artifact Hub / relic grind)
+  // Same semantics as moogle: ?character=lodestoneId with '' fallback,
+  // If-Modified-Since → 304, X-Content-Hash no-op guard on PUT.
+  const artifactMatch = pathname.match(/^\/api\/artifacts\/([^/]+)$/);
+  if (artifactMatch) {
+    const expansionKey = decodeURIComponent(artifactMatch[1]);
+    if (!/^[a-z0-9-]+$/.test(expansionKey)) return errorResponse('Invalid expansion key', 400);
+
+    if (method === 'GET') {
+      const lodestoneId = url.searchParams.get('character') ?? '';
+      const row = await getArtifactProgress(env, s.userId, lodestoneId, expansionKey);
+      if (!row) return errorResponse('Not found', 404);
+      const ims = request.headers.get('If-Modified-Since');
+      if (ims && row.updated_at && ims === row.updated_at) {
+        return new Response(null, { status: 304 });
+      }
+      return jsonResponse({
+        lodestoneId:  row.lodestone_id,
+        expansionKey: row.expansion_key,
+        trackedJobs:  row.tracked_jobs,
+        have:         row.have,
+        steps:        row.steps,
+        reqs:         row.reqs,
+        contentHash:  row.content_hash,
+        updatedAt:    row.updated_at,
+      });
+    }
+
+    if (method === 'PUT') {
+      const raw = await readBodyCapped(request, 64_000);
+      if (raw === null) return errorResponse('Payload too large', 413);
+      let body: PutArtifactBody;
+      try { body = JSON.parse(raw) as PutArtifactBody; } catch { return errorResponse('Invalid JSON', 400); }
+      if (typeof body.tracked_jobs !== 'string') return errorResponse('tracked_jobs must be a string', 400);
+      if (typeof body.have !== 'string') return errorResponse('have must be a string', 400);
+      if (typeof body.steps !== 'string') return errorResponse('steps must be a string', 400);
+      if (body.reqs !== undefined && typeof body.reqs !== 'string') return errorResponse('reqs must be a string', 400);
+      if (body.reqs === undefined) body.reqs = '{}';
+      await putArtifactProgress(env, s.userId, expansionKey, body, request.headers.get('X-Content-Hash') || '');
       return new Response(null, { status: 204 });
     }
   }

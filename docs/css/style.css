@@ -86,6 +86,160 @@
   --attire:     #f88840;
 }
 
+/* ── ARR — Realm Reborn (meteor red / Dalamud fall) ─── */
+[data-theme="arr"] {
+  --gold:       #e05a4e;
+  --gold-light: #f8a08a;
+  --gold-dim:   rgba(224,90,78,0.14);
+  --bg:         #0d0808;
+  --card:       #171010;
+  --card-hover: #201414;
+  --border:     #38262a;
+  --border-gold:rgba(224,90,78,0.4);
+  --text:       #f0e2de;
+  --text-muted: #8d6d6a;
+  --input-bg:   #120b0c;
+  --input-text: #f0e2de;
+  --blue:       #5ba0e0;
+  --green:      #4ade80;
+  --yellow:     #fbbf24;
+  --purple:     #a78bfa;
+  --red:        #f87171;
+  --attire:     #fb923c;
+}
+
+/* ── Heavensward (Ishgard steel blue / ice) ─────────── */
+[data-theme="hw"] {
+  --gold:       #7fb8e8;
+  --gold-light: #bde0ff;
+  --gold-dim:   rgba(127,184,232,0.13);
+  --bg:         #060c14;
+  --card:       #0b1626;
+  --card-hover: #122038;
+  --border:     #1e324a;
+  --border-gold:rgba(127,184,232,0.4);
+  --text:       #d2e6f7;
+  --text-muted: #5f7d95;
+  --input-bg:   #081019;
+  --input-text: #d2e6f7;
+  --blue:       #58a8f0;
+  --green:      #4ade80;
+  --yellow:     #f8d040;
+  --purple:     #9878f8;
+  --red:        #f87070;
+  --attire:     #f88840;
+}
+
+/* ── Stormblood (Far East vermillion) ───────────────── */
+[data-theme="sb"] {
+  --gold:       #f0643c;
+  --gold-light: #ffb08a;
+  --gold-dim:   rgba(240,100,60,0.13);
+  --bg:         #100805;
+  --card:       #1d110a;
+  --card-hover: #291712;
+  --border:     #42271b;
+  --border-gold:rgba(240,100,60,0.4);
+  --text:       #f5e3d3;
+  --text-muted: #8f6f5d;
+  --input-bg:   #150c07;
+  --input-text: #f5e3d3;
+  --blue:       #5ba0e0;
+  --green:      #4ade80;
+  --yellow:     #fbbf24;
+  --purple:     #c090f8;
+  --red:        #f87171;
+  --attire:     #ffb04a;
+}
+
+/* ── Shadowbringers (violet dark / light) ───────────── */
+[data-theme="shb"] {
+  --gold:       #a78bfa;
+  --gold-light: #d0b8ff;
+  --gold-dim:   rgba(167,139,250,0.13);
+  --bg:         #090812;
+  --card:       #141020;
+  --card-hover: #1c162e;
+  --border:     #2b2344;
+  --border-gold:rgba(167,139,250,0.4);
+  --text:       #e6def9;
+  --text-muted: #726891;
+  --input-bg:   #0d0a16;
+  --input-text: #e6def9;
+  --blue:       #7aa8f0;
+  --green:      #4ade80;
+  --yellow:     #f8d040;
+  --purple:     #c0a0ff;
+  --red:        #f87070;
+  --attire:     #f88840;
+}
+
+/* ── Endwalker (cosmic blue / starlight) ────────────── */
+[data-theme="ew"] {
+  --gold:       #6fa8ff;
+  --gold-light: #a8ccff;
+  --gold-dim:   rgba(111,168,255,0.13);
+  --bg:         #040816;
+  --card:       #090f24;
+  --card-hover: #101838;
+  --border:     #1c2a52;
+  --border-gold:rgba(111,168,255,0.4);
+  --text:       #d3e2fb;
+  --text-muted: #5d7599;
+  --input-bg:   #060b1c;
+  --input-text: #d3e2fb;
+  --blue:       #58a8f0;
+  --green:      #4ade80;
+  --yellow:     #e8c85a;
+  --purple:     #9878f8;
+  --red:        #f87070;
+  --attire:     #f88840;
+}
+
+/* ── Dawntrail (tropical teal / jungle) ─────────────── */
+[data-theme="dt"] {
+  --gold:       #2dd4a8;
+  --gold-light: #7df0c8;
+  --gold-dim:   rgba(45,212,168,0.12);
+  --bg:         #03100d;
+  --card:       #081d18;
+  --card-hover: #0e2a23;
+  --border:     #173d33;
+  --border-gold:rgba(45,212,168,0.38);
+  --text:       #d1f0e3;
+  --text-muted: #5b8a7a;
+  --input-bg:   #051511;
+  --input-text: #d1f0e3;
+  --blue:       #58a8f0;
+  --green:      #38e880;
+  --yellow:     #f8d040;
+  --purple:     #9878f8;
+  --red:        #f87070;
+  --attire:     #f88840;
+}
+
+/* ── Evercold (glacial frost — brighter cyan than HW) ─ */
+[data-theme="evercold"] {
+  --gold:       #8ae8ff;
+  --gold-light: #c8f4ff;
+  --gold-dim:   rgba(138,232,255,0.12);
+  --bg:         #040e14;
+  --card:       #0a1a24;
+  --card-hover: #102836;
+  --border:     #1a3a4c;
+  --border-gold:rgba(138,232,255,0.38);
+  --text:       #d8f0f8;
+  --text-muted: #5d8296;
+  --input-bg:   #061420;
+  --input-text: #d8f0f8;
+  --blue:       #58c8f0;
+  --green:      #4ae8b8;
+  --yellow:     #f8e080;
+  --purple:     #a8b8ff;
+  --red:        #f8938a;
+  --attire:     #f8a840;
+}
+
 * { box-sizing: border-box; }
 
 body {
@@ -538,3 +692,168 @@ select option, select optgroup { background: var(--input-bg); color: var(--input
 .shop-row.is-ignored:hover   { opacity: 0.6; }
 .shop-row-actions            { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 @media (max-width: 540px) { #modal-desc { display: none !important; } }
+
+#item-modal-overlay { box-sizing: border-box; position: fixed; inset: 0; background: rgba(0,0,0,0.78); backdrop-filter: blur(5px); z-index: 300; display: none; align-items: center; justify-content: center; padding: 16px; }
+#item-modal-overlay.open { display: flex; }
+#item-modal-card { background: var(--card); border: 1px solid var(--gold); border-radius: 14px; padding: 28px; max-width: 460px; width: 100%; max-height: calc(100vh - 32px); overflow-y: auto; box-shadow: 0 24px 64px rgba(0,0,0,0.7); animation: modalIn 0.22s ease; position: relative; }
+#inv-modal-overlay { box-sizing: border-box; position: fixed; inset: 0; background: rgba(0,0,0,0.78); backdrop-filter: blur(5px); z-index: 300; display: none; align-items: center; justify-content: center; padding: 16px; }
+#inv-modal-overlay.open { display: flex; }
+#inv-modal-card { background: var(--card); border: 1px solid var(--gold); border-radius: 14px; padding: 28px; max-width: 520px; width: 100%; max-height: calc(100vh - 32px); overflow-y: auto; box-shadow: 0 24px 64px rgba(0,0,0,0.7); animation: modalIn 0.22s ease; position: relative; }
+
+/* Number inputs use custom −/+ steppers — hide native spinners to avoid doubles */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+
+/* ── Artifact Hub ──────────────────────────────────── */
+.art-flash {
+  border-radius: 12px;
+  animation: artFlash 0.8s ease-in-out 3;
+}
+@keyframes artFlash {
+  0%, 100% { outline: 2px solid transparent; outline-offset: 4px; box-shadow: none; }
+  50% { outline: 2px solid var(--gold); outline-offset: 4px; box-shadow: 0 0 18px var(--gold-dim), 0 0 6px var(--gold); }
+}
+.art-details > summary { list-style: none; cursor: pointer; }
+.art-details > summary::-webkit-details-marker { display: none; }
+.art-details > summary::before { content: '▸ '; color: var(--gold); font-size: 0.85em; }
+.art-details[open] > summary::before { content: '▾ '; }
+body[data-exp] { --exp: var(--gold); }
+#theme-select { font-family: inherit; cursor: pointer; }
+#theme-select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold-dim); }
+.landing-card-artifact {
+  background: linear-gradient(145deg, rgba(167,139,250,0.2) 0%, rgba(56,204,224,0.08) 55%), var(--card);
+  border: 1px solid rgba(167,139,250,0.4);
+}
+.landing-card-artifact:hover { border-color: var(--purple); }
+
+/* ── Artifact guide: start bubble, breadcrumbs, step cards ─── */
+.art-jobchips { display: flex; gap: 6px; flex-wrap: wrap; }
+.art-jobchip { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; font-size: 11px; border-radius: 14px; cursor: pointer; font-family: inherit; border: 1px solid var(--border); background: transparent; color: var(--text-muted); }
+.art-jobchip.is-on { color: var(--text); }
+.art-start { border-left: 3px solid var(--gold); background: linear-gradient(135deg, var(--gold-dim), transparent 70%); }
+.art-start-kicker { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); }
+.art-guidehead { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin: 18px 0 10px; }
+.art-rail { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.art-rail-dot { width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; border: 1px solid var(--border); background: transparent; color: var(--text-muted); }
+.art-rail-dot.is-next { border-color: var(--border-gold); background: var(--gold-dim); color: var(--gold); }
+.art-rail-dot.is-done { background: var(--green); border-color: var(--green); color: #fff; }
+.art-rail-dot.is-locked { opacity: 0.5; }
+.art-npc-tip { color: var(--gold); text-decoration: underline dotted; text-underline-offset: 2px; font-weight: 600; }
+.art-npc-tip:hover { color: #fff; }
+/* Hover/focus popups: NPC mini location cards + farm-area coverage cards.
+   :focus-within covers keyboard + mobile tap (wraps have tabindex=0). */
+.art-npc-wrap, .art-area-wrap { position: relative; display: inline-block; }
+.art-npc-wrap:focus, .art-area-wrap:focus { outline: none; }
+.art-npc-wrap:focus .art-npc-tip, .art-area-wrap:focus strong { outline: 1px dotted var(--gold); outline-offset: 2px; }
+.art-npc-pop, .art-area-pop {
+  display: none; position: absolute; left: 50%; transform: translateX(-50%);
+  bottom: calc(100% + 8px); width: 248px; z-index: 500;
+  background: var(--card); border: 1px solid var(--border-gold); border-radius: 8px;
+  padding: 8px; box-shadow: 0 12px 32px rgba(0,0,0,0.5); text-align: left;
+  font-weight: 400; line-height: 1.4; white-space: normal;
+}
+.art-npc-wrap:hover .art-npc-pop, .art-npc-wrap:focus-within .art-npc-pop,
+.art-area-wrap:hover .art-area-pop, .art-area-wrap:focus-within .art-area-pop { display: block; }
+/* Item/inventory modals scroll (overflow-y:auto) which would clip upward
+   popups — open downward there instead. */
+#item-modal-card .art-npc-pop, #item-modal-card .art-area-pop,
+#inv-modal-card .art-npc-pop, #inv-modal-card .art-area-pop {
+  bottom: auto; top: calc(100% + 8px);
+}
+.art-area-chip {
+  display: inline-block; font-size: 10px; padding: 1px 8px; margin: 1px 2px 1px 0;
+  border-radius: 10px; border: 1px solid var(--border-gold);
+  background: var(--gold-dim); color: var(--gold); white-space: nowrap;
+}
+.art-stepcards { display: flex; flex-direction: column; gap: 10px; }
+.art-stepcard { border: 1px solid var(--border); border-radius: 10px; background: var(--card); overflow: hidden; }
+.art-stepcard.is-next { border-color: var(--border-gold); box-shadow: 0 0 24px rgba(200, 169, 110, 0.12); }
+.art-stepcard.is-done { opacity: 0.92; }
+.art-stepcard.is-locked { opacity: 0.82; }
+.art-stepcard-head { display: flex; gap: 12px; align-items: flex-start; padding: 11px 13px; cursor: pointer; list-style: none; }
+.art-stepcard-head::-webkit-details-marker { display: none; }
+.art-stepcard-head::marker { content: ''; }
+.art-stepcard-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.art-stepcard-title { font-size: 13px; font-weight: 600; }
+.art-stepcard-sub { font-size: 11px; color: var(--text-muted); }
+.art-stepcard-chevron { color: var(--text-muted); font-size: 12px; transition: transform 0.15s; flex-shrink: 0; margin-top: 2px; }
+.art-stepcard[open] .art-stepcard-chevron { transform: rotate(180deg); }
+.art-stepcard-body { padding: 0 13px 13px; }
+.art-stepgrid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 16px; margin-top: 6px; }
+.art-classchips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
+.art-classchip { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; padding: 1px 7px; border-radius: 10px; border: 1px solid var(--border); }
+.art-grind { display: flex; flex-direction: column; gap: 6px; }
+.art-grindhead { font-size: 11px; color: var(--text-muted); }
+.art-grindline { display: flex; gap: 8px; align-items: flex-start; padding-top: 7px; border-top: 1px solid var(--border); }
+.art-have { display: inline-flex; align-items: center; gap: 3px; flex-shrink: 0; align-self: center; }
+.art-havebtn { width: 24px; height: 24px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text); cursor: pointer; font-size: 13px; line-height: 1; }
+.art-havebtn.is-plus { border-color: var(--border-gold); background: var(--gold-dim); color: var(--gold); }
+.art-record { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.art-record-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+.art-record-btns { display: flex; flex-wrap: wrap; gap: 6px; }
+.art-mark { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; padding: 4px 10px; border-radius: 14px; cursor: pointer; font-family: inherit; border: 1px solid var(--border); background: transparent; color: var(--text-muted); }
+.art-mark.is-done { border-color: var(--green); background: rgba(74, 222, 128, 0.14); color: var(--green); font-weight: 600; }
+.art-mark-done { font-size: 12px; padding: 6px 16px; border-radius: 16px; font-weight: 600; border-color: var(--border-gold); background: var(--gold-dim); color: var(--gold); }
+.art-mark-done.is-done { border-color: var(--green); background: rgba(74, 222, 128, 0.16); color: var(--green); }
+.art-stepbreak { height: 1px; background: var(--border); margin: 12px 0; }
+.art-stepactions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.art-ref-tag { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); border: 1px solid rgba(74, 222, 128, 0.4); border-radius: 10px; padding: 1px 7px; }
+.art-overlap { margin-top: 10px; padding: 7px 9px; border: 1px solid var(--border-gold); border-radius: 8px; background: var(--gold-dim); }
+.art-overlap-title { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: var(--gold); text-transform: uppercase; margin-bottom: 3px; }
+.art-overlap-line { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+.art-overview > summary { cursor: pointer; font-size: 12px; color: var(--gold); font-weight: 600; list-style: none; }
+.art-overview > summary::-webkit-details-marker { display: none; }
+.art-overview > summary::before { content: '▸ '; }
+.art-overview[open] > summary::before { content: '▾ '; }
+.art-alldone { border-color: var(--green); margin-bottom: 12px; }
+.art-guidedone { border-left: 3px solid var(--green); }
+.art-sheet-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.art-review-btn { font-size: 11px; padding: 4px 12px; flex-shrink: 0; }
+.art-completed-guide { margin-top: 18px; }
+.art-completed-guide > summary { cursor: pointer; list-style: none; font-size: 13px; font-weight: 700; color: var(--gold); padding: 4px 2px; }
+.art-completed-guide > summary::-webkit-details-marker { display: none; }
+.art-completed-guide > summary::before { content: '▸ '; }
+.art-completed-guide[open] > summary::before { content: '▾ '; }
+.art-clslist { display: inline-flex; flex-wrap: wrap; gap: 5px; }
+.art-clsico { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; padding: 1px 6px; border-radius: 10px; border: 1px solid var(--border); color: var(--text-muted); }
+
+/* One card, one flow: the step hero + tucked-away folds */
+.art-guidecard { padding: 14px; }
+.art-stephero { border: 1px solid var(--border-gold); border-radius: 10px; overflow: hidden; background: linear-gradient(135deg, var(--gold-dim), transparent 65%); }
+.art-stephero > .art-stepcard-head { cursor: default; }
+.art-stephero-body { padding: 0 13px 13px; }
+.art-unlockhero { padding: 2px; }
+.art-unlocknext { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
+.art-prereqblock .section-title { margin-top: 0; }
+.art-foldlist { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.art-past, .art-inprog, .art-later { margin-top: 10px; border-top: 1px solid var(--border); }
+.art-past > summary, .art-inprog > summary, .art-later > summary {
+  cursor: pointer; list-style: none; padding: 10px 2px 2px; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.04em; color: var(--text-muted); text-transform: uppercase;
+}
+.art-past > summary::-webkit-details-marker, .art-inprog > summary::-webkit-details-marker, .art-later > summary::-webkit-details-marker { display: none; }
+.art-past > summary::before, .art-inprog > summary::before, .art-later > summary::before { content: '▸ '; color: var(--gold); }
+.art-past[open] > summary::before, .art-inprog[open] > summary::before, .art-later[open] > summary::before { content: '▾ '; }
+
+/* Hand-held quest walkthrough */
+.art-questwalk { margin-top: 8px; }
+.art-questwalk > summary { cursor: pointer; color: var(--gold); font-weight: 600; font-size: 12px; list-style: none; }
+.art-questwalk > summary::-webkit-details-marker { display: none; }
+.art-questwalk > summary::before { content: '▸ '; }
+.art-questwalk[open] > summary::before { content: '▾ '; }
+.art-queststeps { margin: 8px 0 4px; padding-left: 20px; font-size: 12px; line-height: 1.7; color: var(--text); }
+.art-queststeps li { margin-bottom: 4px; }
+.art-qw-patch { font-size: 10px; color: var(--text-muted); border: 1px solid var(--border); border-radius: 8px; padding: 0 5px; }
+.art-qw-banner { width: 100%; max-width: 376px; border-radius: 6px; display: block; margin: 6px 0; }
+.art-qw-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; font-size: 11px; }
+.art-qw-sec { font-weight: 600; margin-bottom: 3px; }
+.art-qw-note { font-size: 11px; color: var(--yellow); margin-top: 4px; }
+.art-qw-wiki { margin-top: 8px; font-size: 11px; color: var(--text-muted); }
+@media (max-width: 720px) {
+  .art-qw-cols { grid-template-columns: 1fr; }
+}
+.art-sheet { margin-top: 18px; }
+@media (max-width: 720px) {
+  .art-stepgrid { grid-template-columns: 1fr; }
+}

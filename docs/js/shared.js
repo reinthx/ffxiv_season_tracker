@@ -121,6 +121,9 @@ function parseCharFromDoc(html, doc) {
 function setTheme(name) {
   document.documentElement.setAttribute('data-theme', name === 'dusk' ? '' : name);
   document.querySelectorAll('.theme-swatch').forEach(btn => btn.classList.toggle('active', btn.dataset.theme === name));
+  const sel = document.getElementById('theme-select');
+  if (sel) sel.value = name;
+  if (typeof window !== 'undefined' && typeof window.syncThemeDrop === 'function') window.syncThemeDrop();
   try { localStorage.setItem('ffxiv-theme', name); } catch {}
 }
 function loadTheme() {

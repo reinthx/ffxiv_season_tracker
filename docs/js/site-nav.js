@@ -10,6 +10,7 @@
     { href: '/',        label: 'Home',            match: p => p === '/' },
     { href: '/series/', label: 'Series Tracker',  match: p => p.startsWith('/series') },
     { href: '/moogle/', label: 'Moogle Tracker', match: p => p.startsWith('/moogle') },
+    { href: '/artifacts/', label: 'Artifact Hub', match: p => p.startsWith('/artifacts') },
   ];
 
   function injectNav() {

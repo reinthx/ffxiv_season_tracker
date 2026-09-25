@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FFXIV Relic Hub</title>
+  <meta name="description" content="FFXIV relic weapon tracker hub — pick an expansion for its step-by-step guide, per-class progress and full grind reference sheet.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body data-exp="all">
+
+<div class="page-wrap">
+
+  <!-- ══ HEADER ══════════════════════════════════════════ -->
+  <header class="page-header">
+    <div style="position:absolute; top:0; left:0;">
+      <div id="discord-auth-widget"></div>
+    </div>
+    <div id="header-theme-controls" style="position:absolute; top:0; right:0; display:flex; align-items:center; gap:8px;"></div>
+    <div class="page-eyebrow">Final Fantasy XIV</div>
+    <h1 class="font-cinzel" style="font-size:clamp(1.8rem,5vw,3rem); font-weight:700; color:var(--gold); margin-bottom:6px; line-height:1.1;">Relic Hub</h1>
+    <p style="color:var(--text-muted); font-size:0.83rem;">Pick an expansion for its hand-held guide — unlock the relic, then grind every piece.</p>
+    <div id="site-nav"></div>
+    <div id="art-exp-pills" style="margin-top:10px;"></div>
+  </header>
+
+  <div id="data-load-error" class="error-banner"></div>
+
+  <!-- ══ CHARACTER ═══════════════════════════════════════ -->
+  <div class="char-card-section" style="margin-bottom:18px;">
+    <div class="char-card-header" onclick="this.closest('.char-card-section').dataset.userToggled='1';this.closest('.char-card-section').classList.toggle('open')">
+      <em class="char-toggle-icon">▶</em>
+      <span class="font-cinzel" style="font-size:0.82rem; letter-spacing:0.06em;">Link Your Character</span>
+      <span style="font-size:10px; color:var(--text-muted); font-weight:400; margin-left:2px;">— enables FFXIV Collect achievement sync</span>
+    </div>
+    <div id="art-char-display" class="char-badge" style="display:none;"></div>
+    <div class="char-card-body">
+      <p style="font-size:11px; color:var(--text-muted); margin-bottom:12px; line-height:1.6;">
+        Link your Lodestone character to auto-mark relic steps from FFXIV Collect achievements.
+        Steps without a known achievement ID stay manual-only. Manual ticks always override.
+      </p>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+        <div>
+          <label class="field-label">Character Name</label>
+          <input type="text" id="art-char-name" placeholder="Firstname Lastname" style="width:100%;">
+        </div>
+        <div>
+          <label class="field-label">Home World</label>
+          <select id="art-char-world" onchange="onArtWorldChange()">
+            <option value="">— Select World —</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px; flex-wrap:wrap;">
+        <button id="art-btn-lookup" class="btn btn-gold" style="padding:8px 16px; font-size:13px; white-space:nowrap;" onclick="artLookup(false)" disabled>🔍 Look up on Lodestone</button>
+        <span id="art-lookup-hint" style="font-size:11px; color:var(--text-muted);">Select a Home World above to enable lookup</span>
+        <span style="font-size:11px; color:var(--text-muted);">or</span>
+        <input type="text" id="art-lodestone-url" placeholder="Paste character URL here" style="flex:1; min-width:180px; padding:6px 8px; font-size:12px;">
+        <button class="btn btn-outline" style="padding:6px 12px; font-size:12px; white-space:nowrap;" onclick="artApplyUrl()">Load</button>
+      </div>
+      <div id="art-lookup-result"></div>
+      <div id="art-char-switcher"></div>
+    </div>
+  </div>
+
+  <!-- ══ PICK AN EXPANSION ══════════════════════════════ -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="section-title">Choose your relic</div>
+    <div style="font-size:12px; color:var(--text-muted); line-height:1.7; margin-bottom:12px;">
+      Each expansion opens its own one-page guide: a walkthrough that starts with one bubble, leaves
+      breadcrumbs as you clear steps, and grows into a full grind sheet for every repeat and alt.
+    </div>
+    <div id="art-expansions" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:10px;"></div>
+  </div>
+
+  <div id="art-onboard"></div>
+
+  <!-- ══ COLLECTION / AT-A-GLANCE ═══════════════════════ -->
+  <div id="art-all-card"></div>
+
+  <div class="card" style="margin-bottom:18px;">
+    <div class="section-title">At a Glance</div>
+    <div class="grid-4-col" style="margin-bottom:10px;">
+      <div class="stat-card"><div class="stat-label">Weapons Tracked</div><div class="stat-value" id="art-stat-tracked" style="color:var(--gold);">0</div></div>
+      <div class="stat-card"><div class="stat-label">Weapons Complete</div><div class="stat-value" id="art-stat-done" style="color:var(--green);">0</div></div>
+      <div class="stat-card"><div class="stat-label">Steps Remaining</div><div class="stat-value" id="art-stat-steps" style="color:var(--yellow);">—</div></div>
+      <div class="stat-card"><div class="stat-label">Est. Runs Remaining</div><div class="stat-value" id="art-stat-runs" style="color:var(--blue);">—</div></div>
+    </div>
+    <div id="art-expansion-bars" style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;"></div>
+    <div id="art-hist-line"></div>
+    <div class="section-title" style="margin-top:14px;">Tracked Classes (your grind)</div>
+    <div id="art-tracked-classes" style="display:flex; flex-direction:column; gap:6px;"></div>
+  </div>
+
+  <div id="art-gallery"></div>
+
+</div>
+
+<!-- ══ ITEM MODAL (source / vendor / cost / drop rate) ══ -->
+<div id="item-modal-overlay" onclick="maybeCloseArtItemModal(event)">
+  <div id="item-modal-card" style="max-width:460px;">
+    <button onclick="closeArtItemModal()" style="position:absolute; top:10px; right:12px; background:none; border:none; color:var(--text-muted); font-size:15px; cursor:pointer;">✕</button>
+    <div style="margin-bottom:12px;">
+      <div id="art-item-step" style="font-size:11px; color:var(--text-muted); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:2px;"></div>
+      <h3 id="art-item-name" class="font-cinzel" style="font-size:1.1rem; color:var(--gold); margin:0 0 8px;"></h3>
+      <div id="art-item-body" style="display:flex; flex-direction:column; gap:10px; text-align:left; font-size:12px;"></div>
+    </div>
+    <button class="btn btn-outline" style="width:100%; justify-content:center;" onclick="closeArtItemModal()">Close</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+<canvas id="confetti-canvas"></canvas>
+
+<footer style="text-align:center;padding:24px 16px 16px;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:32px;">
+  Collection data provided by <a href="https://ffxivcollect.com" target="_blank" rel="noopener" style="color:var(--text-muted);text-decoration:underline;">FFXIV Collect</a>
+  <div style="margin-top:6px; font-size:10px; opacity:0.75;">Game assets © SQUARE ENIX CO., LTD. — used under the <a href="https://support.na.square-enix.com/rule.php?id=5382&tag=authc" target="_blank" rel="noopener" style="color:inherit;">FFXIV Material Usage License</a>. Free non-commercial fan project.</div>
+  <div id="site-version" style="display:none; margin-top:6px; font-size:10px; opacity:0.75;"></div>
+</footer>
+
+<script src="../js/shared.js"></script>
+<script src="../js/shared-character.js"></script>
+<script src="../js/site-nav.js"></script>
+<script src="../js/site-header.js"></script>
+<script src="../js/artifact.js" defer></script>
+<script src="../js/artifact-render.js" defer></script>
+<script src="../js/artifact-collect.js" defer></script>
+</body>
+</html>

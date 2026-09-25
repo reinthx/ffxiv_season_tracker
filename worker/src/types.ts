@@ -81,3 +81,24 @@ export interface PutCollectCacheBody {
   last_parsed:  string | null;    // ISO datetime from FFXIV Collect response
   force_synced: boolean;          // true → stamp ffxiv_collect_synced_at = now
 }
+
+/** Row shape returned from artifact_progress queries */
+export interface ArtifactProgressRow {
+  lodestone_id:  string;
+  expansion_key: string;
+  tracked_jobs:  string;
+  have:          string;
+  steps:         string;
+  reqs:          string;
+  content_hash:  string;
+  updated_at:    string;
+}
+
+/** Request body for PUT /api/artifacts/:expansionKey */
+export interface PutArtifactBody {
+  lodestone_id: string;  // '' = account-level fallback
+  tracked_jobs: string;  // JSON
+  have:         string;  // JSON
+  steps:        string;  // JSON
+  reqs:         string;  // JSON
+}

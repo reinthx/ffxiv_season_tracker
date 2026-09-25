@@ -1,4 +1,4 @@
-import type { Env, CharacterRow, PutCharacterBody, MoogleProgressRow, PutMoogleBody, PutCollectCacheBody } from './types';
+import type { Env, CharacterRow, PutCharacterBody, MoogleProgressRow, PutMoogleBody, PutCollectCacheBody, ArtifactProgressRow, PutArtifactBody } from './types';
 
 // ── Users ──────────────────────────────────────────────────────────────
 
@@ -233,10 +233,79 @@ export async function putCollectCache(
   ).bind(body.cache, body.force_synced ? 1 : 0, userId, lodestoneId).run();
 }
 
+// ── Artifact progress ────────────────────────────────────────────────
+
+
+/**
+ * Fetch artifact progress for a specific character.
+ * Falls back to lodestone_id = '' (account-level save) like moogle.
+ * Returns 'not-modified when If-Modified-Since matches updated_at.
+ */
+export async function getArtifactProgress(
+  env: Env,
+  userId: number,
+  lodestoneId: string,
+  expansionKey: string,
+): Promise<ArtifactProgressRow | null> {
+  const row = await env.DB.prepare(
+    `SELECT lodestone_id, expansion_key, tracked_jobs, have, steps, reqs, content_hash, updated_at
+     FROM artifact_progress
+     WHERE user_id = ? AND lodestone_id = ? AND expansion_key = ?`
+  ).bind(userId, lodestoneId, expansionKey).first<ArtifactProgressRow>();
+
+  if (row) return row;
+
+  if (lodestoneId !== '') {
+    return env.DB.prepare(
+      `SELECT lodestone_id, expansion_key, tracked_jobs, have, steps, reqs, content_hash, updated_at
+       FROM artifact_progress
+       WHERE user_id = ? AND lodestone_id = '' AND expansion_key = ?`
+    ).bind(userId, expansionKey).first<ArtifactProgressRow>();
+  }
+
+  return null;
+}
+
+/**
+ * Upsert artifact progress. Skips the write when content_hash matches
+ * the stored row (client soft-cache no-op guard). Returns true when a
+ * write actually happened.
+ */
+export async function putArtifactProgress(
+  env: Env,
+  userId: number,
+  expansionKey: string,
+  body: PutArtifactBody,
+  contentHash: string,
+): Promise<boolean> {
+  const lodestoneId = body.lodestone_id ?? '';
+  if (contentHash) {
+    const cur = await env.DB.prepare(
+      'SELECT content_hash FROM artifact_progress WHERE user_id = ? AND lodestone_id = ? AND expansion_key = ?'
+    ).bind(userId, lodestoneId, expansionKey).first<{ content_hash: string }>();
+    if (cur && cur.content_hash === contentHash) return false;
+  }
+  await env.DB.prepare(
+    `INSERT INTO artifact_progress
+       (user_id, lodestone_id, expansion_key, tracked_jobs, have, steps, reqs, content_hash, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+     ON CONFLICT(user_id, lodestone_id, expansion_key) DO UPDATE SET
+       tracked_jobs = excluded.tracked_jobs,
+       have         = excluded.have,
+       steps        = excluded.steps,
+       reqs         = excluded.reqs,
+       content_hash = excluded.content_hash,
+       updated_at   = datetime('now')`
+  ).bind(
+    userId, lodestoneId, expansionKey,
+    body.tracked_jobs, body.have, body.steps, body.reqs, contentHash || '',
+  ).run();
+  return true;
+}
+
 // ── Character saves ────────────────────────────────────────────────────
 
-/** Delete a character save. Returns true if a row was actually deleted. */
-export async function deleteCharacter(
+/** Delete a character save. Returns true if a row was actually deleted. */export async function deleteCharacter(
   env: Env,
   userId: number,
   lodestoneId: string,

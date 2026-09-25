@@ -16,6 +16,7 @@
     <div style="position:absolute; top:0; left:0; z-index:10;">
       <div id="discord-auth-widget"></div>
     </div>
+    <div id="header-theme-controls" style="position:absolute; top:0; right:0; z-index:10; display:flex; align-items:center; gap:8px;"></div>
     <div class="page-eyebrow">Final Fantasy XIV</div>
     <h1 class="font-cinzel" style="font-size:clamp(2rem,6vw,3.2rem); color:var(--gold); margin-bottom:10px; line-height:1.1;">FFXIV Trackers</h1>
     <p style="color:var(--text-muted); font-size:0.85rem; max-width:440px; margin:0 auto;">Community tools for tracking your progress in Eorzea.</p>
@@ -35,12 +36,21 @@
       <div class="card-desc">Wishlist, farming routes, and challenge objectives for Moogle Treasure Trove events.</div>
       <div id="moogle-card-badge" style="display:none; margin-top:10px; font-size:0.72rem; font-weight:600; letter-spacing:0.05em;"></div>
     </a>
+    <a href="/artifacts/" class="landing-card landing-card-artifact">
+      <div class="card-bg-glyph"><span style="font-size:64px;">⚔️</span></div>
+      <div class="card-title">Artifact Hub</div>
+      <div class="card-desc">Relic grind tracking — selection, step status, and per-step grind plans for every expansion.</div>
+      <div style="margin-top:10px; font-size:0.72rem; font-weight:600; letter-spacing:0.05em; color:var(--purple);">✦ RESISTANCE LIVE — MORE SOON</div>
+    </a>
   </div>
 
   <div id="site-version" style="display:none; text-align:center; margin-top:22px; font-size:10px; color:var(--text-muted); opacity:0.75;"></div>
 
 </div>
 
+<script src="js/shared.js"></script>
+<script src="js/site-header.js"></script>
+<script>try { loadTheme(); } catch {}</script>
 <script>
   (async () => {
     const el = document.getElementById('discord-auth-widget');

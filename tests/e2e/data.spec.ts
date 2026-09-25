@@ -64,6 +64,70 @@ test('all moogle events have unique duty ids', async ({ request }) => {
   }
 });
 
+test('artifacts.json has live expansions with valid steps, items and achievement maps', async ({ request }) => {
+  const data = await (await request.get('/data/artifacts.json')).json();
+  expect(data.expansions.length).toBeGreaterThan(0);
+
+  // Expansion order is chronological and keys are unique
+  const keys = data.expansions.map((e: any) => e.key);
+  expect(new Set(keys).size).toBe(keys.length);
+  expect(keys).toEqual(['arr-zodiac', 'hw-anima', 'sb-eureka', 'shadowbringers-resistance', 'ew-manderville', 'dt-phantom']);
+
+  for (const exp of data.expansions) {
+    expect(exp.name, `${exp.key} name`).toBeTruthy();
+    expect(exp.accent, `${exp.key} accent`).toMatch(/^#[0-9a-f]{6}$/i);
+    const itemKeys = new Set<string>();
+    for (const st of exp.steps || []) {
+      expect(st.quest, `${exp.key} quest name`).toBeTruthy();
+      expect(st.perWeapon, `${exp.key}/${st.quest} perWeapon`).toBeGreaterThan(0);
+      if (st.kind === 'onetime') {
+        expect(typeof st.n, `${exp.key} onetime key`).toBe('string');
+        expect((st.items || []).length, `${exp.key}/${st.quest} items`).toBeGreaterThan(0);
+        for (const it of st.items) {
+          expect(it.key, 'onetime item key').toBeTruthy();
+          expect(itemKeys.has(it.key), `duplicate item key ${it.key}`).toBe(false);
+          itemKeys.add(it.key);
+          expect(it.perWeapon, `${it.key} perWeapon`).toBeGreaterThan(0);
+          expect((it.sources || []).length, `${it.key} sources`).toBeGreaterThan(0);
+          for (const s of it.sources) expect(s.yields, `${it.key} yield`).toBeGreaterThan(0);
+        }
+      } else {
+        expect(typeof st.n, `${exp.key} step number`).toBe('number');
+        expect(st.itemKey, `${exp.key}/${st.quest} itemKey`).toBeTruthy();
+        expect(itemKeys.has(st.itemKey), `duplicate item key ${st.itemKey}`).toBe(false);
+        itemKeys.add(st.itemKey);
+        expect((st.sources || []).length, `${exp.key}/${st.quest} sources`).toBeGreaterThan(0);
+      }
+      // Achievement maps reference known jobs with numeric Collect IDs
+      if (st.collectAchievementIds) {
+        for (const [job, id] of Object.entries(st.collectAchievementIds)) {
+          expect(exp.jobs, `${exp.key} achievement job ${job}`).toContain(job);
+          expect(typeof id, `${exp.key}/${job} achievement id`).toBe('number');
+        }
+      }
+      // Requirements are strings or {t, link} objects
+      for (const r of st.requirements || []) {
+        if (typeof r === 'string') continue;
+        expect(r.t, 'requirement text').toBeTruthy();
+        if (r.link) expect(r.link.startsWith('https://'), 'requirement link').toBe(true);
+      }
+    }
+    // Weapon stage tables cover every job with one stage per repeatable step
+    const repCount = (exp.steps || []).filter((s: any) => s.kind !== 'onetime' && typeof s.n === 'number').length;
+    for (const w of exp.weapons || []) {
+      expect(exp.jobs, `${exp.key} weapon job ${w.job}`).toContain(w.job);
+      expect(w.stages, `${w.job} stages`).toHaveLength(repCount);
+    }
+  }
+
+  const shb = data.expansions.find((e: any) => e.key === 'shadowbringers-resistance');
+  expect(shb.status).toBe('live');
+  expect(shb.jobs).toHaveLength(17);
+  // One-time chain order matches the quest path
+  expect(shb.steps.map((s: any) => s.n)).toEqual([1, 2, 3, 4, 'ot1', 5, 'ot2a', 'ot2b', 'ot2c', 6]);
+  // Parallel Zadnor trio unlocks as a unit
+  expect(shb.steps.filter((s: any) => s.parallel === 'ot2').map((s: any) => s.n)).toEqual(['ot2a', 'ot2b', 'ot2c']);
+});
 test('Mogpendium-era events have collectIds on all Collect-tracked items', async ({ request }) => {
   // Collect integration only resolves by numeric ID (the list API ignores
   // search=), so every unique mount/minion/emote/hairstyle/barding/

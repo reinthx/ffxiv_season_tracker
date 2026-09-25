@@ -1,0 +1,1204 @@
+{
+  "_howToUpdate": "Artifact Hub data. Expansions array is chronological (ARR > HW > SB > ShB > EW > DT); hub cards and tabs follow it. Each expansion has steps with perWeapon counts, sources (label+yields), vendors, reward stage, quest img + weapon stage imgs. collectAchievementIds maps JOB->achievement ID per step (null = manual-only until curated via ffxivcollect.com/achievements/types/4). Weapon stage imgs optional — modal falls back to stage names.",
+  "_imageContract": "All images optional with graceful fallback. bannerImg: full-width hero per expansion (docs/data/artifacts/<exp>/banner.png). steps[].img: quest screenshot (step-<n>.png). weapons[].stages[] may be strings (name only) or {name,img} objects (weapon renders: <job>-<n>.png). Missing files never break layout — emoji/glyph placeholders render instead. glyph: fallback emoji shown on hub cards until banner art lands. Job icons: xivapi/classjob-icons (MIT), vendored under data/artifacts/jobs/<JOB>.png. Quest banners + item icons: consolegameswiki (CC BY-SA), vendored under data/artifacts/<exp>/quests/ and items/.",
+  "_sourceFields": "sources[] entries support: label (required), yields (per run, required for run math), plus optional activity ('Vendor'|'FATE'|'Dungeon'|'Roulette'|'Raid'|'Deep Dungeon'|'Field Operation'), location (zone/coords), vendor (NPC names), cost (currency text), rate (drop-rate guesstimate, e.g. 'rare', '~10%'). The item modal renders whichever fields are present.",
+  "_mapCal": {
+    "data/artifacts/shadowbringers/maps/gangos.jpg": {
+      "x0": 43.5,
+      "x1": 98.0,
+      "y0": 19,
+      "y1": 80,
+      "_note": "Fitted: Zlatan 6.1,4.9 anchors to forge plaza round structure ~51.4%,26.1% per GamerEscape red-X reference; y-scale from island top/bottom (19/80). x fitted (island west at this latitude is water — game x=0 sits mid-texture)."
+    }
+  },
+  "expansions": [
+    {
+      "key": "arr-zodiac",
+      "name": "Zodiac Weapons",
+      "subtitle": "A Realm Reborn",
+      "questline": "A Relic Reborn",
+      "accent": "#e0655a",
+      "glyph": "🛡️",
+      "status": "coming_soon",
+      "jobs": [],
+      "steps": [],
+      "weapons": []
+    },
+    {
+      "key": "hw-anima",
+      "name": "Anima Weapons",
+      "subtitle": "Heavensward",
+      "questline": "An Anima for the Soul",
+      "accent": "#7cc4f0",
+      "glyph": "❄️",
+      "status": "coming_soon",
+      "jobs": [],
+      "steps": [],
+      "weapons": []
+    },
+    {
+      "key": "sb-eureka",
+      "name": "Eureka Weapons",
+      "subtitle": "Stormblood",
+      "questline": "And We Shall Call It Eureka",
+      "accent": "#4ade80",
+      "glyph": "🌩️",
+      "status": "coming_soon",
+      "jobs": [],
+      "steps": [],
+      "weapons": []
+    },
+    {
+      "key": "shadowbringers-resistance",
+      "name": "Resistance Weapons",
+      "subtitle": "The Saga of Gunnhildr's Blades",
+      "questline": "Resistance is Not Futile",
+      "accent": "#a78bfa",
+      "glyph": "⚔️",
+      "artDir": "shadowbringers",
+      "status": "live",
+      "bannerImg": "data/artifacts/shadowbringers/banner.svg",
+      "npc": "Zlatan in Gangos (6.1, 4.9)",
+      "aftercare": {
+        "title": "Aftercare — replicas, stats and glamour",
+        "points": [
+          "Replicas of any finished stage (including non-glowing Matte versions) come from Regana in Gangos (X:6.0, Y:4.7) for 1,000 gil each — glamour only, zero stats",
+          "Augmented Law's Order and Blade's weapons hold 1,167 stat points you allocate yourself, and cannot take materia",
+          "Reallocate stats anytime at the Allagan Node in Gangos (Forged Anew) for 4 Aetherial Sealant — 100 Poetics each from Auriana or Hismena"
+        ]
+      },
+      "jobs": [
+        "PLD",
+        "WAR",
+        "DRK",
+        "GNB",
+        "WHM",
+        "SCH",
+        "AST",
+        "MNK",
+        "DRG",
+        "NIN",
+        "SAM",
+        "BRD",
+        "MCH",
+        "DNC",
+        "BLM",
+        "SMN",
+        "RDM"
+      ],
+      "steps": [
+        {
+          "n": 1,
+          "quest": "Resistance is Not Futile",
+          "wiki": "https://ffxiv.consolegameswiki.com/wiki/Resistance_Is_(Not)_Futile",
+          "itemKey": "thav_scalepowder",
+          "item": "Thavnairian Scalepowder",
+          "perWeapon": 4,
+          "firstFree": 1,
+          "img": "data/artifacts/shadowbringers/quests/step-1.png",
+          "questGiver": "Zlatan in Gangos (6.1, 4.9)",
+          "reward": "Base Relic Weapon",
+          "vendors": [
+            "Auriana - Mor Dhona (22.7, 6.6)",
+            "Hismena - Idyllshire (5.7, 5.2)",
+            "Rowena's Representative - Foundation / Limsa Lower / Gridania / Ul'dah"
+          ],
+          "sources": [
+            {
+              "label": "Poetics vendor",
+              "yields": 1,
+              "activity": "Vendor",
+              "vendor": "Auriana, Hismena, Rowena's Representatives",
+              "location": "Mor Dhona (22.7, 6.6) · Idyllshire (5.7, 5.2) · Foundation / Limsa Lominsa Lower Decks / New Gridania / Ul'dah",
+              "cost": "250 Poetics each (1,000 total per weapon; first weapon free)"
+            }
+          ],
+          "collectAchievementIds": {
+            "PLD": 2569,
+            "WAR": 2570,
+            "DRK": 2571,
+            "GNB": 2572,
+            "DRG": 2573,
+            "MNK": 2574,
+            "SAM": 2576,
+            "NIN": 2575,
+            "BRD": 2577,
+            "MCH": 2578,
+            "DNC": 2579,
+            "BLM": 2580,
+            "SMN": 2581,
+            "RDM": 2582,
+            "WHM": 2583,
+            "SCH": 2584,
+            "AST": 2585
+          },
+          "requirements": [
+            {
+              "t": "Level 80 combat job (DoW/DoM)",
+              "link": null
+            },
+            {
+              "t": "MSQ Shadowbringers complete",
+              "link": null
+            },
+            {
+              "t": "Side quest: The City of Lost Angels",
+              "link": "https://ffxiv.consolegameswiki.com/wiki/The_City_of_Lost_Angels"
+            },
+            {
+              "t": "Quest chain: Hail to the Queen > Path to the Past > The Bozja Incident > Fire in the Forge",
+              "link": "https://ffxiv.consolegameswiki.com/wiki/Hail_to_the_Queen"
+            }
+          ],
+          "setup": [
+            "First weapon is free — 1,000 Poetics per weapon from the second on",
+            "Sundry Splendors near any major-city aetheryte: Combat Supplies > Special Arms Materials"
+          ],
+          "where": {
+            "npc": "Zlatan",
+            "zone": "Gangos",
+            "x": 6.1,
+            "y": 4.9,
+            "aetheryte": "Gangos Aetheryte",
+            "mapImg": "data/artifacts/shadowbringers/maps/gangos.jpg",
+            "hint": "Accept from Zlatan, then buy Scalepowder with Poetics at Auriana (Mor Dhona) or Hismena (Idyllshire)."
+          },
+          "guide": {
+            "giver": "Zlatan — Gangos (X:6.1, Y:4.9)",
+            "turnIn": "Zlatan in Gangos",
+            "previous": "Fire in the Forge",
+            "next": "For Want of a Memory",
+            "patch": "5.25",
+            "blurb": "Zlatan forges your base Resistance weapon. The first copy is free; further copies cost 4 Thavnairian Scalepowder (1,000 Poetics each)."
+          }
+        },
+        {
+          "n": 2,
+          "quest": "For Want of a Memory",
+          "wiki": "https://ffxiv.consolegameswiki.com/wiki/For_Want_of_a_Memory",
+          "itemKey": "memories_trio",
+          "item": "Memories of the Dying (20 Tortured + 20 Sorrowful + 20 Harrowing)",
+          "perWeapon": 60,
+          "img": "data/artifacts/shadowbringers/quests/step-2.png",
+          "questGiver": "Zlatan in Gangos (6.1, 4.9)",
+          "reward": "Augmented Base Relic Weapon",
+          "vendors": [],
+          "sources": [
+            {
+              "label": "Sea of Clouds / Coerthas Western Highlands FATEs (Tortured)",
+              "yields": 1,
+              "activity": "FATE",
+              "location": "Sea of Clouds · Coerthas Western Highlands",
+              "rate": "Guaranteed with Gold medal"
+            },
+            {
+              "label": "Dravanian Forelands / Churning Mists FATEs (Sorrowful)",
+              "yields": 1,
+              "activity": "FATE",
+              "location": "Dravanian Forelands · Churning Mists",
+              "rate": "Guaranteed with Gold medal"
+            },
+            {
+              "label": "Azys Lla / Dravanian Hinterlands FATEs (Harrowing)",
+              "yields": 1,
+              "activity": "FATE",
+              "location": "Azys Lla · Dravanian Hinterlands",
+              "rate": "Guaranteed with Gold medal"
+            },
+            {
+              "label": "Southern Entrenchment skirmishes / mobs (Tortured)",
+              "yields": 1,
+              "activity": "Field Operation",
+              "location": "Bozjan Southern Front — Zone 1",
+              "rate": "Random drop"
+            },
+            {
+              "label": "Old Bozja skirmishes / mobs (Sorrowful)",
+              "yields": 1,
+              "activity": "Field Operation",
+              "location": "Bozjan Southern Front — Zone 2",
+              "rate": "Random drop"
+            },
+            {
+              "label": "Alermuc Climb skirmishes / mobs (Harrowing)",
+              "yields": 1,
+              "activity": "Field Operation",
+              "location": "Bozjan Southern Front — Zone 3",
+              "rate": "Random drop"
+            }
+          ],
+          "subItems": [
+            {
+              "key": "tortured",
+              "name": "Tortured Memories",
+              "perWeapon": 20
+            },
+            {
+              "key": "sorrowful",
+              "name": "Sorrowful Memories",
+              "perWeapon": 20
+            },
+            {
+              "key": "harrowing",
+              "name": "Harrowing Memories",
+              "perWeapon": 20
+            }
+          ],
+          "collectAchievementIds": null,
+          "requirements": [
+            {
+              "t": "A Resistance weapon from Fire in the Forge",
+              "link": "https://ffxiv.consolegameswiki.com/wiki/Fire_in_the_Forge"
+            },
+            {
+              "t": "MSQ Vows of Virtue, Deeds of Cruelty",
+              "link": "https://ffxiv.consolegameswiki.com/wiki/Vows_of_Virtue%2C_Deeds_of_Cruelty"
+            },
+            {
+              "t": "Side quests: Where Eagles Nest + A Sober Proposal",
+              "link": "https://ffxiv.consolegameswiki.com/wiki/Where_Eagles_Nest"
+            }
+          ],
+          "setup": [
+            "Keep For Want of a Memory active to farm memories passively while doing anything",
+            "HW FATEs are guaranteed with Gold; Bozja skirmishes add mettle, XP and fragments",
+            "Cluster-farm parties in Bozja are the fastest for all four early memories"
+          ],
+          "where": {
+            "npc": "Zlatan",
+            "zone": "Gangos",
+            "x": 6.1,
+            "y": 4.9,
+            "aetheryte": "Gangos Aetheryte",
+            "mapImg": "data/artifacts/shadowbringers/maps/gangos.jpg",
+            "hideCopy": true,
+            "hint": "Keep the quest active — memories drop passively from Heavensward FATEs and Bozja skirmishes."
+          },
+          "guide": {
+            "giver": "Zlatan — Gangos (X:6.1, Y:4.9)",
+            "turnIn": "Zlatan in Gangos",
+            "previous": "Resistance is Not Futile",
+            "next": "The Will to Resist",
+            "patch": "5.35",
+            "blurb": "Augment the base weapon with 60 memories of the dying — 20 Tortured, 20 Sorrowful and 20 Harrowing."
+          }
+        },
+        {
+          "n": 3,
+          "quest": "The Will to Resist",
+          "wiki": "https://ffxiv.consolegameswiki.com/wiki/The_Will_to_Resist",
+          "itemKey": "bitter_memories",
+          "item": "Bitter Memories of the Dying",
+          "perWeapon": 6,
+          "img": "data/artifacts/shadowbringers/quests/step-3.png",
+          "questGiver": "Zlatan in Gangos (6.1, 4.9)",
+          "reward": "Recollection Relic Weapon",
+          "vendors": [],
+          "sources": [
+            {
+              "label": "Level 60 dungeons (synced, no Unrestricted Party)",
+              "yields": 1,
+              "activity": "Dungeon",
+              "location": "Any level 60 dungeon, synced",
+              "note": "The Antitower is popular (no ilvl sync); BLU premades and squadrons work"
+            },
+            {
+              "label": "Duty Roulette: Levelling",
+              "yields": 1,
+              "activity": "Roulette",
+              "location": "Duty Finder",
+              "rate": "1 per day"
+            },
+            {
+              "label": "Bozjan Southern Front enemy drops",
+              "yields": 1,
+              "activity": "Field Operation",
+              "location": "Bozjan Southern Front",
+              "rate": "Rare drop (low %)"
+            }
+          ],
+          "collectAchievementIds": {
+            "PLD": 2694,
+            "WAR": 2695,
+            "DRK": 2696,
+            "GNB": 2697,
+            "DRG": 2698,
+            "MNK": 2699,
+            "SAM": 2701,
+            "NIN": 2700,
+            "BRD": 2702,
+            "MCH": 2703,
+            "DNC": 2704,
+            "BLM": 2705,
+            "SMN": 2706,
+            "RDM": 2707,
+            "WHM": 2708,
+            "SCH": 2709,
+            "AST": 2710
+          },
+          "requirements": [
+            {
+              "t": "An Augmented Base weapon from step 2",
+              "link": null
+            }
+          ],
+          "setup": [
+            "Queue synced Great Gubal Library (Hard) or The Antitower; daily levelling roulette",
+            "BLU premades and squadrons work; cluster farms also drop these"
+          ],
+          "where": {
+            "npc": "Zlatan",
+            "zone": "Gangos",
+            "x": 6.1,
+            "y": 4.9,
+            "aetheryte": "Gangos Aetheryte",
+            "mapImg": "data/artifacts/shadowbringers/maps/gangos.jpg",
+            "hint": "Turn in at Zlatan; farm synced level 60 dungeons, levelling roulette or Bozja drops."
+          },
+          "guide": {
+            "giver": "Zlatan — Gangos (X:6.1, Y:4.9)",
+            "turnIn": "Zlatan in Gangos",
+            "previous": "For Want of a Memory",
+            "next": "Change of Arms",
+            "patch": "5.45",
+            "blurb": "Recollection upgrade: 6 Bitter Memories from synced level 60 dungeons, levelling roulette or Bozja drops."
+          }
+        },
+        {
+          "n": 4,
+          "quest": "Change of Arms",
+          "wiki": "https://ffxiv.consolegameswiki.com/wiki/Change_of_Arms",
+          "itemKey": "loathsome_memories",
+          "item": "Loathsome Memories of the Dying",
+          "perWeapon": 15,
+          "img": "data/artifacts/shadowbringers/quests/step-4.png",
+          "questGiver": "Zlatan in Gangos (6.1, 4.9)",
+          "reward": "Law's Order Relic Weapon",
+          "vendors": [],
+          "sources": [
+            {
+              "label": "Bozja Critical Engagements",
+              "yields": 1,
+              "activity": "Field Operation",
+              "location": "Bozjan Southern Front"
+            },
+            {
+              "label": "Castrum Lacus Litore clear",
+              "yields": 5,
+              "activity": "Field Operation",
+              "location": "Bozjan Southern Front"
+            },
+            {
+              "label": "Crystal Tower alliance raids",
+              "yields": 1,
+              "activity": "Raid",
+              "location": "Labyrinth / Syrcus / World of Darkness"
+            }
+          ],
+          "collectAchievementIds": null,
+          "requirements": [
+            {
+              "t": "A Recollection weapon from step 3",
+              "link": null
+            },
+            {
+              "t": "Resistance Rank 10 + Castrum Lacus Litore cleared",
+              "link": "https://ffxiv.consolegameswiki.com/wiki/Castrum_Lacus_Litore"
+            },
+            {
+              "t": "Gangos side quests: A Sign of What's to Come, Fit for a Queen, In the Queen’s Image",
+              "link": "https://ffxiv.consolegameswiki.com/wiki/A_Sign_of_What's_to_Come"
+            },
+            {
+              "t": "Delubrum Reginae cleared",
+              "link": "https://ffxiv.consolegameswiki.com/wiki/Delubrum_Reginae"
+            }
+          ],
+          "setup": [
+            "Syrcus Tower is the fastest Loathsome farm; Castrum gives 5 per clear when it spawns",
+            "Castrum spawns from skirmish/CE clears — Echo scales it down to ~8 players"
+          ],
+          "where": {
+            "npc": "Zlatan",
+            "zone": "Gangos",
+            "x": 6.1,
+            "y": 4.9,
+            "aetheryte": "Gangos Aetheryte",
+            "mapImg": "data/artifacts/shadowbringers/maps/gangos.jpg",
+            "hint": "Turn in at Zlatan; Syrcus Tower is the fastest farm, Castrum Lacus Litore gives 5 per clear."
+          },
+          "guide": {
+            "giver": "Zlatan — Gangos (X:6.1, Y:4.9)",
+            "turnIn": "Zlatan in Gangos",
+            "previous": "The Will to Resist",
+            "next": "The Resistance Remembers",
+            "patch": "5.45",
+            "blurb": "Law's Order upgrade: 15 Loathsome Memories from critical engagements, Castrum Lacus Litore or Crystal Tower raids."
+          }
+        },
+        {
+          "n": "ot1",
+          "kind": "onetime",
+          "quest": "The Resistance Remembers",
+          "wiki": "https://ffxiv.consolegameswiki.com/wiki/The_Resistance_Remembers",
+          "item": "Haunting + Vexatious Memories (18 each, once ever)",
+          "perWeapon": 1,
+          "img": "data/artifacts/shadowbringers/quests/ot1.png",
+          "questGiver": "Gerolt in Gangos (X:6.2, Y:5.0) — turn in to the Allagan Node",
+          "reward": "Unlocks Augmented Law's Order upgrades",
+          "guide": {
+            "giver": "Gerolt — Gangos (X:6.2, Y:5.0)",
+            "turnIn": "Allagan Node in Gangos",
+            "previous": "Change of Arms",
+            "next": "A New Path of Resistance",
+            "patch": "5.45",
+            "blurb": "Gerolt wants to tune your weapon with a registry of analyzed memories. Supply 18 Haunting and 18 Vexatious memories to the Allagan Node — then the hunt for aetherial sealant begins.",
+            "notes": [
+              "Memories for this step cannot be earned inside Bozja or Zadnor — FATEs and alliance raids only."
+            ]
+          },
+          "vendors": [],
+          "items": [
+            {
+              "key": "haunting",
+              "name": "Haunting Memories of the Dying",
+              "perWeapon": 18,
+              "sources": [
+                {
+                  "label": "Shadow of Mhach raids (Void Ark / Weeping City / Dun Scaith)",
+                  "yields": 3,
+                  "activity": "Raid",
+                  "location": "Heavensward alliance raids"
+                },
+                {
+                  "label": "Gyr Abania FATEs (Fringes / Peaks / Lochs)",
+                  "yields": 1,
+                  "activity": "FATE",
+                  "location": "The Fringes · The Peaks · The Lochs",
+                  "rate": "Random drop (~61%, buffed in 5.58)"
+                }
+              ]
+            },
+            {
+              "key": "vexatious",
+              "name": "Vexatious Memories of the Dying",
+              "perWeapon": 18,
+              "sources": [
+                {
+                  "label": "Return to Ivalice raids (Rabanastre / Ridorana / Orbonne)",
+                  "yields": 3,
+                  "activity": "Raid",
+                  "location": "Stormblood alliance raids"
+                },
+                {
+                  "label": "Othard FATEs (Ruby Sea / Yanxia / Azim Steppe)",
+                  "yields": 1,
+                  "activity": "FATE",
+                  "location": "Ruby Sea · Yanxia · Azim Steppe",
+                  "rate": "Random drop (~61%, buffed in 5.58)"
+                }
+              ]
+            }
+          ],
+          "collectAchievementIds": null,
+          "requirements": [
+            {
+              "t": "Step 4 (Change of Arms) done",
+              "link": "https://ffxiv.consolegameswiki.com/wiki/Change_of_Arms"
+            },
+            {
+              "t": "Patch 5.45+",
+              "link": null
+            }
+          ],
+          "setup": [
+            "Void Ark + Rabanastre are the fastest raids; FATE drop rates were buffed in 5.58",
+            "Cannot be earned inside Bozja or Zadnor"
+          ],
+          "where": {
+            "npc": "Gerolt",
+            "zone": "Gangos",
+            "x": 6.2,
+            "y": 5.0,
+            "aetheryte": "Gangos Aetheryte",
+            "mapImg": "data/artifacts/shadowbringers/maps/gangos.jpg",
+            "hint": "Talk to Gerolt, then feed 18 Haunting + 18 Vexatious memories to the Allagan Node."
+          }
+        },
+        {
+          "n": 5,
+          "quest": "A New Path of Resistance",
+          "wiki": "https://ffxiv.consolegameswiki.com/wiki/A_New_Path_of_Resistance",
+          "itemKey": "timeworn_artifact",
+          "item": "Timeworn Artifact",
+          "perWeapon": 15,
+          "img": "data/artifacts/shadowbringers/quests/step-5.png",
+          "questGiver": "Zlatan in Gangos (6.1, 4.9)",
+          "reward": "Augmented Law's Order Relic Weapon",
+          "vendors": [],
+          "sources": [
+            {
+              "label": "Delubrum Reginae",
+              "yields": 3,
+              "activity": "Field Operation",
+              "location": "Bozjan Southern Front (Gangos unlock)",
+              "note": "Also drops Raw Emotions — farm steps 5 and 6 together. Use essences; good runs under 15 min"
+            },
+            {
+              "label": "Palace of the Dead (per 10 floors)",
+              "yields": 1,
+              "activity": "Deep Dungeon",
+              "location": "Quarrymill",
+              "rate": "Per 10 floors: 1–60 ~10–20%, 61–100 ~30%, 101–150 ~80%, 151+ 100%"
+            }
+          ],
+          "collectAchievementIds": {
+            "PLD": 2768,
+            "WAR": 2769,
+            "DRK": 2770,
+            "GNB": 2771,
+            "DRG": 2772,
+            "MNK": 2773,
+            "SAM": 2775,
+            "NIN": 2774,
+            "BRD": 2776,
+            "MCH": 2777,
+            "DNC": 2778,
+            "BLM": 2779,
+            "SMN": 2780,
+            "RDM": 2781,
+            "WHM": 2782,
+            "SCH": 2783,
+            "AST": 2784
+          },
+          "requirements": [
+            {
+              "t": "One-time quest The Resistance Remembers done",
+              "link": "https://ffxiv.consolegameswiki.com/wiki/The_Resistance_Remembers"
+            }
+          ],
+          "setup": [
+            "Delubrum Reginae is fastest (<15 min with essences and Lost Actions)",
+            "Delubrum also drops Raw Emotions — farm steps 5 and 6 together",
+            "Palace of the Dead odds per 10 floors: 1–60 ~10–20%, 61–100 ~30%, 101–150 ~80%, 151+ 100%"
+          ],
+          "where": {
+            "npc": "Zlatan",
+            "zone": "Gangos",
+            "x": 6.1,
+            "y": 4.9,
+            "aetheryte": "Gangos Aetheryte",
+            "mapImg": "data/artifacts/shadowbringers/maps/gangos.jpg",
+            "hint": "Turn in at Zlatan; Delubrum Reginae is fastest and also drops Raw Emotions for step 6."
+          },
+          "guide": {
+            "giver": "Zlatan — Gangos (X:6.1, Y:4.9)",
+            "turnIn": "Zlatan in Gangos",
+            "previous": "The Resistance Remembers",
+            "next": "Spare Parts / Tell Me a Story / A Fond Memory",
+            "patch": "5.55",
+            "blurb": "Augmented Law's Order: 15 Timeworn Artifacts from Delubrum Reginae or Palace of the Dead."
+          }
+        },
+        {
+          "n": "ot2a",
+          "kind": "onetime",
+          "quest": "Spare Parts",
+          "wiki": "https://ffxiv.consolegameswiki.com/wiki/Spare_Parts",
+          "item": "Compact Axles + Springs (30 each, once ever)",
+          "perWeapon": 1,
+          "img": "data/artifacts/shadowbringers/quests/ot2a.png",
+          "questGiver": "Zlatan in Gangos (X:6.1, Y:4.9)",
+          "reward": "Progress toward Blade's (via A Done Deal)",
+          "guide": {
+            "giver": "Zlatan — Gangos (X:6.1, Y:4.9)",
+            "turnIn": "Zlatan in Gangos",
+            "previous": "What Dreams Are Made Of",
+            "next": "A Done Deal",
+            "patch": "5.55",
+            "blurb": "The House of Splendors will trade a binding reagent for 30 compact axles and 30 compact springs for Idyllshire goblin metalworkers. Farm Zadnor Zone 1 or Alexander raids.",
+            "notes": [
+              "Raids must be run synced with a full party (8). A1/A4 style speed-clears are fastest."
+            ]
+          },
+          "vendors": [],
+          "items": [
+            {
+              "key": "compact_axle",
+              "name": "Compact Axle",
+              "perWeapon": 30,
+              "sources": [
+                {
+                  "label": "Skirmishes in the Southern Plateau (Zone 1)",
+                  "yields": 1,
+                  "activity": "Field Operation",
+                  "location": "Zadnor — Southern Plateau"
+                },
+                {
+                  "label": "Alexander raids (A1, A2, A5, A6, A9, A10)",
+                  "yields": 1,
+                  "activity": "Raid",
+                  "location": "Heavensward raids, synced full party (8)"
+                }
+              ]
+            },
+            {
+              "key": "compact_spring",
+              "name": "Compact Spring",
+              "perWeapon": 30,
+              "sources": [
+                {
+                  "label": "Critical Engagements in the Southern Plateau (Zone 1)",
+                  "yields": 2,
+                  "activity": "Field Operation",
+                  "location": "Zadnor — Southern Plateau"
+                },
+                {
+                  "label": "Alexander raids (A3, A4, A7, A8, A11, A12)",
+                  "yields": 1,
+                  "activity": "Raid",
+                  "location": "Heavensward raids, synced full party (8)"
+                }
+              ]
+            }
+          ],
+          "collectAchievementIds": null,
+          "requirements": [
+            {
+              "t": "Step 5 done for a weapon",
+              "link": null
+            },
+            {
+              "t": "Zadnor unlocked (A New Playing Field)",
+              "link": "https://ffxiv.consolegameswiki.com/wiki/A_New_Playing_Field"
+            },
+            {
+              "t": "What Dreams Are Made Of accepted",
+              "link": "https://ffxiv.consolegameswiki.com/wiki/What_Dreams_Are_Made_Of"
+            }
+          ],
+          "setup": [
+            "Pick up Spare Parts, Tell Me a Story and A Fond Memory all at once",
+            "Gold rank in Zadnor = 100% drops; Alexander raids synced, full party (8)"
+          ],
+          "parallel": "ot2",
+          "where": {
+            "npc": "Zlatan",
+            "zone": "Gangos",
+            "x": 6.1,
+            "y": 4.9,
+            "aetheryte": "Gangos Aetheryte",
+            "mapImg": "data/artifacts/shadowbringers/maps/gangos.jpg",
+            "hint": "Pick up all three Zadnor quests at once; farm Zone 1 skirmishes/CEs or Alexander raids."
+          }
+        },
+        {
+          "n": "ot2b",
+          "kind": "onetime",
+          "quest": "Tell Me a Story",
+          "wiki": "https://ffxiv.consolegameswiki.com/wiki/Tell_Me_a_Story",
+          "item": "A Day in the Life tomes (30 each, once ever)",
+          "perWeapon": 1,
+          "img": "data/artifacts/shadowbringers/quests/ot2b.png",
+          "questGiver": "Zlatan in Gangos (X:6.1, Y:4.9)",
+          "reward": "Progress toward Blade's (via A Done Deal)",
+          "guide": {
+            "giver": "Zlatan — Gangos (X:6.1, Y:4.9)",
+            "turnIn": "Zlatan in Gangos",
+            "previous": "What Dreams Are Made Of",
+            "next": "A Done Deal",
+            "patch": "5.55",
+            "blurb": "Pen 30 volumes each of battle memoirs for a shipment of metal alloy. Farm Zadnor Zone 2 or Omega raids — then decline the wholesale contract.",
+            "notes": [
+              "Raids must be run synced with a full party (8). O1/O3 style speed-clears are fastest."
+            ]
+          },
+          "vendors": [],
+          "items": [
+            {
+              "key": "day_realm",
+              "name": "A Day in the Life: Battles for the Realm",
+              "perWeapon": 30,
+              "sources": [
+                {
+                  "label": "Skirmishes in the Western Plateau (Zone 2)",
+                  "yields": 1,
+                  "activity": "Field Operation",
+                  "location": "Zadnor — Western Plateau"
+                },
+                {
+                  "label": "Omega raids (O1, O2, O5, O6, O9, O10)",
+                  "yields": 1,
+                  "activity": "Raid",
+                  "location": "Stormblood raids, synced full party (8)"
+                }
+              ]
+            },
+            {
+              "key": "day_rift",
+              "name": "A Day in the Life: Beyond the Rift",
+              "perWeapon": 30,
+              "sources": [
+                {
+                  "label": "Critical Engagements in the Western Plateau (Zone 2)",
+                  "yields": 2,
+                  "activity": "Field Operation",
+                  "location": "Zadnor — Western Plateau"
+                },
+                {
+                  "label": "Omega raids (O3, O4, O7, O8, O11, O12)",
+                  "yields": 1,
+                  "activity": "Raid",
+                  "location": "Stormblood raids, synced full party (8)"
+                }
+              ]
+            }
+          ],
+          "collectAchievementIds": null,
+          "requirements": [
+            {
+              "t": "Step 5 done for a weapon",
+              "link": null
+            },
+            {
+              "t": "Zadnor unlocked (A New Playing Field)",
+              "link": "https://ffxiv.consolegameswiki.com/wiki/A_New_Playing_Field"
+            },
+            {
+              "t": "What Dreams Are Made Of accepted",
+              "link": "https://ffxiv.consolegameswiki.com/wiki/What_Dreams_Are_Made_Of"
+            }
+          ],
+          "setup": [
+            "Pick up all three quests at once; farm them together in Zadnor",
+            "Gold rank = 100%; Omega raids synced, full party (8)"
+          ],
+          "parallel": "ot2",
+          "where": {
+            "npc": "Zlatan",
+            "zone": "Gangos",
+            "x": 6.1,
+            "y": 4.9,
+            "aetheryte": "Gangos Aetheryte",
+            "mapImg": "data/artifacts/shadowbringers/maps/gangos.jpg",
+            "hint": "Pick up all three Zadnor quests at once; farm Zone 2 skirmishes/CEs or Omega raids."
+          }
+        },
+        {
+          "n": "ot2c",
+          "kind": "onetime",
+          "quest": "A Fond Memory",
+          "wiki": "https://ffxiv.consolegameswiki.com/wiki/A_Fond_Memory",
+          "item": "Bleak + Lurid Memories (30 each, once ever)",
+          "perWeapon": 1,
+          "img": "data/artifacts/shadowbringers/quests/ot2c.png",
+          "questGiver": "Zlatan in Gangos (X:6.1, Y:4.9)",
+          "reward": "Progress toward Blade's (via A Done Deal)",
+          "guide": {
+            "giver": "Zlatan — Gangos (X:6.1, Y:4.9)",
+            "turnIn": "Zlatan in Gangos",
+            "previous": "What Dreams Are Made Of",
+            "next": "A Done Deal",
+            "patch": "5.55",
+            "blurb": "Supply 30 Bleak and 30 Lurid memories so the House of Splendors will share its emotion-binding scrolls. Farm Zadnor Zone 3 or Eden raids.",
+            "notes": [
+              "Raids must be run synced with a full party (8). E1/E3 style speed-clears are fastest."
+            ]
+          },
+          "vendors": [],
+          "items": [
+            {
+              "key": "bleak",
+              "name": "Bleak Memories of the Dying",
+              "perWeapon": 30,
+              "sources": [
+                {
+                  "label": "Skirmishes in the Northern Plateau (Zone 3)",
+                  "yields": 1,
+                  "activity": "Field Operation",
+                  "location": "Zadnor — Northern Plateau"
+                },
+                {
+                  "label": "Eden raids (E1, E2, E5, E6, E9, E10)",
+                  "yields": 1,
+                  "activity": "Raid",
+                  "location": "Shadowbringers raids, synced full party (8)"
+                }
+              ]
+            },
+            {
+              "key": "lurid",
+              "name": "Lurid Memories of the Dying",
+              "perWeapon": 30,
+              "sources": [
+                {
+                  "label": "Critical Engagements in the Northern Plateau (Zone 3)",
+                  "yields": 2,
+                  "activity": "Field Operation",
+                  "location": "Zadnor — Northern Plateau"
+                },
+                {
+                  "label": "Eden raids (E3, E4, E7, E8, E11, E12)",
+                  "yields": 1,
+                  "activity": "Raid",
+                  "location": "Shadowbringers raids, synced full party (8)"
+                }
+              ]
+            }
+          ],
+          "collectAchievementIds": null,
+          "requirements": [
+            {
+              "t": "Step 5 done for a weapon",
+              "link": null
+            },
+            {
+              "t": "Zadnor unlocked (A New Playing Field)",
+              "link": "https://ffxiv.consolegameswiki.com/wiki/A_New_Playing_Field"
+            },
+            {
+              "t": "What Dreams Are Made Of accepted",
+              "link": "https://ffxiv.consolegameswiki.com/wiki/What_Dreams_Are_Made_Of"
+            }
+          ],
+          "setup": [
+            "Finish with the one-time quest A Done Deal afterwards",
+            "Gold rank = 100%; Eden raids synced, full party (8)"
+          ],
+          "parallel": "ot2",
+          "where": {
+            "npc": "Zlatan",
+            "zone": "Gangos",
+            "x": 6.1,
+            "y": 4.9,
+            "aetheryte": "Gangos Aetheryte",
+            "mapImg": "data/artifacts/shadowbringers/maps/gangos.jpg",
+            "hint": "Pick up all three Zadnor quests at once; farm Zone 3 skirmishes/CEs or Eden raids."
+          }
+        },
+        {
+          "n": 6,
+          "quest": "Irresistible",
+          "wiki": "https://ffxiv.consolegameswiki.com/wiki/Irresistible",
+          "itemKey": "raw_emotions",
+          "item": "Raw Emotions",
+          "perWeapon": 15,
+          "img": "data/artifacts/shadowbringers/quests/step-6.png",
+          "questGiver": "Zlatan in Gangos (6.1, 4.9)",
+          "reward": "Blade's Relic Weapon",
+          "vendors": [],
+          "sources": [
+            {
+              "label": "The Dalriada",
+              "yields": 3,
+              "activity": "Field Operation",
+              "location": "Zadnor"
+            },
+            {
+              "label": "Delubrum Reginae",
+              "yields": 2,
+              "activity": "Field Operation",
+              "location": "Bozjan Southern Front"
+            },
+            {
+              "label": "Level 70 dungeons (synced, no Unrestricted Party)",
+              "yields": 1,
+              "activity": "Dungeon",
+              "location": "Any level 70 dungeon, synced",
+              "note": "Fastest with BLU parties: Hells’ Lid, The Burn, Fractal (Hard)"
+            },
+            {
+              "label": "Heaven-on-High (per set of floors)",
+              "yields": 1,
+              "activity": "Deep Dungeon",
+              "location": "Ruby Sea",
+              "rate": "Rare — higher floors = better odds"
+            }
+          ],
+          "collectAchievementIds": {
+            "PLD": 2857,
+            "WAR": 2858,
+            "DRK": 2859,
+            "GNB": 2860,
+            "DRG": 2861,
+            "MNK": 2862,
+            "SAM": 2864,
+            "NIN": 2863,
+            "BRD": 2865,
+            "MCH": 2866,
+            "DNC": 2867,
+            "BLM": 2868,
+            "SMN": 2869,
+            "RDM": 2870,
+            "WHM": 2871,
+            "SCH": 2872,
+            "AST": 2873
+          },
+          "requirements": [
+            {
+              "t": "One-time quests Spare Parts + Tell Me a Story + A Fond Memory done",
+              "link": "https://ffxiv.consolegameswiki.com/wiki/Spare_Parts"
+            },
+            {
+              "t": "A Done Deal complete",
+              "link": "https://ffxiv.consolegameswiki.com/wiki/A_Done_Deal"
+            }
+          ],
+          "setup": [
+            "Fastest: BLU parties in Hells’ Lid, The Burn or Fractal (Hard)",
+            "Dalriada is quick when it pops; Delubrum double-dips Timeworn Artifacts",
+            "Heaven-on-High is the worst option"
+          ],
+          "where": {
+            "npc": "Zlatan",
+            "zone": "Gangos",
+            "x": 6.1,
+            "y": 4.9,
+            "aetheryte": "Gangos Aetheryte",
+            "mapImg": "data/artifacts/shadowbringers/maps/gangos.jpg",
+            "hint": "Final turn-in at Zlatan; BLU parties in level 70 dungeons are the fastest farm."
+          },
+          "guide": {
+            "giver": "Zlatan — Gangos (X:6.1, Y:4.9)",
+            "turnIn": "Zlatan in Gangos",
+            "previous": "A Done Deal",
+            "next": null,
+            "patch": "5.55",
+            "blurb": "The finished Blade's weapon: 15 Raw Emotions from the Dalriada, Delubrum Reginae or synced level 70 dungeons."
+          }
+        }
+      ],
+      "weapons": [
+        {
+          "job": "PLD",
+          "name": "Sword & Shield",
+          "stages": [
+            "Honorbound & Tenacity",
+            "Augmented Honorbound & Tenacity",
+            "Honorbound Recollection & Tenacity Recollection",
+            "Law's Order Bastard Sword & Kite Shield",
+            "Augmented Law's Order Bastard Sword & Kite Shield",
+            "Blade's Honor & Blade's Fortitude"
+          ]
+        },
+        {
+          "job": "WAR",
+          "name": "Axe",
+          "stages": [
+            "Skullrender",
+            "Augmented Skullrender",
+            "Skullrender Recollection",
+            "Law's Order Labrys",
+            "Augmented Law's Order Labrys",
+            "Blade's Valor"
+          ]
+        },
+        {
+          "job": "DRK",
+          "name": "Greatsword",
+          "stages": [
+            "Woeborn",
+            "Augmented Woeborn",
+            "Woeborn Recollection",
+            "Law's Order Zweihander",
+            "Augmented Law's Order Zweihander",
+            "Blade's Justice"
+          ]
+        },
+        {
+          "job": "GNB",
+          "name": "Gunblade",
+          "stages": [
+            "Crownsblade",
+            "Augmented Crownsblade",
+            "Crownsblade Recollection",
+            "Law's Order Manatrigger",
+            "Augmented Law's Order Manatrigger",
+            "Blade's Resolve"
+          ]
+        },
+        {
+          "job": "WHM",
+          "name": "Cane",
+          "stages": [
+            "Ingrimm",
+            "Augmented Ingrimm",
+            "Ingrimm Recollection",
+            "Law's Order Cane",
+            "Augmented Law's Order Cane",
+            "Blade's Mercy"
+          ]
+        },
+        {
+          "job": "SCH",
+          "name": "Codex",
+          "stages": [
+            "Akademos",
+            "Augmented Akademos",
+            "Akademos Recollection",
+            "Law's Order Codex",
+            "Augmented Law's Order Codex",
+            "Blade's Wisdom"
+          ]
+        },
+        {
+          "job": "AST",
+          "name": "Globe",
+          "stages": [
+            "Solstice",
+            "Augmented Solstice",
+            "Solstice Recollection",
+            "Law's Order Astrometer",
+            "Augmented Law's Order Astrometer",
+            "Blade's Providence"
+          ]
+        },
+        {
+          "job": "MNK",
+          "name": "Fists",
+          "stages": [
+            "Samsara",
+            "Augmented Samsara",
+            "Samsara Recollection",
+            "Law's Order Knuckles",
+            "Augmented Law's Order Knuckles",
+            "Blade's Serenity"
+          ]
+        },
+        {
+          "job": "DRG",
+          "name": "Lance",
+          "stages": [
+            "Dreizack",
+            "Augmented Dreizack",
+            "Dreizack Recollection",
+            "Law's Order Spear",
+            "Augmented Law's Order Spear",
+            "Blade's Glory"
+          ]
+        },
+        {
+          "job": "NIN",
+          "name": "Knives",
+          "stages": [
+            "Honeshirazu",
+            "Augmented Honeshirazu",
+            "Honeshirazu Recollection",
+            "Law's Order Knives",
+            "Augmented Law's Order Knives",
+            "Blade's Subtlety"
+          ]
+        },
+        {
+          "job": "SAM",
+          "name": "Katana",
+          "stages": [
+            "Hoshikiri",
+            "Augmented Hoshikiri",
+            "Hoshikiri Recollection",
+            "Law's Order Samurai Blade",
+            "Augmented Law's Order Samurai Blade",
+            "Blade's Fealty"
+          ]
+        },
+        {
+          "job": "BRD",
+          "name": "Bow",
+          "stages": [
+            "Brilliance",
+            "Augmented Brilliance",
+            "Brilliance Recollection",
+            "Law's Order Composite Bow",
+            "Augmented Law's Order Composite Bow",
+            "Blade's Muse"
+          ]
+        },
+        {
+          "job": "MCH",
+          "name": "Firearm",
+          "stages": [
+            "Lawman",
+            "Augmented Lawman",
+            "Lawman Recollection",
+            "Law's Order Revolver",
+            "Augmented Law's Order Revolver",
+            "Blade's Ingenuity"
+          ]
+        },
+        {
+          "job": "DNC",
+          "name": "Chakrams",
+          "stages": [
+            "Enchufla",
+            "Augmented Enchufla",
+            "Enchufla Recollection",
+            "Law's Order Chakrams",
+            "Augmented Law's Order Chakrams",
+            "Blade's Euphoria"
+          ]
+        },
+        {
+          "job": "BLM",
+          "name": "Staff",
+          "stages": [
+            "Soulscourge",
+            "Augmented Soulscourge",
+            "Soulscourge Recollection",
+            "Law's Order Rod",
+            "Augmented Law's Order Rod",
+            "Blade's Fury"
+          ]
+        },
+        {
+          "job": "SMN",
+          "name": "Grimoire",
+          "stages": [
+            "Espiritus",
+            "Augmented Espiritus",
+            "Espiritus Recollection",
+            "Law's Order Index",
+            "Augmented Law's Order Index",
+            "Blade's Acumen"
+          ]
+        },
+        {
+          "job": "RDM",
+          "name": "Rapier",
+          "stages": [
+            "Talekeeper",
+            "Augmented Talekeeper",
+            "Talekeeper Recollection",
+            "Law's Order Rapier",
+            "Augmented Law's Order Rapier",
+            "Blade's Temperance"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "ew-manderville",
+      "name": "Manderville Weapons",
+      "subtitle": "Endwalker",
+      "questline": "Make It Manderville",
+      "accent": "#f0c040",
+      "glyph": "🕵️",
+      "status": "coming_soon",
+      "jobs": [],
+      "steps": [],
+      "weapons": []
+    },
+    {
+      "key": "dt-phantom",
+      "name": "Phantom Weapons",
+      "subtitle": "Dawntrail",
+      "questline": "Occult Crescent",
+      "accent": "#38cce0",
+      "glyph": "🌊",
+      "status": "coming_soon",
+      "jobs": [],
+      "steps": [],
+      "weapons": []
+    }
+  ],
+  "_mapsContract": "Hand-holding maps: steps[].where = {npc, zone, x, y (in-game map coords), aetheryte, mapImg (vendored zone screenshot, full-zone framing), hint}. Pins plot through _mapCal[mapImg]={x0,x1,y0,y1} (image-% for game 0->42) to exclude parchment margins; where.pin=[pxPct,pyPct] is a rare manual override only. Missing mapImg renders a styled coords card instead — never break layout. Zone screenshots: capture the full zone map in-game, save as docs/data/artifacts/<exp>/maps/<zone>.jpg, then add one _mapCal entry. Game assets (c) SQUARE ENIX, used under the FFXIV Material Usage License for this free non-commercial fan project."
+}

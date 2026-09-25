@@ -441,7 +441,8 @@
           "unique": true,
           "img": "/data/moogle/202609/minion_conditional.png",
           "collectId": 318,
-          "collectImg": "/data/collect-preview/minions/318.png"
+          "collectImg": "/data/collect-preview/minions/318.png",
+          "media": "https://www.youtube.com/shorts/7tcnyU_qkIE"
         },
         {
           "id": "barding_ishgardian",
@@ -603,7 +604,8 @@
           "unique": true,
           "img": "/data/moogle/202609/mount_dhalmel.png",
           "collectId": 208,
-          "collectImg": "/data/collect-preview/mounts/208.png"
+          "collectImg": "/data/collect-preview/mounts/208.png",
+          "media": "https://www.youtube.com/watch?v=luWBwpCd6G4"
         },
         {
           "id": "barding_emerald",
@@ -667,6 +669,18 @@
           "title": "Weekly objective",
           "body": "One random standard duty is assigned weekly for +20 tomes (claim in Mogpendium). Hidden Gorge matches are frequent during this event.",
           "type": "tip"
+        },
+        {
+          "id": "ann-deadlines",
+          "title": "Claim and exchange deadlines",
+          "body": "Tomes can only be earned during the event (ends Oct 19). Mogpendium reward claims stay open until Patch 8.05; the Itinerant Moogle item exchange stays open until Patch 8.1.",
+          "type": "tip"
+        },
+        {
+          "id": "ann-concurrent",
+          "title": "Also live right now",
+          "body": "Overlapping this event: FFXV collab 'A Nocturne for Heroes' (Sept 24–Oct 13, Regalia mount), Crucible of the Unbroken Rankings Season One (from Sept 24 until Patch 7.58), Ranked CC Season 21 (until Patch 7.58), and Yo-kai Watch (until Oct 5).",
+          "type": "tip"
         }
       ],
       "challenges": {
@@ -721,7 +735,7 @@
             "name": "5x Bozja skirmishes OR catch Caterwauler",
             "bonus": 10,
             "tokens": 1,
-            "requirement": null
+            "requirement": "Caterwauler must be caught yourself (Market Board purchase doesn't count)"
           },
           {
             "id": "m2",
@@ -729,7 +743,7 @@
             "name": "Bozja Critical Engagement OR decipher treasure map",
             "bonus": 10,
             "tokens": 1,
-            "requirement": null
+            "requirement": "Mysterious Map (75 Poetics) also counts for the treasure map option"
           },
           {
             "id": "m3",
@@ -737,7 +751,7 @@
             "name": "5x Bozja skirmishes OR 1x Doman Mahjong vs players",
             "bonus": 10,
             "tokens": 1,
-            "requirement": null
+            "requirement": "Mahjong must be played against other players (NPC matches don't count)"
           },
           {
             "id": "m4",
@@ -745,7 +759,7 @@
             "name": "Bozja Critical Engagement OR beat Idle Imperial (Triple Triad, Azys Lla)",
             "bonus": 10,
             "tokens": 1,
-            "requirement": null
+            "requirement": "Idle Imperial is in Azys Lla Gamma Quadrant (X:28, Y:31); needs MSQ 'The First Flight of the Excelsior'"
           },
           {
             "id": "m5",
@@ -753,7 +767,7 @@
             "name": "Castrum Lacus Litore OR clear Palace of the Dead area (10 floors)",
             "bonus": 10,
             "tokens": 1,
-            "requirement": null
+            "requirement": "Palace of the Dead: any single 10-floor set counts"
           },
           {
             "id": "m6",
@@ -761,7 +775,7 @@
             "name": "Delubrum Reginae OR Mount Rokkon x4",
             "bonus": 10,
             "tokens": 1,
-            "requirement": null
+            "requirement": "Delubrum Reginae normal only (Savage doesn't count)"
           }
         ],
         "ultimog": [
