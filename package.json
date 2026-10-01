@@ -10,10 +10,10 @@
     "test:e2e:install": "playwright install --with-deps chromium"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.20260908.1",
+    "@cloudflare/workers-types": "^5.20260928.1",
     "@playwright/test": "^1.63.0",
     "terser": "^5.39.0",
     "typescript": "^5.8.3",
-    "wrangler": "^4.130.0"
+    "wrangler": "^4.143.0"
   }
 }
