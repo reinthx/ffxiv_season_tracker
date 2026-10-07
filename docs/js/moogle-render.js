@@ -406,14 +406,15 @@ function renderActiveChallengesWidget() {
       .forEach(ch => rows.push({ ch, label: `Wk${currentWeek.week}` }));
   }
 
-  // Minimog / Ultimog — minimog may be week-gated, ultimog is always flat
+  // Minimog / Ultimog — only the live week's minimog is actionable;
+  // expired weeks are lost, future weeks haven't unlocked (ultimog is flat)
   for (const type of ['minimog', 'ultimog']) {
     (EVENT.challenges[type] || [])
       .filter(ch => {
         if (CHALLENGES[ch.id]) return false;
         if (ch.week) {
           const wd = weekDefs.find(w => w.week === ch.week);
-          if (!wd || today < wd.start) return false;
+          if (!wd || today < wd.start || today > wd.end) return false;
         }
         return true;
       })

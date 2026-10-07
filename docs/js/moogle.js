@@ -270,26 +270,28 @@ function wishlistRemainingCost() {
 }
 
 // Sum of bonus tomes from challenges not yet completed.
-// For weekly challenges: only weeks that are currently active (started, not ended).
-// Standard/Minimog/Ultimog: all uncompleted (no date gate needed).
+// Week-gated challenges only count while still earnable: weeklies in the
+// live week, minimog in live or future weeks. Expired weeks are lost
+// (Mogpendium rewards can't be backfilled), so they're excluded.
 function projectedChallengeEarnings() {
   if (!EVENT) return 0;
   const today    = todayPT();
   const weekDefs = EVENT.weeks || [];
 
-  // Build a set of week numbers that are currently live (started but not yet ended)
+  // Week numbers that are currently live (started but not yet ended)
   const liveWeeks = new Set(weekDefs.filter(w => today >= w.start && today <= w.end).map(w => w.week));
-  // Also include all past weeks (already expired — user can still retroactively mark them)
-  const pastWeeks = new Set(weekDefs.filter(w => today > w.end).map(w => w.week));
 
   let total = 0;
   for (const [type, challenges] of Object.entries(EVENT.challenges)) {
     for (const ch of (challenges || [])) {
       if (CHALLENGES[ch.id]) continue; // already done
       if (type === 'weekly') {
-        // Include if week is live OR already ended (grace period for backfill)
-        const w = ch.week;
-        if (!w || (!liveWeeks.has(w) && !pastWeeks.has(w))) continue;
+        // Weekly must be done in its own week: only the live week counts.
+        if (!ch.week || !liveWeeks.has(ch.week)) continue;
+      } else if (ch.week) {
+        // Minimog etc: live or upcoming weeks count; expired weeks are lost.
+        const wd = weekDefs.find(w => w.week === ch.week);
+        if (wd && today > wd.end) continue;
       }
       total += ch.bonus || 0;
     }
@@ -324,16 +326,22 @@ function tokenNeeded() {
   }, 0);
 }
 
-// Tokens still earnable this event. Unlike tome projections (which only count
-// live/past weeks), this counts ALL uncompleted minimog/ultimog challenges:
-// future weeks will unlock, and the question is whether the mount is still
-// attainable before the event ends.
+// Tokens still earnable this event: uncompleted minimog/ultimog challenges in
+// live or future weeks. Expired weeks are lost (their tokens can't be
+// backfilled), so they're excluded — if the remainder can't cover a wished
+// headline item, the UI points at the Second Hunt carry-over instead.
 function tokenAvailable() {
   if (!EVENT) return 0;
+  const today    = todayPT();
+  const weekDefs = EVENT.weeks || [];
   let total = 0;
   for (const challenges of Object.values(EVENT.challenges || {})) {
     for (const ch of (challenges || [])) {
       if (CHALLENGES[ch.id]) continue;
+      if (ch.week) {
+        const wd = weekDefs.find(w => w.week === ch.week);
+        if (wd && today > wd.end) continue;
+      }
       total += ch.tokens || 0;
     }
   }
