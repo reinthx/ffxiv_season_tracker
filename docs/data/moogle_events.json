@@ -764,10 +764,10 @@
           {
             "id": "m5",
             "week": 5,
-            "name": "Castrum Lacus Litore OR clear Palace of the Dead area (10 floors)",
-            "bonus": 10,
+            "name": "Castrum Lacus Litore OR clear Palace of the Dead area x4 (10 floors each)",
+            "bonus": 30,
             "tokens": 1,
-            "requirement": "Palace of the Dead: any single 10-floor set counts"
+            "requirement": "Palace of the Dead: clear any 10-floor set 4 times. Week 5 pays triple tomes (30 instead of 10)"
           },
           {
             "id": "m6",
