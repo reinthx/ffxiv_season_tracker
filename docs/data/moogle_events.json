@@ -679,7 +679,7 @@
         {
           "id": "ann-concurrent",
           "title": "Also live right now",
-          "body": "Overlapping this event: FFXV collab 'A Nocturne for Heroes' (until Oct 13, Regalia mount), Fall Guys collab in the Gold Saucer (Oct 7–27, MGF prizes), and Ranked CC Season 21 (until Patch 7.58). Note: Crucible Rankings Season One is postponed (no new date yet); Patch 7.57 lands Oct 28 with the 'Keybound Brawler' beastmaster quest.",
+          "body": "Final week — event ends Oct 19! Overlapping now: Fall Guys collab in the Gold Saucer (until Oct 27, MGF prizes) and Ranked CC Season 21 (until Patch 7.58). Note: Crucible Rankings Season One is postponed (no new date yet); Patch 7.57 lands Oct 28 with the 'Keybound Brawler' beastmaster quest.",
           "type": "tip"
         }
       ],
@@ -773,9 +773,9 @@
             "id": "m6",
             "week": 6,
             "name": "Delubrum Reginae OR Mount Rokkon x4",
-            "bonus": 10,
+            "bonus": 30,
             "tokens": 1,
-            "requirement": "Delubrum Reginae normal only (Savage doesn't count)"
+            "requirement": "Delubrum Reginae normal only (Savage doesn't count). Final week pays triple tomes (30 instead of 10)"
           }
         ],
         "ultimog": [
